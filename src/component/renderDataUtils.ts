@@ -6,25 +6,25 @@ const isGateway = (flowElement: FlowContent | FlowGateway): flowElement is FlowG
 
 const determineColumnsWithGateway = (
     targetElementId: string,
-    elementsById: Map<string, FlowContent | FlowGateway>,
+    elements: { [key: string]: FlowContent | FlowGateway },
     columnIndex: number,
     gatewayColumnFlags: Array<boolean>
 ): void => {
-    const targetElement = elementsById.get(targetElementId);
+    const targetElement = elements[targetElementId];
     if (isGateway(targetElement)) {
         gatewayColumnFlags[columnIndex] = true;
         targetElement.nextElements.forEach((elementAfterGateway) =>
-            determineColumnsWithGateway(elementAfterGateway.id, elementsById, columnIndex + 1, gatewayColumnFlags)
+            determineColumnsWithGateway(elementAfterGateway.id, elements, columnIndex + 1, gatewayColumnFlags)
         );
     } else if (targetElement) {
         gatewayColumnFlags[columnIndex] = gatewayColumnFlags[columnIndex] || false;
-        determineColumnsWithGateway(targetElement.nextElementId, elementsById, columnIndex + 1, gatewayColumnFlags);
+        determineColumnsWithGateway(targetElement.nextElementId, elements, columnIndex + 1, gatewayColumnFlags);
     }
 };
 
 const collectGridCellData = (
     targetElementId: string,
-    elementsById: Map<string, FlowContent | FlowGateway>,
+    elements: { [key: string]: FlowContent | FlowGateway },
     gatewayColumnFlags: Array<boolean>,
     columnIndex: number,
     gridColumnOffset: number,
@@ -32,7 +32,7 @@ const collectGridCellData = (
     gridRowIndex: number,
     renderData: Array<GridCellData>
 ): number => {
-    const targetElement = elementsById.get(targetElementId);
+    const targetElement = elements[targetElementId];
     if (!targetElement) {
         const gapCount = totalGridColumnCount - columnIndex - gridColumnOffset;
         if (gapCount > 0) {
@@ -68,7 +68,7 @@ const collectGridCellData = (
             const thisChildStartGridRowIndex = nextChildGridRowIndex;
             nextChildGridRowIndex = collectGridCellData(
                 childElement.id,
-                elementsById,
+                elements,
                 gatewayColumnFlags,
                 columnIndex + 1,
                 // increase offset to make room for gateway-connector
@@ -92,7 +92,7 @@ const collectGridCellData = (
         const columnContainsGateway = gatewayColumnFlags[columnIndex];
         nextChildGridRowIndex = collectGridCellData(
             targetElement.nextElementId,
-            elementsById,
+            elements,
             gatewayColumnFlags,
             columnIndex + 1,
             // increase offset to make room for gateway-connector
@@ -122,20 +122,18 @@ const collectGridCellData = (
     return nextChildGridRowIndex;
 };
 
-const mapElementById = <T extends FlowContent | FlowGateway>(element: T): [string, T] => [element.id, element];
 const filterTrueValues = (flag: boolean): boolean => flag;
 const sortGridCellDataByPosition = (a: GridCellData, b: GridCellData): number =>
     a.rowStartIndex - b.rowStartIndex || a.colStartIndex - b.colStartIndex;
 
 export const buildRenderData = (flow: FlowModelerProps["flow"]): { gridCellData: Array<GridCellData>; columnCount: number } => {
     const { firstElementId, elements } = flow;
-    const elementsById = new Map(elements.map(mapElementById));
     const gatewayColumnFlags: Array<boolean> = [];
-    determineColumnsWithGateway(firstElementId, elementsById, 0, gatewayColumnFlags);
+    determineColumnsWithGateway(firstElementId, elements, 0, gatewayColumnFlags);
     // plan for start, end and an additional column of "gateway-connector" elements after each column containing at least one gateway
     const totalGridColumnCount = 2 + gatewayColumnFlags.length + gatewayColumnFlags.filter(filterTrueValues).length;
     const result: Array<GridCellData> = [];
-    const lastRowEndIndex = collectGridCellData(firstElementId, elementsById, gatewayColumnFlags, 0, 2, totalGridColumnCount, 1, result);
+    const lastRowEndIndex = collectGridCellData(firstElementId, elements, gatewayColumnFlags, 0, 2, totalGridColumnCount, 1, result);
     // add the single start element, now that we know how many rows there are
     result.push({
         colStartIndex: 1,

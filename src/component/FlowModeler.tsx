@@ -55,15 +55,14 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
 
     static propTypes = {
         flow: PropTypes.shape({
-            elements: PropTypes.arrayOf(
+            firstElementId: PropTypes.string.isRequired,
+            elements: PropTypes.objectOf(
                 PropTypes.oneOfType([
                     PropTypes.shape({
-                        id: PropTypes.string.isRequired,
                         data: PropTypes.object,
                         nextElementId: PropTypes.string
                     }),
                     PropTypes.shape({
-                        id: PropTypes.string.isRequired,
                         data: PropTypes.object,
                         nextElements: PropTypes.arrayOf(
                             PropTypes.shape({
@@ -73,8 +72,7 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
                         ).isRequired
                     })
                 ])
-            ).isRequired,
-            firstElementId: PropTypes.string.isRequired
+            ).isRequired
         }).isRequired,
         renderContent: PropTypes.func.isRequired,
         renderGatewayConditionType: PropTypes.func,

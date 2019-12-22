@@ -3,8 +3,8 @@ import { buildRenderData } from "../../src/component/renderDataUtils";
 describe("buildRenderData()", () => {
     it.each`
         testDescription             | input
-        ${"no elements"}            | ${{ elements: [], firstElementId: "0" }}
-        ${"invalid firstElementId"} | ${{ elements: [{ id: "a" }], firstElementId: "b" }}
+        ${"no elements"}            | ${{ elements: {}, firstElementId: "0" }}
+        ${"invalid firstElementId"} | ${{ elements: { a: {} }, firstElementId: "b" }}
     `("returns two cells: one start and one end if $testDescription provided", ({ input }) => {
         const result = buildRenderData(input);
         expect(result.columnCount).toBe(2);
@@ -23,10 +23,10 @@ describe("buildRenderData()", () => {
     });
     it("includes content elements", () => {
         const result = buildRenderData({
-            elements: [
-                { id: "one", nextElementId: "two" },
-                { id: "two", data: { label: "text" } }
-            ],
+            elements: {
+                one: { nextElementId: "two" },
+                two: { data: { label: "text" } }
+            },
             firstElementId: "one"
         });
         expect(result.columnCount).toBe(4);
@@ -60,7 +60,7 @@ describe("buildRenderData()", () => {
     });
     it("can handle gateway without children", () => {
         const result = buildRenderData({
-            elements: [{ id: "one", nextElements: [] }],
+            elements: { one: { nextElements: [] } },
             firstElementId: "one"
         });
         expect(result.columnCount).toBe(4);
@@ -109,10 +109,10 @@ describe("buildRenderData()", () => {
     });
     it("can handle gateway with single child", () => {
         const result = buildRenderData({
-            elements: [
-                { id: "one", nextElements: [{ id: "two", conditionData: { label: "condition" } }] },
-                { id: "two", data: { label: "text" } }
-            ],
+            elements: {
+                one: { nextElements: [{ id: "two", conditionData: { label: "condition" } }] },
+                two: { data: { label: "text" } }
+            },
             firstElementId: "one"
         });
         expect(result.columnCount).toBe(5);
@@ -175,15 +175,14 @@ describe("buildRenderData()", () => {
     });
     it("includes data for gateway and its children", () => {
         const result = buildRenderData({
-            elements: [
-                {
-                    id: "one",
+            elements: {
+                one: {
                     data: { label: "text-one" },
                     nextElements: [{ id: "two", conditionData: { label: "cond-1" } }, { conditionData: { label: "cond-2" } }, { id: "three" }]
                 },
-                { id: "two", data: { label: "text-two" } },
-                { id: "three", data: { label: "text-three" } }
-            ],
+                two: { data: { label: "text-two" } },
+                three: { data: { label: "text-three" } }
+            },
             firstElementId: "one"
         });
         expect(result.columnCount).toBe(5);
@@ -270,9 +269,8 @@ describe("buildRenderData()", () => {
     it("considers combination of content and gateway elements", () => {
         const result = buildRenderData({
             firstElementId: "1",
-            elements: [
-                {
-                    id: "1",
+            elements: {
+                "1": {
                     nextElements: [
                         {
                             id: "2.1"
@@ -283,12 +281,10 @@ describe("buildRenderData()", () => {
                         }
                     ]
                 },
-                {
-                    id: "2.1",
+                "2.1": {
                     nextElementId: "3.1"
                 },
-                {
-                    id: "2.3",
+                "2.3": {
                     nextElements: [
                         {},
                         {
@@ -296,11 +292,8 @@ describe("buildRenderData()", () => {
                         }
                     ]
                 },
-                {
-                    id: "3.1"
-                },
-                {
-                    id: "3.3.2",
+                "3.1": {},
+                "3.3.2": {
                     nextElements: [
                         {},
                         {
@@ -311,10 +304,8 @@ describe("buildRenderData()", () => {
                         }
                     ]
                 },
-                {
-                    id: "4.3.2.2"
-                }
-            ]
+                "4.3.2.2": {}
+            }
         });
         expect(result.columnCount).toBe(9);
         expect(result.gridCellData).toHaveLength(28);
