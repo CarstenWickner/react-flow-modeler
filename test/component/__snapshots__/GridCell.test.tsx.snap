@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly with minimal/default props 1`] = `
+<div
+  className="grid-cell"
+  style={
+    Object {
+      "grid-area": "4 / 1 / 6 / 3",
+    }
+  }
+>
+  <div>
+    cell content
+  </div>
+</div>
+`;

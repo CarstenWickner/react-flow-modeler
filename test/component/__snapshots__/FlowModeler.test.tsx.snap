@@ -1,0 +1,191 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly with all render props 1`] = `
+<div
+  className="flow-modeler"
+  style={
+    Object {
+      "gridTemplateColumns": "repeat(6, max-content)",
+    }
+  }
+>
+  <Component
+    colStartIndex={1}
+    key="1-1"
+    rowEndIndex={3}
+    rowStartIndex={1}
+  >
+    <Component />
+  </Component>
+  <Component
+    colStartIndex={2}
+    key="2-1"
+    rowEndIndex={3}
+    rowStartIndex={1}
+  >
+    <Component>
+      First Node
+    </Component>
+  </Component>
+  <Component
+    colStartIndex={3}
+    key="3-1"
+    rowEndIndex={3}
+    rowStartIndex={1}
+  >
+    <Component>
+      <label>
+        Alternatives
+      </label>
+    </Component>
+  </Component>
+  <Component
+    colStartIndex={4}
+    key="4-1"
+    rowEndIndex={2}
+    rowStartIndex={1}
+  >
+    <Component
+      incomingConnection="first"
+    >
+      <span>
+        Stop Here
+      </span>
+    </Component>
+  </Component>
+  <Component
+    colStartIndex={5}
+    key="5-1"
+    rowStartIndex={1}
+  >
+    <Component />
+  </Component>
+  <Component
+    colStartIndex={6}
+    key="6-1"
+    rowStartIndex={1}
+  >
+    <Component />
+  </Component>
+  <Component
+    colStartIndex={4}
+    key="4-2"
+    rowEndIndex={3}
+    rowStartIndex={2}
+  >
+    <Component
+      incomingConnection="last"
+    >
+      <span>
+        Continue
+      </span>
+    </Component>
+  </Component>
+  <Component
+    colStartIndex={5}
+    key="5-2"
+    rowEndIndex={3}
+    rowStartIndex={2}
+  >
+    <Component>
+      Second Node
+    </Component>
+  </Component>
+  <Component
+    colStartIndex={6}
+    key="6-2"
+    rowStartIndex={2}
+  >
+    <Component />
+  </Component>
+</div>
+`;
+
+exports[`renders correctly with minimal/default props 1`] = `
+<div
+  className="flow-modeler"
+  style={
+    Object {
+      "gridTemplateColumns": "repeat(6, max-content)",
+    }
+  }
+>
+  <Component
+    colStartIndex={1}
+    key="1-1"
+    rowEndIndex={3}
+    rowStartIndex={1}
+  >
+    <Component />
+  </Component>
+  <Component
+    colStartIndex={2}
+    key="2-1"
+    rowEndIndex={3}
+    rowStartIndex={1}
+  >
+    <Component>
+      First Node
+    </Component>
+  </Component>
+  <Component
+    colStartIndex={3}
+    key="3-1"
+    rowEndIndex={3}
+    rowStartIndex={1}
+  >
+    <Component />
+  </Component>
+  <Component
+    colStartIndex={4}
+    key="4-1"
+    rowEndIndex={2}
+    rowStartIndex={1}
+  >
+    <Component
+      incomingConnection="first"
+    />
+  </Component>
+  <Component
+    colStartIndex={5}
+    key="5-1"
+    rowStartIndex={1}
+  >
+    <Component />
+  </Component>
+  <Component
+    colStartIndex={6}
+    key="6-1"
+    rowStartIndex={1}
+  >
+    <Component />
+  </Component>
+  <Component
+    colStartIndex={4}
+    key="4-2"
+    rowEndIndex={3}
+    rowStartIndex={2}
+  >
+    <Component
+      incomingConnection="last"
+    />
+  </Component>
+  <Component
+    colStartIndex={5}
+    key="5-2"
+    rowEndIndex={3}
+    rowStartIndex={2}
+  >
+    <Component>
+      Second Node
+    </Component>
+  </Component>
+  <Component
+    colStartIndex={6}
+    key="6-2"
+    rowStartIndex={2}
+  >
+    <Component />
+  </Component>
+</div>
+`;

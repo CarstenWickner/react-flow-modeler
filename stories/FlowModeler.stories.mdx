@@ -1,0 +1,40 @@
+import { action } from '@storybook/addon-actions';
+import { Meta, Preview, Story, Props } from '@storybook/addon-docs/blocks';
+import "./style-overrides.css";
+
+import { FlowModeler } from "../src/index";
+
+<Meta title='FlowModeler' component={FlowModeler} />
+
+# FlowModeler
+
+Introducing a component for viewing/editing simple flows.
+
+<Preview>
+    <Story name="show-case">
+        <FlowModeler
+            flow={{
+                elements: [
+                    { id: "1", data: { label: "First Node" }, nextElementId: "2" },
+                    { id: "2", data: { label: "Second Node" }, nextElementId: "3" },
+                    { id: "3", data: { label: "Condition" }, nextElements: [
+                        { id: "4.1", conditionData: { label: "Fulfilled" } },
+                        { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
+                    { id: "4.1", data: { label: "Optional Node 1" }, nextElementId: "5.1" },
+                    { id: "4.2", data: { label: "Optional Node 2" }},
+                    { id: "5.1", data: { label: "Last Node"}}
+                ],
+                firstElementId: "1"
+            }}
+            renderContent={(data, id) => <span>{data.label}</span>}
+            renderGatewayConditionType={(data, id) => <label>{data.label}</label>}
+            renderGatewayConditionValue={(data, id) => <label>{data.label}</label>}
+        />
+    </Story>
+</Preview>
+
+----
+
+## Props
+
+<Props of={FlowModeler} />

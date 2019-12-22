@@ -1,0 +1,137 @@
+@import "node_modules/mathsass/dist/math";
+
+.flow-modeler {
+    display: grid;
+    padding: 1em;
+    overflow-y: auto;
+    align-content: stretch;
+    justify-content: stretch;
+
+    $strokeColor: red;
+    $strokeStrength: 0.25em;
+    $arrowSize: 1.5 * $strokeStrength;
+    $strokeLength: 2em - $arrowSize;
+    $standardElementSize: 2.5em;
+    $gatewayElementMargin: ((sqrt(2.5 * 2.5 * 2) * 1em) - $standardElementSize) / 2;
+    $standardElementColor: #808080;
+
+    & .grid-cell {
+        display: flex;
+        align-items: center;
+        align-content: center;
+
+        & .flow-element {
+            display: flex;
+            background-color: white;
+            margin: $strokeStrength 0;
+
+            &.start-element {
+                border: ($strokeStrength / 2) solid $standardElementColor;
+                height: $standardElementSize - $strokeStrength;
+                width: $standardElementSize - $strokeStrength;
+                border-radius: 50%;
+            }
+            &.end-element {
+                box-shadow: 0 0 0 ($strokeStrength * 0.9) $standardElementColor;
+                border: ($strokeStrength * 0.9) solid white;
+                background-color: $standardElementColor;
+                height: $standardElementSize - (4 * 0.9 * $strokeStrength);
+                width: $standardElementSize - (4 * 0.9 * $strokeStrength);
+                border-radius: 50%;
+                margin: $strokeStrength ($strokeStrength * 0.9);
+            }
+            &.content-element {
+                border: ($strokeStrength / 3) solid $standardElementColor;
+                border-radius: 0.5em;
+                min-width: $standardElementSize;
+                min-height: $standardElementSize;
+                flex-grow: 1;
+            }
+            &.gateway-element {
+                border: ($strokeStrength / 2) solid $standardElementColor;
+                height: $standardElementSize;
+                width: $standardElementSize;
+                transform: rotate(45deg);
+                margin: 0 $gatewayElementMargin;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &:before {
+                    content: "X";
+                    transform: rotate(-45deg);
+                    font: bold 2.25em Arial, sans-serif;
+                    color: $standardElementColor;
+                }
+            }
+        }
+        & .arrow,
+        & .stroke-horizontal,
+        & .stroke-vertical {
+            background-color: $strokeColor;
+        }
+        & .arrow {
+            height: $strokeStrength;
+            width: $strokeLength;
+            position: relative;
+            margin-right: $arrowSize;
+    
+            &:after {
+                content: "";
+                height: 0;
+                width: 0;
+                position: absolute;
+                right: 0;
+                top: -$strokeStrength;
+                margin-right: -$arrowSize;
+                border-top: $arrowSize solid transparent;
+                border-left: $arrowSize solid $strokeColor;
+                border-bottom: $arrowSize solid transparent;
+            }
+        }
+        & .stroke-horizontal {
+            height: $strokeStrength;
+            min-width: $strokeLength;
+            flex-grow: 1;
+        }
+        & .stroke-vertical {
+            width: $strokeStrength;
+            &.full-height {
+                height: 100%;
+            }
+            &.bottom-half,
+            &.top-half {
+                height: calc(50% + #{$strokeStrength / 2});
+            }
+            &.bottom-half {
+                margin-top: auto;
+            }
+            &.top-half {
+                margin-bottom: auto;
+            }
+            & + .arrow {
+                margin-left: -$strokeStrength;
+            }
+        }
+        & .centered-line-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+    
+            & .wrapper-top-label,
+            & .wrapper-bottom-spacing {
+                flex-grow: 1;
+            }
+            & .wrapper-top-label {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                align-content: center;
+                padding: 0 0.25em;
+            }
+            & .stroke-horizontal {
+                flex-grow: 0;
+            }
+        }
+    }
+}

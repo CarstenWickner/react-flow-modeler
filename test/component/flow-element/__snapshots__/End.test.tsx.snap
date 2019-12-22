@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly without props 1`] = `
+<Fragment>
+  <div
+    className="arrow"
+  />
+  <div
+    className="flow-element end-element"
+  />
+</Fragment>
+`;

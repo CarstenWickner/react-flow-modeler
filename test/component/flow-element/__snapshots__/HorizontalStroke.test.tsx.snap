@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly for incomingConnection = single 1`] = `
+<React.Fragment>
+  <div
+    className="centered-line-wrapper"
+  >
+    <div
+      className="wrapper-top-label"
+    >
+      text
+    </div>
+    <div
+      className="stroke-horizontal"
+    />
+    <div
+      className="wrapper-bottom-spacing"
+      style={
+        Object {
+          "height": "30px",
+        }
+      }
+    />
+  </div>
+</React.Fragment>
+`;
+
+exports[`renders correctly with minimal/default props 1`] = `
+<Fragment>
+  <div
+    className="centered-line-wrapper"
+  >
+    <div
+      className="wrapper-top-label"
+    >
+      label
+    </div>
+    <div
+      className="stroke-horizontal"
+    />
+    <div
+      className="wrapper-bottom-spacing"
+    />
+  </div>
+</Fragment>
+`;
