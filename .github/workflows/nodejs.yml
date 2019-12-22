@@ -17,17 +17,16 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: npm install, build, and test
+    - name: npm install and build (module + storybook)
       run: |
         npm install
         npm run build
-        npm run test -- --coverage --coverageReporters=text-lcov | coveralls
-        npm run lint
         npm run build-storybook
-        make test-coverage
       env:
         CI: true
-    - name: Coveralls
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: npm test and lint
+      run: |
+        npm run test -- --ci --coverage --coverageReporters=text-lcov | coveralls
+        npm run lint
+      env:
+        CI: true
