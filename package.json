@@ -1,0 +1,131 @@
+{
+    "name": "react-flow-modeler",
+    "version": "0.1.0",
+    "description": "Modeler for customisable flow charts",
+    "homepage": "https://CarstenWickner.github.io/react-flow-modeler/?path=/docs/flowmodeler--show-case",
+    "author": "Carsten Wickner",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/CarstenWickner/react-flow-modeler.git"
+    },
+    "scripts": {
+        "start": "start-storybook -p 9001 -c .storybook",
+        "build": "rollup -c",
+        "lint": "tsc --noEmit && npm run lint-code && npm run lint-styles",
+        "lint-code": "eslint {src,test}/**/*.{ts,tsx} --report-unused-disable-directives",
+        "lint-styles": "stylelint src stories/**/*.*css stories/**/*.mdx",
+        "lint-fix": "npm run lint-code -- --fix",
+        "test": "jest",
+        "build-storybook": "build-storybook -c .storybook -o docs",
+        "predeploy": "rm -rf docs && npm run lint && npm run test --bail && npm run build-storybook",
+        "deploy": "gh-pages -d docs",
+        "prepublishOnly": "rm -rf build && npm run lint && npm run test --bail && npm run build"
+    },
+    "main": "build/index.js",
+    "module": "build/index.es.js",
+    "types": "build/index.d.ts",
+    "files": [
+        "/build"
+    ],
+    "browserslist": [
+        "defaults"
+    ],
+    "devDependencies": {
+        "@mdx-js/loader": "~1.5.1",
+        "@storybook/addon-actions": "~5.2.3",
+        "@storybook/addon-docs": "~5.2.3",
+        "@storybook/addon-options": "~5.2.3",
+        "@storybook/react": "~5.2.3",
+        "@types/enzyme": "~3.10.3",
+        "@types/enzyme-adapter-react-16": "~1.0.5",
+        "@types/jest": "24.0.23",
+        "@types/prop-types": "^15.7.2",
+        "@types/react": "^16.9.5",
+        "@types/react-dom": "^16.9.2",
+        "@typescript-eslint/eslint-plugin": "^2.11.0",
+        "@typescript-eslint/parser": "^2.9.0",
+        "@typescript-eslint/typescript-estree": "^2.9.0",
+        "@wessberg/rollup-plugin-ts": "~1.1.73",
+        "awesome-typescript-loader": "~5.2.1",
+        "babel-loader": "~8.0.6",
+        "coveralls": "~3.0.6",
+        "css-loader": "~3.3.0",
+        "enzyme": "~3.10.0",
+        "enzyme-adapter-react-16": "~1.15.0",
+        "enzyme-to-json": "~3.4.2",
+        "eslint": "^6.7.0",
+        "eslint-config-prettier": "^6.7.0",
+        "eslint-plugin-import": "^2.18.2",
+        "eslint-plugin-jsdoc": "^18.4.0",
+        "eslint-plugin-jsx-a11y": "^6.2.3",
+        "eslint-plugin-prettier": "^3.1.1",
+        "eslint-plugin-react": "^7.17.0",
+        "gh-pages": "~2.1.1",
+        "identity-obj-proxy": "~3.0.0",
+        "jest": "24.0.0",
+        "mathsass": "^0.11.0",
+        "node-sass": "~4.13.0",
+        "prettier": "~1.19.1",
+        "react-docgen-typescript-loader": "~3.6.0",
+        "rollup": "~1.27.0",
+        "rollup-plugin-postcss": "~2.0.3",
+        "rollup-plugin-terser": "~5.1.2",
+        "sass-loader": "~8.0.0",
+        "style-loader": "~1.0.0",
+        "stylelint": "^12.0.0",
+        "stylelint-config-recommended-scss": "^4.1.0",
+        "stylelint-scss": "~3.13.0",
+        "ts-jest": "~24.2.0",
+        "typescript": "~3.6.4"
+    },
+    "dependencies": {},
+    "peerDependencies": {
+        "prop-types": "^15.7.2",
+        "react": "^16.9.5",
+        "react-dom": "^16.9.2"
+    },
+    "jest": {
+        "testEnvironment": "jsdom",
+        "roots": [
+            "<rootDir>/src",
+            "<rootDir>/test"
+        ],
+        "transform": {
+            "^.+\\.tsx?$": "ts-jest"
+        },
+        "globals": {
+            "ts-jest": {
+                "diagnostics": {
+                    "ignoreCodes": [
+                        2322,
+                        2493,
+                        2532,
+                        2740,
+                        7053,
+                        18002
+                    ]
+                }
+            }
+        },
+        "setupFilesAfterEnv": [
+            "<rootDir>/test/setupTests.ts"
+        ],
+        "snapshotSerializers": [
+            "enzyme-to-json/serializer"
+        ],
+        "moduleNameMapper": {
+            "\\.(scss)$": "identity-obj-proxy"
+        },
+        "clearMocks": true
+    },
+    "bugs": {
+        "url": "https://github.com/CarstenWickner/react-flow-modeler/issues"
+    },
+    "keywords": [
+        "react",
+        "viewer",
+        "modeler",
+        "flowchart"
+    ]
+}
