@@ -17,12 +17,20 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: npm install, build, test and lint
+    - name: npm install and build (module + storybook)
       run: |
         npm install
         npm run build
-        npm run test -- --ci --coverage --coverageReporters=text-lcov | coveralls
-        npm run lint
         npm run build-storybook
+      env:
+        CI: true
+    - name: Run tests
+      run: |
+        npm run test -- --ci --coverage --coverageReporters=text-lcov
+      env:
+        CI: true
+    - name: Lint code and styles
+      run: |
+        npm run lint
       env:
         CI: true
