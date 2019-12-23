@@ -4,6 +4,19 @@ import { GridCellData } from "../types/GridCellData";
 const isDivergingGateway = (flowElement: FlowContent | FlowGatewayDiverging): flowElement is FlowGatewayDiverging =>
     flowElement && (flowElement as FlowGatewayDiverging).nextElements !== undefined;
 
+const getGatewayConnections = (gateway: FlowGatewayDiverging): FlowGatewayDiverging["nextElements"] => {
+    // ensure that there are always at least two sub elements under a gateway to allow for respective "end" elements to be displayed
+    let subElements;
+    if (gateway.nextElements.length > 1) {
+        subElements = gateway.nextElements;
+    } else if (gateway.nextElements.length === 1) {
+        subElements = [...gateway.nextElements, {}];
+    } else {
+        subElements = [{}, {}];
+    }
+    return subElements;
+};
+
 const collectPaths = (
     targetElementId: string,
     elements: { [key: string]: FlowContent | FlowGatewayDiverging },
@@ -22,7 +35,7 @@ const collectPaths = (
     }
     currentPath.push(targetElementId);
     if (isDivergingGateway(targetElement)) {
-        targetElement.nextElements.forEach((next) => collectPaths(next.id, elements, currentPath.slice(0), otherPaths));
+        getGatewayConnections(targetElement).forEach((next) => collectPaths(next.id, elements, currentPath.slice(0), otherPaths));
     } else {
         collectPaths(targetElement.nextElementId, elements, currentPath, otherPaths);
     }
@@ -61,16 +74,7 @@ const collectGridCellData = (
     if (isDivergingGateway(targetElement)) {
         elementType = "gateway-diverging";
         nextChildGridRowIndex = gridRowIndex;
-        // ensure that there are always at least two sub elements under a gateway to allow for respective "end" elements to be displayed
-        let subElements;
-        if (targetElement.nextElements.length > 1) {
-            subElements = targetElement.nextElements;
-        } else if (targetElement.nextElements.length === 1) {
-            subElements = [...targetElement.nextElements, {}];
-        } else {
-            subElements = [{}, {}];
-        }
-        subElements.forEach((childElement, childIndex, children) => {
+        getGatewayConnections(targetElement).forEach((childElement, childIndex, children) => {
             const thisChildStartGridRowIndex = nextChildGridRowIndex;
             nextChildGridRowIndex = collectGridCellData(
                 childElement.id,
