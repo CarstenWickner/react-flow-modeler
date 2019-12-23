@@ -1,30 +1,36 @@
-import { FlowContent, FlowGateway, FlowModelerProps } from "../types/FlowModelerProps";
+import { FlowContent, FlowGatewayDiverging, FlowModelerProps } from "../types/FlowModelerProps";
 import { GridCellData } from "../types/GridCellData";
 
-const isGateway = (flowElement: FlowContent | FlowGateway): flowElement is FlowGateway =>
-    flowElement && (flowElement as FlowGateway).nextElements !== undefined;
+const isDivergingGateway = (flowElement: FlowContent | FlowGatewayDiverging): flowElement is FlowGatewayDiverging =>
+    flowElement && (flowElement as FlowGatewayDiverging).nextElements !== undefined;
 
-const determineColumnsWithGateway = (
+const collectPaths = (
     targetElementId: string,
-    elements: { [key: string]: FlowContent | FlowGateway },
-    columnIndex: number,
-    gatewayColumnFlags: Array<boolean>
+    elements: { [key: string]: FlowContent | FlowGatewayDiverging },
+    currentPath: Array<string>,
+    otherPaths: Array<Array<string>>
 ): void => {
     const targetElement = elements[targetElementId];
-    if (isGateway(targetElement)) {
-        gatewayColumnFlags[columnIndex] = true;
-        targetElement.nextElements.forEach((elementAfterGateway) =>
-            determineColumnsWithGateway(elementAfterGateway.id, elements, columnIndex + 1, gatewayColumnFlags)
-        );
-    } else if (targetElement) {
-        gatewayColumnFlags[columnIndex] = gatewayColumnFlags[columnIndex] || false;
-        determineColumnsWithGateway(targetElement.nextElementId, elements, columnIndex + 1, gatewayColumnFlags);
+    if (!targetElement) {
+        // current path ends here, i.e. it should be added to the overall list
+        otherPaths.push(currentPath);
+        return;
+    }
+    if (currentPath.includes(targetElementId)) {
+        // no reason to go in circles, stop it right there
+        throw new Error(`Circular reference to element: ${targetElementId}`);
+    }
+    currentPath.push(targetElementId);
+    if (isDivergingGateway(targetElement)) {
+        targetElement.nextElements.forEach((next) => collectPaths(next.id, elements, currentPath.slice(0), otherPaths));
+    } else {
+        collectPaths(targetElement.nextElementId, elements, currentPath, otherPaths);
     }
 };
 
 const collectGridCellData = (
     targetElementId: string,
-    elements: { [key: string]: FlowContent | FlowGateway },
+    elements: { [key: string]: FlowContent | FlowGatewayDiverging },
     gatewayColumnFlags: Array<boolean>,
     columnIndex: number,
     gridColumnOffset: number,
@@ -40,20 +46,20 @@ const collectGridCellData = (
                 colStartIndex: columnIndex + gridColumnOffset,
                 colEndIndex: totalGridColumnCount,
                 rowStartIndex: gridRowIndex,
-                elementType: "stroke-extension"
+                type: "stroke-extension"
             });
         }
         renderData.push({
             colStartIndex: totalGridColumnCount,
             rowStartIndex: gridRowIndex,
-            elementType: "end"
+            type: "end"
         });
         return gridRowIndex + 1;
     }
     let nextChildGridRowIndex: number;
-    let elementType: "content" | "gateway";
-    if (isGateway(targetElement)) {
-        elementType = "gateway";
+    let elementType: "content" | "gateway-diverging";
+    if (isDivergingGateway(targetElement)) {
+        elementType = "gateway-diverging";
         nextChildGridRowIndex = gridRowIndex;
         // ensure that there are always at least two sub elements under a gateway to allow for respective "end" elements to be displayed
         let subElements;
@@ -81,9 +87,10 @@ const collectGridCellData = (
                 colStartIndex: columnIndex + gridColumnOffset + 1,
                 rowStartIndex: thisChildStartGridRowIndex,
                 rowEndIndex: nextChildGridRowIndex,
+                gatewayId: targetElementId,
                 elementId: childElement.id,
-                elementType: "gateway-connector",
-                elementData: childElement.conditionData,
+                type: "gateway-to-element",
+                data: childElement.conditionData,
                 connectionType: childIndex === 0 ? "first" : childIndex + 1 < children.length ? "middle" : "last"
             });
         });
@@ -107,18 +114,29 @@ const collectGridCellData = (
                 colStartIndex: columnIndex + gridColumnOffset + 1,
                 rowStartIndex: gridRowIndex,
                 rowEndIndex: nextChildGridRowIndex,
-                elementType: "stroke-extension"
+                type: "stroke-extension"
             });
         }
     }
-    renderData.push({
+    const commonValues = {
         colStartIndex: columnIndex + gridColumnOffset,
         rowStartIndex: gridRowIndex,
         rowEndIndex: nextChildGridRowIndex,
-        elementId: targetElementId,
-        elementType,
-        elementData: targetElement.data
-    });
+        data: targetElement.data
+    };
+    if (elementType === "content") {
+        renderData.push({
+            ...commonValues,
+            type: elementType,
+            elementId: targetElementId
+        });
+    } else {
+        renderData.push({
+            ...commonValues,
+            type: elementType,
+            gatewayId: targetElementId
+        });
+    }
     return nextChildGridRowIndex;
 };
 
@@ -128,8 +146,17 @@ const sortGridCellDataByPosition = (a: GridCellData, b: GridCellData): number =>
 
 export const buildRenderData = (flow: FlowModelerProps["flow"]): { gridCellData: Array<GridCellData>; columnCount: number } => {
     const { firstElementId, elements } = flow;
+    const paths: Array<Array<string>> = [];
+    collectPaths(firstElementId, elements, [], paths);
+    // TODO determine where converging gateways are required
+    // TODO ensure necessary gaps are considered (also for total column count)
+
     const gatewayColumnFlags: Array<boolean> = [];
-    determineColumnsWithGateway(firstElementId, elements, 0, gatewayColumnFlags);
+    paths.forEach((singlePath) =>
+        singlePath.forEach((id, index) => {
+            gatewayColumnFlags[index] = gatewayColumnFlags[index] || (id && isDivergingGateway(elements[id]));
+        })
+    );
     // plan for start, end and an additional column of "gateway-connector" elements after each column containing at least one gateway
     const totalGridColumnCount = 2 + gatewayColumnFlags.length + gatewayColumnFlags.filter(filterTrueValues).length;
     const result: Array<GridCellData> = [];
@@ -139,7 +166,7 @@ export const buildRenderData = (flow: FlowModelerProps["flow"]): { gridCellData:
         colStartIndex: 1,
         rowStartIndex: 1,
         rowEndIndex: lastRowEndIndex,
-        elementType: "start"
+        type: "start"
     });
     // for a more readable resulting html structure, sort the grid elements first from top to bottom and within each row from left to right
     result.sort(sortGridCellDataByPosition);

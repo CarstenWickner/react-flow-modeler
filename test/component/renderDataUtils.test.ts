@@ -13,12 +13,12 @@ describe("buildRenderData()", () => {
             colStartIndex: 1,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "start"
+            type: "start"
         });
         expect(result.gridCellData[1]).toEqual({
             colStartIndex: 2,
             rowStartIndex: 1,
-            elementType: "end"
+            type: "end"
         });
     });
     it("includes content elements", () => {
@@ -35,27 +35,27 @@ describe("buildRenderData()", () => {
             colStartIndex: 1,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "start"
+            type: "start"
         });
         expect(result.gridCellData[1]).toEqual({
             colStartIndex: 2,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "content",
+            type: "content",
             elementId: "one"
         });
         expect(result.gridCellData[2]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "content",
+            type: "content",
             elementId: "two",
-            elementData: { label: "text" }
+            data: { label: "text" }
         });
         expect(result.gridCellData[3]).toEqual({
             colStartIndex: 4,
             rowStartIndex: 1,
-            elementType: "end"
+            type: "end"
         });
     });
     it("can handle gateway without children", () => {
@@ -69,42 +69,44 @@ describe("buildRenderData()", () => {
             colStartIndex: 1,
             rowStartIndex: 1,
             rowEndIndex: 3,
-            elementType: "start"
+            type: "start"
         });
         expect(result.gridCellData[1]).toEqual({
             colStartIndex: 2,
             rowStartIndex: 1,
             rowEndIndex: 3,
-            elementType: "gateway",
-            elementId: "one"
+            type: "gateway-diverging",
+            gatewayId: "one"
         });
         expect(result.gridCellData[2]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "first",
+            gatewayId: "one",
             elementId: undefined,
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[3]).toEqual({
             colStartIndex: 4,
             rowStartIndex: 1,
-            elementType: "end"
+            type: "end"
         });
         expect(result.gridCellData[4]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 2,
             rowEndIndex: 3,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "last",
+            gatewayId: "one",
             elementId: undefined,
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[5]).toEqual({
             colStartIndex: 4,
             rowStartIndex: 2,
-            elementType: "end"
+            type: "end"
         });
     });
     it("can handle gateway with single child", () => {
@@ -121,56 +123,58 @@ describe("buildRenderData()", () => {
             colStartIndex: 1,
             rowStartIndex: 1,
             rowEndIndex: 3,
-            elementType: "start"
+            type: "start"
         });
         expect(result.gridCellData[1]).toEqual({
             colStartIndex: 2,
             rowStartIndex: 1,
             rowEndIndex: 3,
-            elementType: "gateway",
-            elementId: "one"
+            type: "gateway-diverging",
+            gatewayId: "one"
         });
         expect(result.gridCellData[2]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "first",
+            gatewayId: "one",
             elementId: "two",
-            elementData: { label: "condition" }
+            data: { label: "condition" }
         });
         expect(result.gridCellData[3]).toEqual({
             colStartIndex: 4,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "content",
+            type: "content",
             elementId: "two",
-            elementData: { label: "text" }
+            data: { label: "text" }
         });
         expect(result.gridCellData[4]).toEqual({
             colStartIndex: 5,
             rowStartIndex: 1,
-            elementType: "end"
+            type: "end"
         });
         expect(result.gridCellData[5]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 2,
             rowEndIndex: 3,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "last",
+            gatewayId: "one",
             elementId: undefined,
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[6]).toEqual({
             colStartIndex: 4,
             colEndIndex: 5,
             rowStartIndex: 2,
-            elementType: "stroke-extension"
+            type: "stroke-extension"
         });
         expect(result.gridCellData[7]).toEqual({
             colStartIndex: 5,
             rowStartIndex: 2,
-            elementType: "end"
+            type: "end"
         });
     });
     it("includes data for gateway and its children", () => {
@@ -191,79 +195,82 @@ describe("buildRenderData()", () => {
             colStartIndex: 1,
             rowStartIndex: 1,
             rowEndIndex: 4,
-            elementType: "start"
+            type: "start"
         });
         expect(result.gridCellData[1]).toEqual({
             colStartIndex: 2,
             rowStartIndex: 1,
             rowEndIndex: 4,
-            elementType: "gateway",
-            elementId: "one",
-            elementData: { label: "text-one" }
+            type: "gateway-diverging",
+            gatewayId: "one",
+            data: { label: "text-one" }
         });
         expect(result.gridCellData[2]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "first",
+            gatewayId: "one",
             elementId: "two",
-            elementData: { label: "cond-1" }
+            data: { label: "cond-1" }
         });
         expect(result.gridCellData[3]).toEqual({
             colStartIndex: 4,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "content",
+            type: "content",
             elementId: "two",
-            elementData: { label: "text-two" }
+            data: { label: "text-two" }
         });
         expect(result.gridCellData[4]).toEqual({
             colStartIndex: 5,
             rowStartIndex: 1,
-            elementType: "end"
+            type: "end"
         });
         expect(result.gridCellData[5]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 2,
             rowEndIndex: 3,
-            elementId: undefined,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "middle",
-            elementData: { label: "cond-2" }
+            gatewayId: "one",
+            elementId: undefined,
+            data: { label: "cond-2" }
         });
         expect(result.gridCellData[6]).toEqual({
             colStartIndex: 4,
             colEndIndex: 5,
             rowStartIndex: 2,
-            elementType: "stroke-extension"
+            type: "stroke-extension"
         });
         expect(result.gridCellData[7]).toEqual({
             colStartIndex: 5,
             rowStartIndex: 2,
-            elementType: "end"
+            type: "end"
         });
         expect(result.gridCellData[8]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 3,
             rowEndIndex: 4,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "last",
+            gatewayId: "one",
             elementId: "three",
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[9]).toEqual({
             colStartIndex: 4,
             rowStartIndex: 3,
             rowEndIndex: 4,
-            elementType: "content",
+            type: "content",
             elementId: "three",
-            elementData: { label: "text-three" }
+            data: { label: "text-three" }
         });
         expect(result.gridCellData[10]).toEqual({
             colStartIndex: 5,
             rowStartIndex: 3,
-            elementType: "end"
+            type: "end"
         });
     });
     it("considers combination of content and gateway elements", () => {
@@ -313,199 +320,207 @@ describe("buildRenderData()", () => {
             colStartIndex: 1,
             rowStartIndex: 1,
             rowEndIndex: 7,
-            elementType: "start"
+            type: "start"
         });
         expect(result.gridCellData[1]).toEqual({
             colStartIndex: 2,
             rowStartIndex: 1,
             rowEndIndex: 7,
-            elementType: "gateway",
-            elementId: "1",
-            elementData: undefined
+            type: "gateway-diverging",
+            gatewayId: "1",
+            data: undefined
         });
         expect(result.gridCellData[2]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "first",
+            gatewayId: "1",
             elementId: "2.1",
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[3]).toEqual({
             colStartIndex: 4,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "content",
+            type: "content",
             elementId: "2.1",
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[4]).toEqual({
             colStartIndex: 5,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "stroke-extension"
+            type: "stroke-extension"
         });
         expect(result.gridCellData[5]).toEqual({
             colStartIndex: 6,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "content",
+            type: "content",
             elementId: "3.1",
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[6]).toEqual({
             colStartIndex: 7,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            elementType: "stroke-extension"
+            type: "stroke-extension"
         });
         expect(result.gridCellData[7]).toEqual({
             colStartIndex: 8,
             colEndIndex: 9,
             rowStartIndex: 1,
-            elementType: "stroke-extension"
+            type: "stroke-extension"
         });
         expect(result.gridCellData[8]).toEqual({
             colStartIndex: 9,
             rowStartIndex: 1,
-            elementType: "end"
+            type: "end"
         });
         expect(result.gridCellData[9]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 2,
             rowEndIndex: 3,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "middle",
+            gatewayId: "1",
             elementId: undefined,
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[10]).toEqual({
             colStartIndex: 4,
             colEndIndex: 9,
             rowStartIndex: 2,
-            elementType: "stroke-extension"
+            type: "stroke-extension"
         });
         expect(result.gridCellData[11]).toEqual({
             colStartIndex: 9,
             rowStartIndex: 2,
-            elementType: "end"
+            type: "end"
         });
         expect(result.gridCellData[12]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 3,
             rowEndIndex: 7,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "last",
+            gatewayId: "1",
             elementId: "2.3",
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[13]).toEqual({
             colStartIndex: 4,
             rowStartIndex: 3,
             rowEndIndex: 7,
-            elementType: "gateway",
-            elementId: "2.3",
-            elementData: undefined
+            type: "gateway-diverging",
+            gatewayId: "2.3",
+            data: undefined
         });
         expect(result.gridCellData[14]).toEqual({
             colStartIndex: 5,
             rowEndIndex: 4,
             rowStartIndex: 3,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "first",
+            gatewayId: "2.3",
             elementId: undefined,
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[15]).toEqual({
             colStartIndex: 6,
             colEndIndex: 9,
             rowStartIndex: 3,
-            elementType: "stroke-extension"
+            type: "stroke-extension"
         });
         expect(result.gridCellData[16]).toEqual({
             colStartIndex: 9,
             rowStartIndex: 3,
-            elementType: "end"
+            type: "end"
         });
         expect(result.gridCellData[17]).toEqual({
             colStartIndex: 5,
             rowStartIndex: 4,
             rowEndIndex: 7,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "last",
+            gatewayId: "2.3",
             elementId: "3.3.2",
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[18]).toEqual({
             colStartIndex: 6,
             rowStartIndex: 4,
             rowEndIndex: 7,
-            elementType: "gateway",
-            elementId: "3.3.2",
-            elementData: undefined
+            type: "gateway-diverging",
+            gatewayId: "3.3.2",
+            data: undefined
         });
         expect(result.gridCellData[19]).toEqual({
             colStartIndex: 7,
             rowStartIndex: 4,
             rowEndIndex: 5,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "first",
+            gatewayId: "3.3.2",
             elementId: undefined,
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[20]).toEqual({
             colStartIndex: 8,
             colEndIndex: 9,
             rowStartIndex: 4,
-            elementType: "stroke-extension"
+            type: "stroke-extension"
         });
         expect(result.gridCellData[21]).toEqual({
             colStartIndex: 9,
             rowStartIndex: 4,
-            elementType: "end"
+            type: "end"
         });
         expect(result.gridCellData[22]).toEqual({
             colStartIndex: 7,
             rowStartIndex: 5,
             rowEndIndex: 6,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "middle",
+            gatewayId: "3.3.2",
             elementId: "4.3.2.2",
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[23]).toEqual({
             colStartIndex: 8,
             rowStartIndex: 5,
             rowEndIndex: 6,
-            elementType: "content",
+            type: "content",
             elementId: "4.3.2.2",
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[24]).toEqual({
             colStartIndex: 9,
             rowStartIndex: 5,
-            elementType: "end"
+            type: "end"
         });
         expect(result.gridCellData[25]).toEqual({
             colStartIndex: 7,
             rowStartIndex: 6,
             rowEndIndex: 7,
-            elementType: "gateway-connector",
+            type: "gateway-to-element",
             connectionType: "last",
+            gatewayId: "3.3.2",
             elementId: "4.3.2.3",
-            elementData: undefined
+            data: undefined
         });
         expect(result.gridCellData[26]).toEqual({
             colStartIndex: 8,
             colEndIndex: 9,
             rowStartIndex: 6,
-            elementType: "stroke-extension"
+            type: "stroke-extension"
         });
         expect(result.gridCellData[27]).toEqual({
             colStartIndex: 9,
             rowStartIndex: 6,
-            elementType: "end"
+            type: "end"
         });
     });
 });

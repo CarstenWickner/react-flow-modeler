@@ -8,6 +8,6 @@ export const Gateway: React.FunctionComponent<{
     <>
         <div className="arrow" />
         <div className="flow-element gateway-element" />
-        <HorizontalStroke incomingConnection="single">{children}</HorizontalStroke>
+        <HorizontalStroke>{children}</HorizontalStroke>
     </>
 );

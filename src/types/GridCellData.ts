@@ -6,27 +6,42 @@ export interface GridCellCoordinates {
 }
 
 export interface SimpleElement extends GridCellCoordinates {
-    elementType: "start" | "end" | "stroke-extension";
+    type: "start" | "end" | "stroke-extension";
 }
 
 /*
  * contextual information concerning a flow element
  */
 export interface ContentCellData extends GridCellCoordinates {
-    elementType: "content";
+    type: "content";
     elementId: string;
-    elementData: { [key: string]: unknown };
+    data?: { [key: string]: unknown };
 }
-export interface GatewayCellData extends GridCellCoordinates {
-    elementType: "gateway";
-    elementId: string;
-    elementData: { [key: string]: unknown };
+export interface GatewayDivergingCellData extends GridCellCoordinates {
+    type: "gateway-diverging";
+    gatewayId: string;
+    data?: { [key: string]: unknown };
 }
-export interface GatewayConnectorCellData extends GridCellCoordinates {
-    elementType: "gateway-connector";
-    elementId: string;
-    elementData: { [key: string]: unknown };
+export interface GatewayToElementConnectorCellData extends GridCellCoordinates {
+    type: "gateway-to-element";
+    gatewayId: string;
+    elementId?: string;
+    data?: { [key: string]: unknown };
     connectionType: "first" | "middle" | "last";
 }
+export interface ElementToGatewayConnectorCellData extends GridCellCoordinates {
+    type: "element-to-gateway";
+    elementId: string;
+    connectionType: "first" | "middle" | "last";
+}
+export interface GatewayConvergingCellData extends GridCellCoordinates {
+    type: "gateway-converging";
+}
 
-export type GridCellData = SimpleElement | ContentCellData | GatewayCellData | GatewayConnectorCellData;
+export type GridCellData =
+    | SimpleElement
+    | ContentCellData
+    | GatewayDivergingCellData
+    | GatewayToElementConnectorCellData
+    | GatewayConvergingCellData
+    | ElementToGatewayConnectorCellData;

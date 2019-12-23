@@ -35,4 +35,13 @@ describe("renders correctly", () => {
             expect(component.find(`.stroke-vertical.${verticalStrokeClassName}`).exists()).toBe(true);
         });
     });
+    it.each`
+        outgoingConnection | verticalStrokeClassName
+        ${"first"}         | ${"bottom-half"}
+        ${"middle"}        | ${"full-height"}
+        ${"last"}          | ${"top-half"}
+    `("for incomingConnection = $incomingConnection", ({ outgoingConnection, verticalStrokeClassName }) => {
+        const component = shallow(<HorizontalStroke outgoingConnection={outgoingConnection} />);
+        expect(component.find(`.stroke-vertical.${verticalStrokeClassName}`).exists()).toBe(true);
+    });
 });

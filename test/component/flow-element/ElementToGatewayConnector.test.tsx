@@ -1,11 +1,11 @@
 import * as React from "react";
 import { shallow } from "enzyme";
 
-import { GatewayConnector } from "../../../src/component/flow-element/GatewayConnector";
+import { ElementToGatewayConnector } from "../../../src/component/flow-element/ElementToGatewayConnector";
 
 describe("renders correctly", () => {
     it("with minimal/default props", () => {
-        const component = shallow(<GatewayConnector incomingConnection="first">label</GatewayConnector>);
+        const component = shallow(<ElementToGatewayConnector connectionType="first" />);
         expect(component).toMatchSnapshot();
     });
 });

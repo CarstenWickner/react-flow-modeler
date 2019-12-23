@@ -1,7 +1,7 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 
-import { Start, ContentElement, Gateway, GatewayConnector, StrokeExtension, End } from "./flow-element";
+import { Start, ContentElement, Gateway, GatewayToElementConnector, ElementToGatewayConnector, StrokeExtension, End } from "./flow-element";
 import { GridCell } from "./GridCell";
 import { buildRenderData } from "./renderDataUtils";
 import { GridCellData } from "../types/GridCellData";
@@ -11,22 +11,26 @@ import "./FlowModeler.scss";
 
 export class FlowModeler extends React.Component<FlowModelerProps> {
     renderFlowElement(cellData: GridCellData): React.ReactChild {
-        switch (cellData.elementType) {
+        switch (cellData.type) {
             case "start":
                 return <Start />;
             case "content":
                 const { renderContent } = this.props;
-                return <ContentElement>{renderContent(cellData.elementData, cellData.elementId)}</ContentElement>;
-            case "gateway":
+                return <ContentElement>{renderContent(cellData.data, cellData.elementId)}</ContentElement>;
+            case "gateway-diverging":
                 const { renderGatewayConditionType } = this.props;
-                return <Gateway>{renderGatewayConditionType && renderGatewayConditionType(cellData.elementData, cellData.elementId)}</Gateway>;
-            case "gateway-connector":
+                return <Gateway>{renderGatewayConditionType && renderGatewayConditionType(cellData.data, cellData.gatewayId)}</Gateway>;
+            case "gateway-to-element":
                 const { renderGatewayConditionValue } = this.props;
                 return (
-                    <GatewayConnector incomingConnection={cellData.connectionType}>
-                        {renderGatewayConditionValue && renderGatewayConditionValue(cellData.elementData, cellData.elementId)}
-                    </GatewayConnector>
+                    <GatewayToElementConnector connectionType={cellData.connectionType}>
+                        {renderGatewayConditionValue && renderGatewayConditionValue(cellData.data, cellData.elementId, cellData.gatewayId)}
+                    </GatewayToElementConnector>
                 );
+            case "element-to-gateway":
+                return <ElementToGatewayConnector connectionType={cellData.connectionType} />;
+            case "gateway-converging":
+                return <Gateway />;
             case "stroke-extension":
                 return <StrokeExtension />;
             case "end":

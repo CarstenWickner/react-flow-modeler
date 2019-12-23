@@ -10,6 +10,7 @@ exports[`renders correctly without props 1`] = `
   />
   <HorizontalStroke
     incomingConnection="single"
+    outgoingConnection="single"
   >
     text
   </HorizontalStroke>

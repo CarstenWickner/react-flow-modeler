@@ -14,16 +14,16 @@ Introducing a component for viewing/editing simple flows.
     <Story name="show-case">
         <FlowModeler
             flow={{
-                elements: [
-                    { id: "1", data: { label: "First Node" }, nextElementId: "2" },
-                    { id: "2", data: { label: "Second Node" }, nextElementId: "3" },
-                    { id: "3", data: { label: "Condition" }, nextElements: [
+                elements: {
+                    "1": { data: { label: "First Node" }, nextElementId: "2" },
+                    "2": { data: { label: "Second Node" }, nextElementId: "3" },
+                    "3": { data: { label: "Condition" }, nextElements: [
                         { id: "4.1", conditionData: { label: "Fulfilled" } },
                         { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
-                    { id: "4.1", data: { label: "Optional Node 1" }, nextElementId: "5.1" },
-                    { id: "4.2", data: { label: "Optional Node 2" }},
-                    { id: "5.1", data: { label: "Last Node"}}
-                ],
+                    "4.1": { data: { label: "Optional Node 1" }, nextElementId: "5.1" },
+                    "4.2": { data: { label: "Optional Node 2" }},
+                    "5.1": { data: { label: "Last Node"}}
+                },
                 firstElementId: "1"
             }}
             renderContent={(data, id) => <span>{data.label}</span>}

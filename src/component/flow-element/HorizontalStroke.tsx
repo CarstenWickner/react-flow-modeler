@@ -1,6 +1,6 @@
 import * as React from "react";
 
-function getConnectionClassName(connectionType: "first" | "middle" | "last"): string {
+const getConnectionClassName = (connectionType: "first" | "middle" | "last"): string => {
     switch (connectionType) {
         case "first":
             return "bottom-half";
@@ -9,16 +9,14 @@ function getConnectionClassName(connectionType: "first" | "middle" | "last"): st
         case "last":
             return "top-half";
     }
-}
+};
 
 export class HorizontalStroke extends React.Component<
-    {
-        incomingConnection: "single" | "first" | "middle" | "last";
-        children?: React.ReactChild;
-    },
+    | { incomingConnection: "single" | "first" | "middle" | "last"; outgoingConnection: "single"; children?: React.ReactChild }
+    | { incomingConnection: "single"; outgoingConnection: "first" | "middle" | "last" },
     { wrapperTopHeight: number }
 > {
-    topLabelRef = React.createRef<HTMLDivElement>();
+    readonly topLabelRef = React.createRef<HTMLDivElement>();
     state = { wrapperTopHeight: 0 };
 
     componentDidMount(): void {
@@ -34,7 +32,7 @@ export class HorizontalStroke extends React.Component<
     }
 
     render(): React.ReactChild {
-        const { incomingConnection, children } = this.props;
+        const { incomingConnection, outgoingConnection, children } = this.props;
         return (
             <>
                 {incomingConnection !== "single" && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}`} />}
@@ -51,7 +49,13 @@ export class HorizontalStroke extends React.Component<
                         />
                     </div>
                 )}
+                {outgoingConnection !== "single" && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}`} />}
             </>
         );
     }
+
+    static defaultProps = {
+        incomingConnection: "single",
+        outgoingConnection: "single"
+    };
 }
