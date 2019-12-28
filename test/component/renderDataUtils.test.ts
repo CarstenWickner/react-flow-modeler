@@ -524,4 +524,19 @@ describe("buildRenderData()", () => {
             type: ElementType.End
         });
     });
+
+    const ref = (nextId: string): { nextElementId: string } => ({ nextElementId: nextId });
+    it.each`
+        testDescription            | flowElements
+        ${"direct self-reference"} | ${{ a: ref("a") }}
+        ${"nested one level"}      | ${{ a: ref("b"), b: ref("a") }}
+        ${"nested six levels"}     | ${{ a: ref("b"), b: ref("c"), c: ref("d"), d: ref("e"), e: ref("f"), f: ref("g"), g: ref("a") }}
+    `("throws error for circular reference – $testDescription", ({ flowElements }) => {
+        const execution = (): never =>
+            buildRenderData({
+                elements: flowElements,
+                firstElementId: "a"
+            });
+        expect(execution).toThrowError("Circular reference to element: a");
+    });
 });
