@@ -14,8 +14,8 @@ const getConnectionClassName = (connectionType: ConnectionType): string => {
 };
 
 export class HorizontalStroke extends React.Component<
-    | { incomingConnection: "single" | ConnectionType; outgoingConnection: "single"; children?: React.ReactChild }
-    | { incomingConnection: "single"; outgoingConnection: ConnectionType },
+    | { incomingConnection: null | ConnectionType; outgoingConnection: null; children?: React.ReactChild }
+    | { incomingConnection: null; outgoingConnection: ConnectionType },
     { wrapperTopHeight: number }
 > {
     readonly topLabelRef = React.createRef<HTMLDivElement>();
@@ -37,7 +37,7 @@ export class HorizontalStroke extends React.Component<
         const { incomingConnection, outgoingConnection, children } = this.props;
         return (
             <>
-                {incomingConnection !== "single" && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}`} />}
+                {incomingConnection !== null && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}`} />}
                 {!children && <div className="stroke-horizontal" />}
                 {children && (
                     <div className="centered-line-wrapper">
@@ -51,13 +51,16 @@ export class HorizontalStroke extends React.Component<
                         />
                     </div>
                 )}
-                {outgoingConnection !== "single" && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}`} />}
+                {outgoingConnection !== null && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}`} />}
             </>
         );
     }
 
-    static defaultProps = {
-        incomingConnection: "single",
-        outgoingConnection: "single"
+    static defaultProps: {
+        incomingConnection: null;
+        outgoingConnection: null;
+    } = {
+        incomingConnection: null,
+        outgoingConnection: null
     };
 }

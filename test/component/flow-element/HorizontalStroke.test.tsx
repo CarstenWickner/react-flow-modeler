@@ -6,11 +6,11 @@ import { ConnectionType } from "../../../src/types/GridCellData";
 
 describe("renders correctly", () => {
     it("with minimal/default props", () => {
-        const component = shallow(<HorizontalStroke incomingConnection="single">label</HorizontalStroke>);
+        const component = shallow(<HorizontalStroke incomingConnection={null}>label</HorizontalStroke>);
         expect(component).toMatchSnapshot();
     });
     it("for incomingConnection = single", () => {
-        const component = mount(<HorizontalStroke incomingConnection="single">text</HorizontalStroke>);
+        const component = mount(<HorizontalStroke incomingConnection={null}>text</HorizontalStroke>);
         expect(component.find(".stroke-vertical").exists()).toBe(false);
         const renderedInstance = component.instance() as HorizontalStroke;
         expect(renderedInstance.state.wrapperTopHeight).toBe(0);

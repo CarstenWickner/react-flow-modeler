@@ -9,8 +9,8 @@ exports[`renders correctly without props 1`] = `
     className="flow-element gateway-element"
   />
   <HorizontalStroke
-    incomingConnection="single"
-    outgoingConnection="single"
+    incomingConnection={null}
+    outgoingConnection={null}
   >
     text
   </HorizontalStroke>
