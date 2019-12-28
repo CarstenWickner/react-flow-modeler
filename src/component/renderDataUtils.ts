@@ -145,6 +145,17 @@ const collectGridCellData = (
     return nextChildGridRowIndex;
 };
 
+const filterPathsWithDifferingStart = ([elementId, pathsIncludingElement]: [string, Array<Array<string>>]): boolean => {
+    if (pathsIncludingElement.length < 2) {
+        return false;
+    }
+    const elementIndex = pathsIncludingElement[0].indexOf(elementId);
+    if (pathsIncludingElement.some((path) => path.indexOf(elementId) !== elementIndex)) {
+        return true;
+    }
+    const leadingPathPart = pathsIncludingElement[0].slice(0, elementIndex);
+    return pathsIncludingElement.some((path) => leadingPathPart.some((value, index) => value !== path[index]));
+};
 const filterTrueValues = (flag: boolean): boolean => flag;
 const sortGridCellDataByPosition = (a: GridCellData, b: GridCellData): number =>
     a.rowStartIndex - b.rowStartIndex || a.colStartIndex - b.colStartIndex;
@@ -157,16 +168,18 @@ export const buildRenderData = (flow: FlowModelerProps["flow"]): { gridCellData:
     // TODO ensure necessary gaps are considered (also for total column count)
     const elementsOnMultiplePaths = Object.keys(elements)
         .map((elementId) => [elementId, paths.filter((path) => path.includes(elementId))] as [string, Array<Array<string>>])
-        .filter((entry) => entry[1].length > 1);
+        .filter(filterPathsWithDifferingStart);
     const getIndexOfPath = (path: Array<string>): number => paths.indexOf(path);
-    const invalidElements = elementsOnMultiplePaths
-        .filter(([, pathsWithOverlappingElements]) => {
-            const indexes = pathsWithOverlappingElements.map(getIndexOfPath);
-            return indexes.length && indexes[0] + indexes.length != indexes[indexes.length - 1] + 1;
-        })
-        .map(([elementId]) => elementId);
+    const invalidElements = elementsOnMultiplePaths.filter(([, pathsWithOverlappingElements]) => {
+        const indexes = pathsWithOverlappingElements.map(getIndexOfPath);
+        return indexes.length && indexes[0] + indexes.length != indexes[indexes.length - 1] + 1;
+    });
     if (invalidElements.length > 0) {
-        throw new Error(`Multiple references only valid from neighbouring paths. Invalid references to: '${invalidElements.join("', '")}'`);
+        throw new Error(
+            `Multiple references only valid from neighbouring paths. Invalid references to: '${invalidElements
+                .map(([elementId]) => elementId)
+                .join("', '")}'`
+        );
     }
 
     const gatewayColumnFlags: Array<boolean> = [];
