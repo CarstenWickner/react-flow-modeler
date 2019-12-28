@@ -1,19 +1,21 @@
 import * as React from "react";
 
-const getConnectionClassName = (connectionType: "first" | "middle" | "last"): string => {
+import { ConnectionType } from "../../types/GridCellData";
+
+const getConnectionClassName = (connectionType: ConnectionType): string => {
     switch (connectionType) {
-        case "first":
+        case ConnectionType.First:
             return "bottom-half";
-        case "middle":
+        case ConnectionType.Middle:
             return "full-height";
-        case "last":
+        case ConnectionType.Last:
             return "top-half";
     }
 };
 
 export class HorizontalStroke extends React.Component<
-    | { incomingConnection: "single" | "first" | "middle" | "last"; outgoingConnection: "single"; children?: React.ReactChild }
-    | { incomingConnection: "single"; outgoingConnection: "first" | "middle" | "last" },
+    | { incomingConnection: "single" | ConnectionType; outgoingConnection: "single"; children?: React.ReactChild }
+    | { incomingConnection: "single"; outgoingConnection: ConnectionType },
     { wrapperTopHeight: number }
 > {
     readonly topLabelRef = React.createRef<HTMLDivElement>();

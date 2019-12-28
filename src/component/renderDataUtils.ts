@@ -1,11 +1,11 @@
 import { FlowContent, FlowGatewayDiverging, FlowModelerProps } from "../types/FlowModelerProps";
-import { GridCellData } from "../types/GridCellData";
+import { GridCellData, ElementType, ConnectionType } from "../types/GridCellData";
 
 const isDivergingGateway = (flowElement: FlowContent | FlowGatewayDiverging): flowElement is FlowGatewayDiverging =>
     flowElement && (flowElement as FlowGatewayDiverging).nextElements !== undefined;
 
 const getGatewayConnections = (gateway: FlowGatewayDiverging): FlowGatewayDiverging["nextElements"] => {
-    // ensure that there are always at least two sub elements under a gateway to allow for respective "end" elements to be displayed
+    // ensure that there are always at least two sub elements under a gateway to allow for respective End elements to be displayed
     let subElements;
     if (gateway.nextElements.length > 1) {
         subElements = gateway.nextElements;
@@ -59,20 +59,20 @@ const collectGridCellData = (
                 colStartIndex: columnIndex + gridColumnOffset,
                 colEndIndex: totalGridColumnCount,
                 rowStartIndex: gridRowIndex,
-                type: "stroke-extension"
+                type: ElementType.StrokeExtension
             });
         }
         renderData.push({
             colStartIndex: totalGridColumnCount,
             rowStartIndex: gridRowIndex,
-            type: "end"
+            type: ElementType.End
         });
         return gridRowIndex + 1;
     }
     let nextChildGridRowIndex: number;
-    let elementType: "content" | "gateway-diverging";
+    let elementType: ElementType.Content | ElementType.GatewayDiverging;
     if (isDivergingGateway(targetElement)) {
-        elementType = "gateway-diverging";
+        elementType = ElementType.GatewayDiverging;
         nextChildGridRowIndex = gridRowIndex;
         getGatewayConnections(targetElement).forEach((childElement, childIndex, children) => {
             const thisChildStartGridRowIndex = nextChildGridRowIndex;
@@ -93,13 +93,14 @@ const collectGridCellData = (
                 rowEndIndex: nextChildGridRowIndex,
                 gatewayId: targetElementId,
                 elementId: childElement.id,
-                type: "gateway-to-element",
+                type: ElementType.ConnectGatewayToElement,
                 data: childElement.conditionData,
-                connectionType: childIndex === 0 ? "first" : childIndex + 1 < children.length ? "middle" : "last"
+                connectionType:
+                    childIndex === 0 ? ConnectionType.First : childIndex + 1 < children.length ? ConnectionType.Middle : ConnectionType.Last
             });
         });
     } else {
-        elementType = "content";
+        elementType = ElementType.Content;
         const columnContainsGateway = gatewayColumnFlags[columnIndex];
         nextChildGridRowIndex = collectGridCellData(
             targetElement.nextElementId,
@@ -118,7 +119,7 @@ const collectGridCellData = (
                 colStartIndex: columnIndex + gridColumnOffset + 1,
                 rowStartIndex: gridRowIndex,
                 rowEndIndex: nextChildGridRowIndex,
-                type: "stroke-extension"
+                type: ElementType.StrokeExtension
             });
         }
     }
@@ -128,7 +129,7 @@ const collectGridCellData = (
         rowEndIndex: nextChildGridRowIndex,
         data: targetElement.data
     };
-    if (elementType === "content") {
+    if (elementType === ElementType.Content) {
         renderData.push({
             ...commonValues,
             type: elementType,
@@ -170,7 +171,7 @@ export const buildRenderData = (flow: FlowModelerProps["flow"]): { gridCellData:
         colStartIndex: 1,
         rowStartIndex: 1,
         rowEndIndex: lastRowEndIndex,
-        type: "start"
+        type: ElementType.Start
     });
     // for a more readable resulting html structure, sort the grid elements first from top to bottom and within each row from left to right
     result.sort(sortGridCellDataByPosition);

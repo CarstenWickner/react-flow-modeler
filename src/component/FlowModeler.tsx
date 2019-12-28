@@ -4,7 +4,7 @@ import * as React from "react";
 import { Start, ContentElement, Gateway, GatewayToElementConnector, ElementToGatewayConnector, StrokeExtension, End } from "./flow-element";
 import { GridCell } from "./GridCell";
 import { buildRenderData } from "./renderDataUtils";
-import { GridCellData } from "../types/GridCellData";
+import { GridCellData, ElementType } from "../types/GridCellData";
 import { FlowModelerProps } from "../types/FlowModelerProps";
 
 import "./FlowModeler.scss";
@@ -12,28 +12,28 @@ import "./FlowModeler.scss";
 export class FlowModeler extends React.Component<FlowModelerProps> {
     renderFlowElement(cellData: GridCellData): React.ReactChild {
         switch (cellData.type) {
-            case "start":
+            case ElementType.Start:
                 return <Start />;
-            case "content":
+            case ElementType.Content:
                 const { renderContent } = this.props;
                 return <ContentElement>{renderContent(cellData.data, cellData.elementId)}</ContentElement>;
-            case "gateway-diverging":
+            case ElementType.GatewayDiverging:
                 const { renderGatewayConditionType } = this.props;
                 return <Gateway>{renderGatewayConditionType && renderGatewayConditionType(cellData.data, cellData.gatewayId)}</Gateway>;
-            case "gateway-to-element":
+            case ElementType.ConnectGatewayToElement:
                 const { renderGatewayConditionValue } = this.props;
                 return (
                     <GatewayToElementConnector connectionType={cellData.connectionType}>
                         {renderGatewayConditionValue && renderGatewayConditionValue(cellData.data, cellData.elementId, cellData.gatewayId)}
                     </GatewayToElementConnector>
                 );
-            case "element-to-gateway":
+            case ElementType.ConnectElementToGateway:
                 return <ElementToGatewayConnector connectionType={cellData.connectionType} />;
-            case "gateway-converging":
+            case ElementType.GatewayConverging:
                 return <Gateway />;
-            case "stroke-extension":
+            case ElementType.StrokeExtension:
                 return <StrokeExtension />;
-            case "end":
+            case ElementType.End:
                 return <End />;
         }
     }

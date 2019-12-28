@@ -3,6 +3,6 @@
 exports[`renders correctly with minimal/default props 1`] = `
 <HorizontalStroke
   incomingConnection="single"
-  outgoingConnection="first"
+  outgoingConnection={1}
 />
 `;

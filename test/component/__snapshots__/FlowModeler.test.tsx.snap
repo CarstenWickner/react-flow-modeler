@@ -46,7 +46,7 @@ exports[`renders correctly with all render props 1`] = `
     rowStartIndex={1}
   >
     <Component
-      connectionType="first"
+      connectionType={1}
     >
       <span>
         Stop Here
@@ -74,7 +74,7 @@ exports[`renders correctly with all render props 1`] = `
     rowStartIndex={2}
   >
     <Component
-      connectionType="last"
+      connectionType={3}
     >
       <span>
         Continue
@@ -143,7 +143,7 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowStartIndex={1}
   >
     <Component
-      connectionType="first"
+      connectionType={1}
     />
   </Component>
   <Component
@@ -167,7 +167,7 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowStartIndex={2}
   >
     <Component
-      connectionType="last"
+      connectionType={3}
     />
   </Component>
   <Component

@@ -2,7 +2,7 @@
 
 exports[`renders correctly with minimal/default props 1`] = `
 <HorizontalStroke
-  incomingConnection="first"
+  incomingConnection={1}
   outgoingConnection="single"
 >
   label

@@ -1,4 +1,5 @@
 import { buildRenderData } from "../../src/component/renderDataUtils";
+import { ConnectionType, ElementType } from "../../src/types/GridCellData";
 
 describe("buildRenderData()", () => {
     it.each`
@@ -13,12 +14,12 @@ describe("buildRenderData()", () => {
             colStartIndex: 1,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "start"
+            type: ElementType.Start
         });
         expect(result.gridCellData[1]).toEqual({
             colStartIndex: 2,
             rowStartIndex: 1,
-            type: "end"
+            type: ElementType.End
         });
     });
     it("includes content elements", () => {
@@ -35,27 +36,27 @@ describe("buildRenderData()", () => {
             colStartIndex: 1,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "start"
+            type: ElementType.Start
         });
         expect(result.gridCellData[1]).toEqual({
             colStartIndex: 2,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "content",
+            type: ElementType.Content,
             elementId: "one"
         });
         expect(result.gridCellData[2]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "content",
+            type: ElementType.Content,
             elementId: "two",
             data: { label: "text" }
         });
         expect(result.gridCellData[3]).toEqual({
             colStartIndex: 4,
             rowStartIndex: 1,
-            type: "end"
+            type: ElementType.End
         });
     });
     it("can handle gateway without children", () => {
@@ -69,21 +70,21 @@ describe("buildRenderData()", () => {
             colStartIndex: 1,
             rowStartIndex: 1,
             rowEndIndex: 3,
-            type: "start"
+            type: ElementType.Start
         });
         expect(result.gridCellData[1]).toEqual({
             colStartIndex: 2,
             rowStartIndex: 1,
             rowEndIndex: 3,
-            type: "gateway-diverging",
+            type: ElementType.GatewayDiverging,
             gatewayId: "one"
         });
         expect(result.gridCellData[2]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "gateway-to-element",
-            connectionType: "first",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.First,
             gatewayId: "one",
             elementId: undefined,
             data: undefined
@@ -91,14 +92,14 @@ describe("buildRenderData()", () => {
         expect(result.gridCellData[3]).toEqual({
             colStartIndex: 4,
             rowStartIndex: 1,
-            type: "end"
+            type: ElementType.End
         });
         expect(result.gridCellData[4]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 2,
             rowEndIndex: 3,
-            type: "gateway-to-element",
-            connectionType: "last",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.Last,
             gatewayId: "one",
             elementId: undefined,
             data: undefined
@@ -106,7 +107,7 @@ describe("buildRenderData()", () => {
         expect(result.gridCellData[5]).toEqual({
             colStartIndex: 4,
             rowStartIndex: 2,
-            type: "end"
+            type: ElementType.End
         });
     });
     it("can handle gateway with single child", () => {
@@ -123,21 +124,21 @@ describe("buildRenderData()", () => {
             colStartIndex: 1,
             rowStartIndex: 1,
             rowEndIndex: 3,
-            type: "start"
+            type: ElementType.Start
         });
         expect(result.gridCellData[1]).toEqual({
             colStartIndex: 2,
             rowStartIndex: 1,
             rowEndIndex: 3,
-            type: "gateway-diverging",
+            type: ElementType.GatewayDiverging,
             gatewayId: "one"
         });
         expect(result.gridCellData[2]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "gateway-to-element",
-            connectionType: "first",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.First,
             gatewayId: "one",
             elementId: "two",
             data: { label: "condition" }
@@ -146,21 +147,21 @@ describe("buildRenderData()", () => {
             colStartIndex: 4,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "content",
+            type: ElementType.Content,
             elementId: "two",
             data: { label: "text" }
         });
         expect(result.gridCellData[4]).toEqual({
             colStartIndex: 5,
             rowStartIndex: 1,
-            type: "end"
+            type: ElementType.End
         });
         expect(result.gridCellData[5]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 2,
             rowEndIndex: 3,
-            type: "gateway-to-element",
-            connectionType: "last",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.Last,
             gatewayId: "one",
             elementId: undefined,
             data: undefined
@@ -169,12 +170,12 @@ describe("buildRenderData()", () => {
             colStartIndex: 4,
             colEndIndex: 5,
             rowStartIndex: 2,
-            type: "stroke-extension"
+            type: ElementType.StrokeExtension
         });
         expect(result.gridCellData[7]).toEqual({
             colStartIndex: 5,
             rowStartIndex: 2,
-            type: "end"
+            type: ElementType.End
         });
     });
     it("includes data for gateway and its children", () => {
@@ -195,13 +196,13 @@ describe("buildRenderData()", () => {
             colStartIndex: 1,
             rowStartIndex: 1,
             rowEndIndex: 4,
-            type: "start"
+            type: ElementType.Start
         });
         expect(result.gridCellData[1]).toEqual({
             colStartIndex: 2,
             rowStartIndex: 1,
             rowEndIndex: 4,
-            type: "gateway-diverging",
+            type: ElementType.GatewayDiverging,
             gatewayId: "one",
             data: { label: "text-one" }
         });
@@ -209,8 +210,8 @@ describe("buildRenderData()", () => {
             colStartIndex: 3,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "gateway-to-element",
-            connectionType: "first",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.First,
             gatewayId: "one",
             elementId: "two",
             data: { label: "cond-1" }
@@ -219,21 +220,21 @@ describe("buildRenderData()", () => {
             colStartIndex: 4,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "content",
+            type: ElementType.Content,
             elementId: "two",
             data: { label: "text-two" }
         });
         expect(result.gridCellData[4]).toEqual({
             colStartIndex: 5,
             rowStartIndex: 1,
-            type: "end"
+            type: ElementType.End
         });
         expect(result.gridCellData[5]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 2,
             rowEndIndex: 3,
-            type: "gateway-to-element",
-            connectionType: "middle",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.Middle,
             gatewayId: "one",
             elementId: undefined,
             data: { label: "cond-2" }
@@ -242,19 +243,19 @@ describe("buildRenderData()", () => {
             colStartIndex: 4,
             colEndIndex: 5,
             rowStartIndex: 2,
-            type: "stroke-extension"
+            type: ElementType.StrokeExtension
         });
         expect(result.gridCellData[7]).toEqual({
             colStartIndex: 5,
             rowStartIndex: 2,
-            type: "end"
+            type: ElementType.End
         });
         expect(result.gridCellData[8]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 3,
             rowEndIndex: 4,
-            type: "gateway-to-element",
-            connectionType: "last",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.Last,
             gatewayId: "one",
             elementId: "three",
             data: undefined
@@ -263,14 +264,14 @@ describe("buildRenderData()", () => {
             colStartIndex: 4,
             rowStartIndex: 3,
             rowEndIndex: 4,
-            type: "content",
+            type: ElementType.Content,
             elementId: "three",
             data: { label: "text-three" }
         });
         expect(result.gridCellData[10]).toEqual({
             colStartIndex: 5,
             rowStartIndex: 3,
-            type: "end"
+            type: ElementType.End
         });
     });
     it("considers combination of content and gateway elements", () => {
@@ -320,13 +321,13 @@ describe("buildRenderData()", () => {
             colStartIndex: 1,
             rowStartIndex: 1,
             rowEndIndex: 7,
-            type: "start"
+            type: ElementType.Start
         });
         expect(result.gridCellData[1]).toEqual({
             colStartIndex: 2,
             rowStartIndex: 1,
             rowEndIndex: 7,
-            type: "gateway-diverging",
+            type: ElementType.GatewayDiverging,
             gatewayId: "1",
             data: undefined
         });
@@ -334,8 +335,8 @@ describe("buildRenderData()", () => {
             colStartIndex: 3,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "gateway-to-element",
-            connectionType: "first",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.First,
             gatewayId: "1",
             elementId: "2.1",
             data: undefined
@@ -344,7 +345,7 @@ describe("buildRenderData()", () => {
             colStartIndex: 4,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "content",
+            type: ElementType.Content,
             elementId: "2.1",
             data: undefined
         });
@@ -352,13 +353,13 @@ describe("buildRenderData()", () => {
             colStartIndex: 5,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "stroke-extension"
+            type: ElementType.StrokeExtension
         });
         expect(result.gridCellData[5]).toEqual({
             colStartIndex: 6,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "content",
+            type: ElementType.Content,
             elementId: "3.1",
             data: undefined
         });
@@ -366,25 +367,25 @@ describe("buildRenderData()", () => {
             colStartIndex: 7,
             rowStartIndex: 1,
             rowEndIndex: 2,
-            type: "stroke-extension"
+            type: ElementType.StrokeExtension
         });
         expect(result.gridCellData[7]).toEqual({
             colStartIndex: 8,
             colEndIndex: 9,
             rowStartIndex: 1,
-            type: "stroke-extension"
+            type: ElementType.StrokeExtension
         });
         expect(result.gridCellData[8]).toEqual({
             colStartIndex: 9,
             rowStartIndex: 1,
-            type: "end"
+            type: ElementType.End
         });
         expect(result.gridCellData[9]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 2,
             rowEndIndex: 3,
-            type: "gateway-to-element",
-            connectionType: "middle",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.Middle,
             gatewayId: "1",
             elementId: undefined,
             data: undefined
@@ -393,19 +394,19 @@ describe("buildRenderData()", () => {
             colStartIndex: 4,
             colEndIndex: 9,
             rowStartIndex: 2,
-            type: "stroke-extension"
+            type: ElementType.StrokeExtension
         });
         expect(result.gridCellData[11]).toEqual({
             colStartIndex: 9,
             rowStartIndex: 2,
-            type: "end"
+            type: ElementType.End
         });
         expect(result.gridCellData[12]).toEqual({
             colStartIndex: 3,
             rowStartIndex: 3,
             rowEndIndex: 7,
-            type: "gateway-to-element",
-            connectionType: "last",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.Last,
             gatewayId: "1",
             elementId: "2.3",
             data: undefined
@@ -414,7 +415,7 @@ describe("buildRenderData()", () => {
             colStartIndex: 4,
             rowStartIndex: 3,
             rowEndIndex: 7,
-            type: "gateway-diverging",
+            type: ElementType.GatewayDiverging,
             gatewayId: "2.3",
             data: undefined
         });
@@ -422,8 +423,8 @@ describe("buildRenderData()", () => {
             colStartIndex: 5,
             rowEndIndex: 4,
             rowStartIndex: 3,
-            type: "gateway-to-element",
-            connectionType: "first",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.First,
             gatewayId: "2.3",
             elementId: undefined,
             data: undefined
@@ -432,19 +433,19 @@ describe("buildRenderData()", () => {
             colStartIndex: 6,
             colEndIndex: 9,
             rowStartIndex: 3,
-            type: "stroke-extension"
+            type: ElementType.StrokeExtension
         });
         expect(result.gridCellData[16]).toEqual({
             colStartIndex: 9,
             rowStartIndex: 3,
-            type: "end"
+            type: ElementType.End
         });
         expect(result.gridCellData[17]).toEqual({
             colStartIndex: 5,
             rowStartIndex: 4,
             rowEndIndex: 7,
-            type: "gateway-to-element",
-            connectionType: "last",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.Last,
             gatewayId: "2.3",
             elementId: "3.3.2",
             data: undefined
@@ -453,7 +454,7 @@ describe("buildRenderData()", () => {
             colStartIndex: 6,
             rowStartIndex: 4,
             rowEndIndex: 7,
-            type: "gateway-diverging",
+            type: ElementType.GatewayDiverging,
             gatewayId: "3.3.2",
             data: undefined
         });
@@ -461,8 +462,8 @@ describe("buildRenderData()", () => {
             colStartIndex: 7,
             rowStartIndex: 4,
             rowEndIndex: 5,
-            type: "gateway-to-element",
-            connectionType: "first",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.First,
             gatewayId: "3.3.2",
             elementId: undefined,
             data: undefined
@@ -471,19 +472,19 @@ describe("buildRenderData()", () => {
             colStartIndex: 8,
             colEndIndex: 9,
             rowStartIndex: 4,
-            type: "stroke-extension"
+            type: ElementType.StrokeExtension
         });
         expect(result.gridCellData[21]).toEqual({
             colStartIndex: 9,
             rowStartIndex: 4,
-            type: "end"
+            type: ElementType.End
         });
         expect(result.gridCellData[22]).toEqual({
             colStartIndex: 7,
             rowStartIndex: 5,
             rowEndIndex: 6,
-            type: "gateway-to-element",
-            connectionType: "middle",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.Middle,
             gatewayId: "3.3.2",
             elementId: "4.3.2.2",
             data: undefined
@@ -492,21 +493,21 @@ describe("buildRenderData()", () => {
             colStartIndex: 8,
             rowStartIndex: 5,
             rowEndIndex: 6,
-            type: "content",
+            type: ElementType.Content,
             elementId: "4.3.2.2",
             data: undefined
         });
         expect(result.gridCellData[24]).toEqual({
             colStartIndex: 9,
             rowStartIndex: 5,
-            type: "end"
+            type: ElementType.End
         });
         expect(result.gridCellData[25]).toEqual({
             colStartIndex: 7,
             rowStartIndex: 6,
             rowEndIndex: 7,
-            type: "gateway-to-element",
-            connectionType: "last",
+            type: ElementType.ConnectGatewayToElement,
+            connectionType: ConnectionType.Last,
             gatewayId: "3.3.2",
             elementId: "4.3.2.3",
             data: undefined
@@ -515,12 +516,12 @@ describe("buildRenderData()", () => {
             colStartIndex: 8,
             colEndIndex: 9,
             rowStartIndex: 6,
-            type: "stroke-extension"
+            type: ElementType.StrokeExtension
         });
         expect(result.gridCellData[27]).toEqual({
             colStartIndex: 9,
             rowStartIndex: 6,
-            type: "end"
+            type: ElementType.End
         });
     });
 });

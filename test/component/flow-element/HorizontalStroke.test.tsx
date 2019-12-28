@@ -2,6 +2,7 @@ import * as React from "react";
 import { shallow, mount } from "enzyme";
 
 import { HorizontalStroke } from "../../../src/component/flow-element/HorizontalStroke";
+import { ConnectionType } from "../../../src/types/GridCellData";
 
 describe("renders correctly", () => {
     it("with minimal/default props", () => {
@@ -19,10 +20,10 @@ describe("renders correctly", () => {
         expect(renderedInstance.render()).toMatchSnapshot();
     });
     describe.each`
-        incomingConnection | verticalStrokeClassName
-        ${"first"}         | ${"bottom-half"}
-        ${"middle"}        | ${"full-height"}
-        ${"last"}          | ${"top-half"}
+        incomingConnection       | verticalStrokeClassName
+        ${ConnectionType.First}  | ${"bottom-half"}
+        ${ConnectionType.Middle} | ${"full-height"}
+        ${ConnectionType.Last}   | ${"top-half"}
     `("for incomingConnection = $incomingConnection", ({ incomingConnection, verticalStrokeClassName }) => {
         it.each`
             withLabel
@@ -36,10 +37,10 @@ describe("renders correctly", () => {
         });
     });
     it.each`
-        outgoingConnection | verticalStrokeClassName
-        ${"first"}         | ${"bottom-half"}
-        ${"middle"}        | ${"full-height"}
-        ${"last"}          | ${"top-half"}
+        outgoingConnection       | verticalStrokeClassName
+        ${ConnectionType.First}  | ${"bottom-half"}
+        ${ConnectionType.Middle} | ${"full-height"}
+        ${ConnectionType.Last}   | ${"top-half"}
     `("for incomingConnection = $incomingConnection", ({ outgoingConnection, verticalStrokeClassName }) => {
         const component = shallow(<HorizontalStroke outgoingConnection={outgoingConnection} />);
         expect(component.find(`.stroke-vertical.${verticalStrokeClassName}`).exists()).toBe(true);

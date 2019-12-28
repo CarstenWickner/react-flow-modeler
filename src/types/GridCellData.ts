@@ -5,37 +5,50 @@ export interface GridCellCoordinates {
     rowEndIndex?: number;
 }
 
-export interface SimpleElement extends GridCellCoordinates {
-    type: "start" | "end" | "stroke-extension";
+export const enum ElementType {
+    Start = 1,
+    Content,
+    GatewayDiverging,
+    GatewayConverging,
+    ConnectGatewayToElement,
+    ConnectElementToGateway,
+    StrokeExtension,
+    End
 }
 
-/*
- * contextual information concerning a flow element
- */
+export interface SimpleElement extends GridCellCoordinates {
+    type: ElementType.Start | ElementType.End | ElementType.StrokeExtension;
+}
+
 export interface ContentCellData extends GridCellCoordinates {
-    type: "content";
+    type: ElementType.Content;
     elementId: string;
     data?: { [key: string]: unknown };
 }
 export interface GatewayDivergingCellData extends GridCellCoordinates {
-    type: "gateway-diverging";
+    type: ElementType.GatewayDiverging;
     gatewayId: string;
     data?: { [key: string]: unknown };
 }
+export const enum ConnectionType {
+    First = 1,
+    Middle,
+    Last
+}
 export interface GatewayToElementConnectorCellData extends GridCellCoordinates {
-    type: "gateway-to-element";
+    type: ElementType.ConnectGatewayToElement;
     gatewayId: string;
     elementId?: string;
     data?: { [key: string]: unknown };
-    connectionType: "first" | "middle" | "last";
+    connectionType: ConnectionType;
 }
 export interface ElementToGatewayConnectorCellData extends GridCellCoordinates {
-    type: "element-to-gateway";
+    type: ElementType.ConnectElementToGateway;
     elementId: string;
-    connectionType: "first" | "middle" | "last";
+    connectionType: ConnectionType;
 }
 export interface GatewayConvergingCellData extends GridCellCoordinates {
-    type: "gateway-converging";
+    type: ElementType.GatewayConverging;
 }
 
 export type GridCellData =
