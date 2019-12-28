@@ -155,6 +155,19 @@ export const buildRenderData = (flow: FlowModelerProps["flow"]): { gridCellData:
     collectPaths(firstElementId, elements, [], paths);
     // TODO determine where converging gateways are required
     // TODO ensure necessary gaps are considered (also for total column count)
+    const elementsOnMultiplePaths = Object.keys(elements)
+        .map((elementId) => [elementId, paths.filter((path) => path.includes(elementId))] as [string, Array<Array<string>>])
+        .filter((entry) => entry[1].length > 1);
+    const getIndexOfPath = (path: Array<string>): number => paths.indexOf(path);
+    const invalidElements = elementsOnMultiplePaths
+        .filter(([, pathsWithOverlappingElements]) => {
+            const indexes = pathsWithOverlappingElements.map(getIndexOfPath);
+            return indexes.length && indexes[0] + indexes.length != indexes[indexes.length - 1] + 1;
+        })
+        .map(([elementId]) => elementId);
+    if (invalidElements.length > 0) {
+        throw new Error(`Multiple references only valid from neighbouring paths. Invalid references to: '${invalidElements.join("', '")}'`);
+    }
 
     const gatewayColumnFlags: Array<boolean> = [];
     paths.forEach((singlePath) =>
