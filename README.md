@@ -26,6 +26,7 @@ In active development, i.e. not yet published
 | Prop | Description |
 | --- | --- |
 | `flow` (required) | model description of the flow-chart to be displayed |
+| `options` | display options: <ul><li>`verticalAlign`: either `"top"`, `"middle"` (default) or `"bottom"`</li></ul> |
 | `renderContent` (required) | custom render function for the "content" elements |
 | `renderGatewayConditionType` | custom render function for the condition label following an exclusive gateway |
 | `renderGatewayConditionValue` | custom render function for the condition label in front of an element following an exclusive gateway |

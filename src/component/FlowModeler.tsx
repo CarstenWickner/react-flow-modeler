@@ -39,9 +39,16 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
     }
 
     renderGridCell = ((cellData: GridCellData): React.ReactChild => {
+        const { options } = this.props;
+        const verticalAlign = options && options.verticalAlign;
         const { colStartIndex, rowStartIndex, rowEndIndex } = cellData;
         return (
-            <GridCell colStartIndex={colStartIndex} rowStartIndex={rowStartIndex} rowEndIndex={rowEndIndex} key={`${colStartIndex}-${rowStartIndex}`}>
+            <GridCell
+                colStartIndex={colStartIndex}
+                rowStartIndex={verticalAlign === "bottom" && rowEndIndex ? rowEndIndex - 1 : rowStartIndex}
+                rowEndIndex={verticalAlign === "top" || verticalAlign === "bottom" ? undefined : rowEndIndex}
+                key={`${colStartIndex}-${rowStartIndex}`}
+            >
                 {this.renderFlowElement(cellData)}
             </GridCell>
         );
@@ -78,6 +85,9 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
                 ])
             ).isRequired
         }).isRequired,
+        options: PropTypes.shape({
+            verticalAlign: PropTypes.oneOf(["top", "middle", "bottom"])
+        }),
         renderContent: PropTypes.func.isRequired,
         renderGatewayConditionType: PropTypes.func,
         renderGatewayConditionValue: PropTypes.func

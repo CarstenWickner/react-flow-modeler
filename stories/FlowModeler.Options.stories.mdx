@@ -1,0 +1,94 @@
+import { action } from '@storybook/addon-actions';
+import { Meta, Preview, Story, Props } from '@storybook/addon-docs/blocks';
+import "./style-overrides.css";
+
+import { FlowModeler } from "../src/index";
+
+<Meta title='FlowModeler (options)' component={FlowModeler} />
+
+# FlowModeler
+## Focus: Display options
+
+<Props of={FlowModeler} exclude={Object.keys(FlowModeler.propTypes).filter(propName => propName !== "options")} />
+
+----
+
+### Vertical Alignment: default = "middle"
+If no `options`/`options.verticalAlign` prop is defined, the paths will be vertically centered.
+
+<Preview>
+    <Story name="verticalAlign: middle">
+        <FlowModeler
+            flow={{
+                elements: {
+                    "1": { data: { label: "First Node" }, nextElementId: "2" },
+                    "2": { data: { label: "Second Node" }, nextElementId: "3" },
+                    "3": { data: { label: "Condition" }, nextElements: [
+                        { id: "4.1", conditionData: { label: "Fulfilled" } },
+                        { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
+                    "4.1": { data: { label: "Optional Node 1" }, nextElementId: "5.1" },
+                    "4.2": { data: { label: "Optional Node 2" }},
+                    "5.1": { data: { label: "Last Node"}}
+                },
+                firstElementId: "1"
+            }}
+            renderContent={(data, id) => <span>{data.label}</span>}
+            renderGatewayConditionType={(data, id) => <label>{data.label}</label>}
+            renderGatewayConditionValue={(data, id) => <label>{data.label}</label>}
+        />
+    </Story>
+</Preview>
+
+----
+
+### Vertical Alignment: "top"
+
+<Preview>
+    <Story name="verticalAlign: top">
+        <FlowModeler
+            flow={{
+                elements: {
+                    "1": { data: { label: "First Node" }, nextElementId: "2" },
+                    "2": { data: { label: "Second Node" }, nextElementId: "3" },
+                    "3": { data: { label: "Condition" }, nextElements: [
+                        { id: "4.1", conditionData: { label: "Fulfilled" } },
+                        { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
+                    "4.1": { data: { label: "Optional Node 1" }, nextElementId: "5.1" },
+                    "4.2": { data: { label: "Optional Node 2" }},
+                    "5.1": { data: { label: "Last Node"}}
+                },
+                firstElementId: "1"
+            }}
+            options={{ verticalAlign: "top" }}
+            renderContent={(data, id) => <span>{data.label}</span>}
+            renderGatewayConditionType={(data, id) => <label>{data.label}</label>}
+            renderGatewayConditionValue={(data, id) => <label>{data.label}</label>}
+        />
+    </Story>
+</Preview>
+
+### Vertical Alignment: bottom
+
+<Preview>
+    <Story name="verticalAlign: bottom">
+        <FlowModeler
+            flow={{
+                elements: {
+                    "1": { data: { label: "First Node" }, nextElementId: "2" },
+                    "2": { data: { label: "Second Node" }, nextElementId: "3" },
+                    "3": { data: { label: "Condition" }, nextElements: [
+                        { id: "4.1", conditionData: { label: "Fulfilled" } },
+                        { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
+                    "4.1": { data: { label: "Optional Node 1" }, nextElementId: "5.1" },
+                    "4.2": { data: { label: "Optional Node 2" }},
+                    "5.1": { data: { label: "Last Node"}}
+                },
+                firstElementId: "1"
+            }}
+            options={{ verticalAlign: "bottom" }}
+            renderContent={(data, id) => <span>{data.label}</span>}
+            renderGatewayConditionType={(data, id) => <label>{data.label}</label>}
+            renderGatewayConditionValue={(data, id) => <label>{data.label}</label>}
+        />
+    </Story>
+</Preview>
