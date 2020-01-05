@@ -16,15 +16,35 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
                 return <Start />;
             case ElementType.Content:
                 const { renderContent } = this.props;
-                return <ContentElement>{renderContent(cellData.data, cellData.elementId)}</ContentElement>;
+                return (
+                    <ContentElement>
+                        {renderContent({
+                            elementData: cellData.data,
+                            contentElementId: cellData.elementId
+                        })}
+                    </ContentElement>
+                );
             case ElementType.GatewayDiverging:
                 const { renderGatewayConditionType } = this.props;
-                return <Gateway>{renderGatewayConditionType && renderGatewayConditionType(cellData.data, cellData.gatewayId)}</Gateway>;
+                return (
+                    <Gateway>
+                        {renderGatewayConditionType &&
+                            renderGatewayConditionType({
+                                gatewayData: cellData.data,
+                                gatewayElementId: cellData.gatewayId
+                            })}
+                    </Gateway>
+                );
             case ElementType.ConnectGatewayToElement:
                 const { renderGatewayConditionValue } = this.props;
                 return (
                     <GatewayToElementConnector connectionType={cellData.connectionType}>
-                        {renderGatewayConditionValue && renderGatewayConditionValue(cellData.data, cellData.elementId, cellData.gatewayId)}
+                        {renderGatewayConditionValue &&
+                            renderGatewayConditionValue({
+                                conditionData: cellData.data,
+                                branchElementId: cellData.elementId,
+                                gatewayElementId: cellData.gatewayId
+                            })}
                     </GatewayToElementConnector>
                 );
             case ElementType.ConnectElementToGateway:
@@ -41,10 +61,11 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
     renderGridCell = ((cellData: GridCellData): React.ReactChild => {
         const { options } = this.props;
         const verticalAlign = options && options.verticalAlign;
-        const { colStartIndex, rowStartIndex, rowEndIndex } = cellData;
+        const { colStartIndex, colEndIndex, rowStartIndex, rowEndIndex } = cellData;
         return (
             <GridCell
                 colStartIndex={colStartIndex}
+                colEndIndex={colEndIndex}
                 rowStartIndex={verticalAlign === "bottom" && rowEndIndex ? rowEndIndex - 1 : rowStartIndex}
                 rowEndIndex={verticalAlign === "top" || verticalAlign === "bottom" ? undefined : rowEndIndex}
                 key={`${colStartIndex}-${rowStartIndex}`}

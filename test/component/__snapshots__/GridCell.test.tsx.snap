@@ -5,7 +5,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   className="grid-cell"
   style={
     Object {
-      "grid-area": "4 / 1 / 6 / 3",
+      "gridArea": "4 / 1 / 6 / 3",
     }
   }
 >
