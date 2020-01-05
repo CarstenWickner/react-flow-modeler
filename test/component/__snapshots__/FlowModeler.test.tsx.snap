@@ -5,23 +5,21 @@ exports[`renders correctly with all render props 1`] = `
   className="flow-modeler"
   style={
     Object {
-      "gridTemplateColumns": "repeat(6, max-content)",
+      "gridTemplateColumns": "repeat(8, max-content)",
     }
   }
 >
   <Component
     colStartIndex={1}
     key="1-1"
-    rowEndIndex={3}
-    rowStartIndex={1}
+    rowStartIndex={3}
   >
     <Component />
   </Component>
   <Component
     colStartIndex={2}
     key="2-1"
-    rowEndIndex={3}
-    rowStartIndex={1}
+    rowStartIndex={3}
   >
     <Component>
       First Node
@@ -30,8 +28,7 @@ exports[`renders correctly with all render props 1`] = `
   <Component
     colStartIndex={3}
     key="3-1"
-    rowEndIndex={3}
-    rowStartIndex={1}
+    rowStartIndex={3}
   >
     <Component>
       <label>
@@ -42,7 +39,6 @@ exports[`renders correctly with all render props 1`] = `
   <Component
     colStartIndex={4}
     key="4-1"
-    rowEndIndex={2}
     rowStartIndex={1}
   >
     <Component
@@ -54,6 +50,7 @@ exports[`renders correctly with all render props 1`] = `
     </Component>
   </Component>
   <Component
+    colEndIndex={8}
     colStartIndex={5}
     key="5-1"
     rowStartIndex={1}
@@ -61,8 +58,8 @@ exports[`renders correctly with all render props 1`] = `
     <Component />
   </Component>
   <Component
-    colStartIndex={6}
-    key="6-1"
+    colStartIndex={8}
+    key="8-1"
     rowStartIndex={1}
   >
     <Component />
@@ -70,11 +67,10 @@ exports[`renders correctly with all render props 1`] = `
   <Component
     colStartIndex={4}
     key="4-2"
-    rowEndIndex={3}
     rowStartIndex={2}
   >
     <Component
-      connectionType={3}
+      connectionType={2}
     >
       <span>
         Continue
@@ -84,7 +80,6 @@ exports[`renders correctly with all render props 1`] = `
   <Component
     colStartIndex={5}
     key="5-2"
-    rowEndIndex={3}
     rowStartIndex={2}
   >
     <Component>
@@ -92,11 +87,51 @@ exports[`renders correctly with all render props 1`] = `
     </Component>
   </Component>
   <Component
+    colEndIndex={7}
     colStartIndex={6}
     key="6-2"
     rowStartIndex={2}
   >
+    <Component
+      connectionType={1}
+    />
+  </Component>
+  <Component
+    colStartIndex={7}
+    key="7-2"
+    rowStartIndex={3}
+  >
     <Component />
+  </Component>
+  <Component
+    colStartIndex={8}
+    key="8-2"
+    rowStartIndex={3}
+  >
+    <Component />
+  </Component>
+  <Component
+    colEndIndex={7}
+    colStartIndex={4}
+    key="4-3"
+    rowStartIndex={5}
+  >
+    <Component
+      connectionType={3}
+    />
+  </Component>
+  <Component
+    colStartIndex={7}
+    key="7-3"
+    rowStartIndex={4}
+  >
+    <Component
+      connectionType={3}
+    >
+      <span>
+        Unless it is already done
+      </span>
+    </Component>
   </Component>
 </div>
 `;
@@ -106,14 +141,14 @@ exports[`renders correctly with minimal/default props 1`] = `
   className="flow-modeler"
   style={
     Object {
-      "gridTemplateColumns": "repeat(6, max-content)",
+      "gridTemplateColumns": "repeat(8, max-content)",
     }
   }
 >
   <Component
     colStartIndex={1}
     key="1-1"
-    rowEndIndex={3}
+    rowEndIndex={4}
     rowStartIndex={1}
   >
     <Component />
@@ -121,7 +156,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   <Component
     colStartIndex={2}
     key="2-1"
-    rowEndIndex={3}
+    rowEndIndex={4}
     rowStartIndex={1}
   >
     <Component>
@@ -131,7 +166,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   <Component
     colStartIndex={3}
     key="3-1"
-    rowEndIndex={3}
+    rowEndIndex={4}
     rowStartIndex={1}
   >
     <Component />
@@ -147,15 +182,18 @@ exports[`renders correctly with minimal/default props 1`] = `
     />
   </Component>
   <Component
+    colEndIndex={8}
     colStartIndex={5}
     key="5-1"
+    rowEndIndex={2}
     rowStartIndex={1}
   >
     <Component />
   </Component>
   <Component
-    colStartIndex={6}
-    key="6-1"
+    colStartIndex={8}
+    key="8-1"
+    rowEndIndex={2}
     rowStartIndex={1}
   >
     <Component />
@@ -167,7 +205,7 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowStartIndex={2}
   >
     <Component
-      connectionType={3}
+      connectionType={2}
     />
   </Component>
   <Component
@@ -181,11 +219,52 @@ exports[`renders correctly with minimal/default props 1`] = `
     </Component>
   </Component>
   <Component
+    colEndIndex={7}
     colStartIndex={6}
     key="6-2"
+    rowEndIndex={3}
+    rowStartIndex={2}
+  >
+    <Component
+      connectionType={1}
+    />
+  </Component>
+  <Component
+    colStartIndex={7}
+    key="7-2"
+    rowEndIndex={4}
     rowStartIndex={2}
   >
     <Component />
+  </Component>
+  <Component
+    colStartIndex={8}
+    key="8-2"
+    rowEndIndex={4}
+    rowStartIndex={2}
+  >
+    <Component />
+  </Component>
+  <Component
+    colEndIndex={7}
+    colStartIndex={4}
+    key="4-3"
+    rowEndIndex={6}
+    rowStartIndex={3}
+  >
+    <Component
+      connectionType={3}
+    />
+  </Component>
+  <Component
+    colStartIndex={7}
+    key="7-3"
+    rowEndIndex={5}
+    rowStartIndex={3}
+  >
+    <Component
+      connectionType={3}
+    />
   </Component>
 </div>
 `;

@@ -10,22 +10,27 @@ describe("renders correctly", () => {
             "1": { data: { label: "First Node" }, nextElementId: "2" },
             "2": {
                 data: { label: "Alternatives" },
-                nextElements: [{ conditionData: { label: "Stop Here" } }, { id: "3.2", conditionData: { label: "Continue" } }]
+                nextElements: [
+                    { id: "3.1-end", conditionData: { label: "Stop Here" } },
+                    { id: "3.2", conditionData: { label: "Continue" } },
+                    { conditionData: { label: "Unless it is already done" } }
+                ]
             },
             "3.2": { data: { label: "Second Node" } }
         }
     };
     it("with minimal/default props", () => {
-        const component = shallow(<FlowModeler flow={simpleFlow} renderContent={(data): React.ReactChild => <>{data.label}</>} />);
+        const component = shallow(<FlowModeler flow={simpleFlow} renderContent={({ elementData }): React.ReactChild => <>{elementData.label}</>} />);
         expect(component).toMatchSnapshot();
     });
     it("with all render props", () => {
         const component = shallow(
             <FlowModeler
                 flow={simpleFlow}
-                renderContent={(data): React.ReactChild => <>{data.label}</>}
-                renderGatewayConditionType={(data): React.ReactChild => <label>{data.label}</label>}
-                renderGatewayConditionValue={(data): React.ReactChild => <span>{data.label}</span>}
+                options={{ verticalAlign: "bottom" }}
+                renderContent={({ elementData }): React.ReactChild => <>{elementData.label}</>}
+                renderGatewayConditionType={({ gatewayData }): React.ReactChild => <label>{gatewayData.label}</label>}
+                renderGatewayConditionValue={({ conditionData }): React.ReactChild => <span>{conditionData.label}</span>}
             />
         );
         expect(component).toMatchSnapshot();
