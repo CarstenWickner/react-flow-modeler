@@ -26,7 +26,7 @@ jobs:
         CI: true
     - name: Run tests
       run: |
-        npm run test -- --ci --coverage --coverageReporters=text-lcov
+        npm run test -- --ci --coverage
       env:
         CI: true
     - name: Lint code and styles
