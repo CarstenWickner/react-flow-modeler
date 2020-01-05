@@ -26,9 +26,9 @@ Introducing a component for viewing/editing simple flows.
                 },
                 firstElementId: "1"
             }}
-            renderContent={(data, id) => <span>{data.label}</span>}
-            renderGatewayConditionType={(data, id) => <label>{data.label}</label>}
-            renderGatewayConditionValue={(data, id) => <label>{data.label}</label>}
+            renderContent={({ elementData }) => <span>{elementData.label}</span>}
+            renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData.label}</label>}
+            renderGatewayConditionValue={({ conditionData }) => <label>{conditionData.label}</label>}
         />
     </Story>
 </Preview>
