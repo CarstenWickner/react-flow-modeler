@@ -455,6 +455,12 @@ describe("buildRenderData()", () => {
                   "type": 2,
                 },
                 Object {
+                  "colStartIndex": 5,
+                  "rowEndIndex": 2,
+                  "rowStartIndex": 1,
+                  "type": 7,
+                },
+                Object {
                   "colStartIndex": 6,
                   "data": undefined,
                   "elementId": "3.1",

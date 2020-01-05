@@ -70,7 +70,7 @@ const collectGridCellData = (
     renderElement: FlowElement,
     triggeringRenderElement: FlowElement,
     elements: { [key: string]: FlowContent | FlowGatewayDiverging },
-    connectorColumnsIndexes: Set<number>,
+    connectorColumnIndexes: Set<number>,
     totalColumnCount: number,
     rowStartIndex: number,
     renderData: Array<GridCellData>
@@ -99,6 +99,18 @@ const collectGridCellData = (
             rowStartIndex,
             rowEndIndex,
             type: ElementType.GatewayConverging
+        });
+    } else if (
+        triggeringRenderElement &&
+        renderElement.getPrecedingElements().length === 1 &&
+        triggeringRenderElement.getFollowingElements().length === 1 &&
+        connectorColumnIndexes.has(renderElement.getColumnIndex() - 1)
+    ) {
+        renderData.push({
+            colStartIndex: renderElement.getColumnIndex() - 1,
+            rowStartIndex,
+            rowEndIndex,
+            type: ElementType.StrokeExtension
         });
     }
     const targetElement = elements[renderElement.getId()];
@@ -156,7 +168,7 @@ const collectGridCellData = (
                 childRenderElement,
                 renderElement,
                 elements,
-                connectorColumnsIndexes,
+                connectorColumnIndexes,
                 totalColumnCount,
                 thisChildStartRowIndex,
                 renderData
@@ -177,7 +189,7 @@ const collectGridCellData = (
             renderElement.getFollowingElements()[0],
             renderElement,
             elements,
-            connectorColumnsIndexes,
+            connectorColumnIndexes,
             totalColumnCount,
             rowStartIndex,
             renderData

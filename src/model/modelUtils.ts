@@ -118,7 +118,7 @@ export const createElementTree = ({ firstElementId, elements }: FlowModelerProps
                 target.getPrecedingElements().reduce(sumUpPrecedingElementRowCount, 0),
                 target.getFollowingElements().reduce(sumUpFollowingElementRowCount, 0)
             );
-            if (minimumRowCount !== target.getRowCount()) {
+            if (minimumRowCount > target.getRowCount()) {
                 target.setRowCount(minimumRowCount);
                 someRowCountChanged = true;
             }
