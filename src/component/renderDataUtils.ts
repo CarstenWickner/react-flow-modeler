@@ -75,15 +75,21 @@ const collectGridCellData = (
     rowStartIndex: number,
     renderData: Array<GridCellData>
 ): void => {
+    if (renderElement.getPrecedingElements().length > 1 && renderElement.getPrecedingElements()[0] !== triggeringRenderElement) {
+        // avoid rendering the same converging gateway and its children multiple times
+        return;
+    }
     const rowEndIndex = rowStartIndex + renderElement.getRowCount();
-    if (renderElement.getPrecedingElements().length > 1 && renderElement.getPrecedingElements()[0] === triggeringRenderElement) {
+    const targetElement = elements[renderElement.getId()];
+    if (renderElement.getPrecedingElements().length > 1) {
         let nextChildRowStartIndex = rowStartIndex;
         renderElement.getPrecedingElements().forEach((precedingElement, parentIndex, parents) => {
             const thisChildStartRowIndex = nextChildRowStartIndex;
-            nextChildRowStartIndex = thisChildStartRowIndex + precedingElement.getRowCount();
+            nextChildRowStartIndex =
+                thisChildStartRowIndex + (precedingElement.getFollowingElements().length > 1 ? 1 : precedingElement.getRowCount());
             // render element-to-gateway connector
             renderData.push({
-                colStartIndex: precedingElement.getColumnIndex() + 1,
+                colStartIndex: precedingElement.getColumnIndex() + (precedingElement.getFollowingElements().length === 1 ? 1 : 2),
                 colEndIndex: renderElement.getColumnIndex() - 1,
                 rowStartIndex: thisChildStartRowIndex,
                 rowEndIndex: nextChildRowStartIndex,
@@ -112,29 +118,22 @@ const collectGridCellData = (
             rowEndIndex,
             type: ElementType.StrokeExtension
         });
+    } else if (!targetElement && renderElement.getColumnIndex() < totalColumnCount) {
+        renderData.push({
+            colStartIndex: renderElement.getColumnIndex(),
+            colEndIndex: totalColumnCount,
+            rowStartIndex,
+            rowEndIndex,
+            type: ElementType.StrokeExtension
+        });
     }
-    const targetElement = elements[renderElement.getId()];
     if (!targetElement) {
-        if (renderElement.getColumnIndex() < totalColumnCount) {
-            renderData.push({
-                colStartIndex: renderElement.getColumnIndex(),
-                colEndIndex: totalColumnCount,
-                rowStartIndex,
-                rowEndIndex,
-                type: ElementType.StrokeExtension
-            });
-        }
-        if (
-            renderElement.getPrecedingElements().length === 0 ||
-            (triggeringRenderElement && renderElement.getPrecedingElements()[0] === triggeringRenderElement)
-        ) {
-            renderData.push({
-                colStartIndex: totalColumnCount,
-                rowStartIndex,
-                rowEndIndex,
-                type: ElementType.End
-            });
-        }
+        renderData.push({
+            colStartIndex: totalColumnCount,
+            rowStartIndex,
+            rowEndIndex,
+            type: ElementType.End
+        });
         return;
     }
     if (renderElement.getFollowingElements().length > 1) {
@@ -150,10 +149,11 @@ const collectGridCellData = (
         let nextChildRowStartIndex = rowStartIndex;
         renderElement.getFollowingElements().forEach((childRenderElement, childIndex, children) => {
             const thisChildStartRowIndex = nextChildRowStartIndex;
-            nextChildRowStartIndex = thisChildStartRowIndex + childRenderElement.getRowCount();
+            nextChildRowStartIndex =
+                thisChildStartRowIndex + (childRenderElement.getPrecedingElements().length > 1 ? 1 : childRenderElement.getRowCount());
             // render gateway-to-element connector
             renderData.push({
-                colStartIndex: childRenderElement.getColumnIndex() - 1,
+                colStartIndex: renderElement.getColumnIndex() + 1,
                 rowStartIndex: thisChildStartRowIndex,
                 rowEndIndex: nextChildRowStartIndex,
                 gatewayId: renderElement.getId(),

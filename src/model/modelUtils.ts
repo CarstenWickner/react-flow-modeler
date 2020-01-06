@@ -89,9 +89,9 @@ const assignMinimumIndependentRowCount = (target: FlowElement): void =>
 
 const sumUpPrecedingElementRowCount = (sum: number, precedingElement: FlowElement): number =>
     sum + (precedingElement.getFollowingElements().length === 1 ? precedingElement.getRowCount() : 1);
-
 const sumUpFollowingElementRowCount = (sum: number, followingElement: FlowElement): number =>
     sum + (followingElement.getPrecedingElements().length === 1 ? followingElement.getRowCount() : 1);
+const sumUpElementRowCount = (sum: number, element: FlowElement): number => sum + element.getRowCount();
 
 export const createElementTree = ({ firstElementId, elements }: FlowModelerProps["flow"]): FlowElement => {
     const firstElement = new FlowElement(firstElementId);
@@ -126,6 +126,34 @@ export const createElementTree = ({ firstElementId, elements }: FlowModelerProps
         do {
             someRowCountChanged = false;
             createdElementsInTree.forEach(assignMinimumRowCountFromNeighbours);
+            if (!someRowCountChanged) {
+                createdElementsInTree.forEach((element) => {
+                    if (element.getPrecedingElements().length === 1) {
+                        const parent = element.getPrecedingElements()[0];
+                        const siblings = parent.getFollowingElements();
+                        if (siblings.length > 1 && siblings[siblings.length - 1] === element) {
+                            const siblingSumRowCount = siblings.reduce(sumUpElementRowCount, 0);
+                            if (siblingSumRowCount < parent.getRowCount()) {
+                                // increase the row count for the last element so that the sum of children adds up to the parent
+                                element.setRowCount(element.getRowCount() + (parent.getRowCount() - siblingSumRowCount));
+                                someRowCountChanged = true;
+                            }
+                        }
+                    }
+                    if (element.getFollowingElements().length === 1) {
+                        const child = element.getFollowingElements()[0];
+                        const siblings = child.getPrecedingElements();
+                        if (siblings.length > 1 && siblings[siblings.length - 1] === element) {
+                            const siblingSumRowCount = siblings.reduce(sumUpElementRowCount, 0);
+                            if (siblingSumRowCount < child.getRowCount()) {
+                                // increase the row count for the last element so that the sum of parents adds up to the child
+                                element.setRowCount(element.getRowCount() + (child.getRowCount() - siblingSumRowCount));
+                                someRowCountChanged = true;
+                            }
+                        }
+                    }
+                });
+            }
         } while (someRowCountChanged);
     }
     return firstElement;

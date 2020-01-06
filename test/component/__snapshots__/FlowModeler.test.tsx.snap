@@ -111,19 +111,9 @@ exports[`renders correctly with all render props 1`] = `
     <Component />
   </Component>
   <Component
-    colEndIndex={7}
     colStartIndex={4}
     key="4-3"
-    rowStartIndex={5}
-  >
-    <Component
-      connectionType={3}
-    />
-  </Component>
-  <Component
-    colStartIndex={7}
-    key="7-3"
-    rowStartIndex={4}
+    rowStartIndex={3}
   >
     <Component
       connectionType={3}
@@ -132,6 +122,16 @@ exports[`renders correctly with all render props 1`] = `
         Unless it is already done
       </span>
     </Component>
+  </Component>
+  <Component
+    colEndIndex={7}
+    colStartIndex={5}
+    key="5-3"
+    rowStartIndex={3}
+  >
+    <Component
+      connectionType={3}
+    />
   </Component>
 </div>
 `;
@@ -246,10 +246,9 @@ exports[`renders correctly with minimal/default props 1`] = `
     <Component />
   </Component>
   <Component
-    colEndIndex={7}
     colStartIndex={4}
     key="4-3"
-    rowEndIndex={6}
+    rowEndIndex={4}
     rowStartIndex={3}
   >
     <Component
@@ -257,9 +256,10 @@ exports[`renders correctly with minimal/default props 1`] = `
     />
   </Component>
   <Component
-    colStartIndex={7}
-    key="7-3"
-    rowEndIndex={5}
+    colEndIndex={7}
+    colStartIndex={5}
+    key="5-3"
+    rowEndIndex={4}
     rowStartIndex={3}
   >
     <Component
