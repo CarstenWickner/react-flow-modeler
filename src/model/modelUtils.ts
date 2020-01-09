@@ -10,13 +10,12 @@ const handleNextElement = (
     inputElements: FlowModelerProps["flow"]["elements"],
     resultingModelElements: Map<string, FlowElement>
 ): void => {
-    let nextElement;
-    if (resultingModelElements.has(nextElementId)) {
-        // don't revisit already created FlowElement, just look it up and add additional references
-        nextElement = resultingModelElements.get(nextElementId);
-    } else {
-        nextElement = new FlowElement(nextElementId);
-        resultingModelElements.set(nextElementId, nextElement);
+    const verifiedNextElementId = inputElements[nextElementId] ? nextElementId : null;
+    // don't revisit already created FlowElement, just look it up and add additional references
+    let nextElement = resultingModelElements.get(verifiedNextElementId);
+    if (!nextElement) {
+        nextElement = new FlowElement(verifiedNextElementId);
+        resultingModelElements.set(verifiedNextElementId, nextElement);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         populateElement(nextElement, inputElements, resultingModelElements);
     }
@@ -31,7 +30,7 @@ const populateElement = (
 ): void => {
     const inputElement = inputElements[target.getId()];
     if (isDivergingGateway(inputElement)) {
-        // ensure that there are always at least two sub elements under a gateway to allow for respective End elements to be displayed
+        // ensure that there are always at least two sub elements under a gateway to allow for respective connectors to be displayed
         let subElements;
         if (inputElement.nextElements.length > 1) {
             subElements = inputElement.nextElements;
@@ -46,52 +45,52 @@ const populateElement = (
     }
 };
 
+const getPreceding = (element: FlowElement): Array<FlowElement> => element.getPrecedingElements();
+const getFollowing = (element: FlowElement): Array<FlowElement> => element.getFollowingElements();
+
 const determineColumnIndex = (target: FlowElement): number => {
     if (!target.getColumnIndex()) {
-        if (target.getPrecedingElements().length > 0) {
-            const maxPrecedingColumnIndex = Math.max(1, ...target.getPrecedingElements().map(determineColumnIndex));
-            // cater for additional column containing the converging gateway if necessary
-            target.setColumnIndex(maxPrecedingColumnIndex + (target.getPrecedingElements().length === 1 ? 1 : 2));
-        } else {
-            target.setColumnIndex(2);
-        }
+        const maxPrecedingColumnIndex = Math.max(
+            1,
+            ...target.getPrecedingElements().map((preceding) => determineColumnIndex(preceding) + (getFollowing(preceding).length > 1 ? 1 : 0))
+        );
+        // cater for additional column containing the converging gateway if necessary
+        target.setColumnIndex(maxPrecedingColumnIndex + (getPreceding(target).length > 1 ? 3 : 1));
     }
     return target.getColumnIndex();
 };
 
-const addGatewayConnectorOffsets = (
-    elementsInTree: Map<string, FlowElement>,
-    indexOffsetStart: number,
-    gatewayCheck: (element: FlowElement) => boolean
-): void => {
-    const gatewayColumns = new Set<number>();
-    elementsInTree.forEach((element) => {
-        if (gatewayCheck(element)) {
-            gatewayColumns.add(indexOffsetStart + element.getColumnIndex());
-        }
-    });
-    // iterate over indexes of gateway columns from right to left
-    [...gatewayColumns]
-        .sort((x, y) => y - x)
-        .forEach((gatewayColumnIndex) =>
-            // ensure there is an extra column for the gateway connectors
-            elementsInTree.forEach((element) => {
-                // move all elements behind the identified gateway column to the right by one column
-                if (element.getColumnIndex() > gatewayColumnIndex) {
-                    element.setColumnIndex(element.getColumnIndex() + 1);
-                }
-            })
-        );
-};
-
 const assignMinimumIndependentRowCount = (target: FlowElement): void =>
-    target.setRowCount(Math.max(target.getPrecedingElements().length, target.getFollowingElements().length));
+    target.setRowCount(Math.max(getPreceding(target).length, getFollowing(target).length));
 
-const sumUpPrecedingElementRowCount = (sum: number, precedingElement: FlowElement): number =>
-    sum + (precedingElement.getFollowingElements().length === 1 ? precedingElement.getRowCount() : 1);
-const sumUpFollowingElementRowCount = (sum: number, followingElement: FlowElement): number =>
-    sum + (followingElement.getPrecedingElements().length === 1 ? followingElement.getRowCount() : 1);
-const sumUpElementRowCount = (sum: number, element: FlowElement): number => sum + element.getRowCount();
+const sumUpSingleElementRowCount = (backLink: (element: FlowElement) => Array<FlowElement>) => (sum: number, singleElement: FlowElement): number =>
+    sum + (backLink(singleElement).length === 1 ? singleElement.getRowCount() : 1);
+const sumUpSinglePrecedingElementRowCount = sumUpSingleElementRowCount(getFollowing);
+const sumUpSingleFollowingElementRowCount = sumUpSingleElementRowCount(getPreceding);
+
+const sumUpAllElementRowCount = (sum: number, element: FlowElement): number => sum + element.getRowCount();
+
+const addExcessRowCountToTrailingNeighbour = (
+    referenceLookUp: (element: FlowElement) => Array<FlowElement>,
+    backLink: (element: FlowElement) => Array<FlowElement>
+) => (element: FlowElement): boolean => {
+    const referenceList = referenceLookUp(element);
+    if (referenceList.length === 1) {
+        const reference = referenceList[0];
+        const siblings = backLink(reference);
+        if (siblings.length > 1 && siblings[siblings.length - 1] === element) {
+            const siblingSumRowCount = siblings.reduce(sumUpAllElementRowCount, 0);
+            if (siblingSumRowCount < reference.getRowCount()) {
+                // increase the row count for the last element so that the sum of children adds up to the parent
+                element.setRowCount(element.getRowCount() + (reference.getRowCount() - siblingSumRowCount));
+                return true;
+            }
+        }
+    }
+    return false;
+};
+const addPrecedingExcessRowCountToTrailingNeighbour = addExcessRowCountToTrailingNeighbour(getPreceding, getFollowing);
+const addFollowingExcessRowCountToTrailingNeighbour = addExcessRowCountToTrailingNeighbour(getFollowing, getPreceding);
 
 export const createElementTree = ({ firstElementId, elements }: FlowModelerProps["flow"]): FlowElement => {
     const firstElement = new FlowElement(firstElementId);
@@ -100,59 +99,35 @@ export const createElementTree = ({ firstElementId, elements }: FlowModelerProps
     populateElement(firstElement, elements, createdElementsInTree);
     // second iteration: determine column indexes
     createdElementsInTree.forEach(determineColumnIndex);
-    // third iteration: add column offsets for gateway connectors
-    // diverging gateways have gateway-to-element connectors to the right of the gateway
-    addGatewayConnectorOffsets(createdElementsInTree, 0, (element) => element.getFollowingElements().length > 1);
-    // converging gateways have element-to-gateway connectors to the left of the gateway (and the gateway itself is one column left of the element)
-    addGatewayConnectorOffsets(createdElementsInTree, -2, (element) => element.getPrecedingElements().length > 1);
-    // fourth iteration: assign minimum row counts to each element on its own
+    // third iteration: assign minimum row counts to each element on its own
     createdElementsInTree.forEach(assignMinimumIndependentRowCount);
-    // fifth iteration: propagate minimum row counts
     if (firstElement.getFollowingElements().length === 0) {
         // edge case: empty model containing only a single end node (with rowIndex = 0)
         firstElement.setRowCount(1);
     } else {
-        let someRowCountChanged;
+        let someRowCountChanged: boolean;
         const assignMinimumRowCountFromNeighbours = (target: FlowElement): void => {
             const minimumRowCount = Math.max(
-                target.getPrecedingElements().reduce(sumUpPrecedingElementRowCount, 0),
-                target.getFollowingElements().reduce(sumUpFollowingElementRowCount, 0)
+                getPreceding(target).reduce(sumUpSinglePrecedingElementRowCount, 0),
+                getFollowing(target).reduce(sumUpSingleFollowingElementRowCount, 0)
             );
             if (minimumRowCount > target.getRowCount()) {
                 target.setRowCount(minimumRowCount);
                 someRowCountChanged = true;
             }
         };
+        const fixGatewayRowCountGaps = (element: FlowElement): void => {
+            someRowCountChanged = addPrecedingExcessRowCountToTrailingNeighbour(element) || someRowCountChanged;
+            someRowCountChanged = addFollowingExcessRowCountToTrailingNeighbour(element) || someRowCountChanged;
+        };
+        // fourth iteration: propagate minimum row counts to ensure the elements in all columns fill up the same number of rows
         do {
             someRowCountChanged = false;
+            // first make sure each neighbour has their appropriate minimum height
             createdElementsInTree.forEach(assignMinimumRowCountFromNeighbours);
             if (!someRowCountChanged) {
-                createdElementsInTree.forEach((element) => {
-                    if (element.getPrecedingElements().length === 1) {
-                        const parent = element.getPrecedingElements()[0];
-                        const siblings = parent.getFollowingElements();
-                        if (siblings.length > 1 && siblings[siblings.length - 1] === element) {
-                            const siblingSumRowCount = siblings.reduce(sumUpElementRowCount, 0);
-                            if (siblingSumRowCount < parent.getRowCount()) {
-                                // increase the row count for the last element so that the sum of children adds up to the parent
-                                element.setRowCount(element.getRowCount() + (parent.getRowCount() - siblingSumRowCount));
-                                someRowCountChanged = true;
-                            }
-                        }
-                    }
-                    if (element.getFollowingElements().length === 1) {
-                        const child = element.getFollowingElements()[0];
-                        const siblings = child.getPrecedingElements();
-                        if (siblings.length > 1 && siblings[siblings.length - 1] === element) {
-                            const siblingSumRowCount = siblings.reduce(sumUpElementRowCount, 0);
-                            if (siblingSumRowCount < child.getRowCount()) {
-                                // increase the row count for the last element so that the sum of parents adds up to the child
-                                element.setRowCount(element.getRowCount() + (child.getRowCount() - siblingSumRowCount));
-                                someRowCountChanged = true;
-                            }
-                        }
-                    }
-                });
+                // mixed diverging/converging gateways might lead to gaps when the parts before/after these have different total heights
+                createdElementsInTree.forEach(fixGatewayRowCountGaps);
             }
         } while (someRowCountChanged);
     }

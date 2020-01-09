@@ -7,19 +7,20 @@
     align-content: stretch;
     justify-content: stretch;
 
-    $strokeColor: red;
+    $strokeColor: #01579b;
     $strokeStrength: 0.25em;
     $arrowSize: 1.5 * $strokeStrength;
     $strokeLength: 2em - $arrowSize;
     $standardElementSize: 2.5em;
-    $gatewayElementMargin: ((sqrt(2.5 * 2.5 * 2) * 1em) - $standardElementSize) / 2;
+    $gatewayElementSizeFactor: 2;
+    $gatewayElementMargin: (sqrt($gatewayElementSizeFactor * $gatewayElementSizeFactor * 2) - $gatewayElementSizeFactor) * 1em / 2;
     $standardElementColor: #808080;
 
     & .grid-cell {
         display: flex;
         align-items: center;
         align-content: center;
-
+        min-height: $strokeLength;
         & .flow-element {
             display: flex;
             background-color: white;
@@ -42,15 +43,15 @@
             }
             &.content-element {
                 border: ($strokeStrength / 3) solid $standardElementColor;
-                border-radius: 0.5em;
+                border-radius: 0.25em;
                 min-width: $standardElementSize;
-                min-height: $standardElementSize;
+                min-height: $standardElementSize / 2;
                 flex-grow: 1;
             }
             &.gateway-element {
                 border: ($strokeStrength / 2) solid $standardElementColor;
-                height: $standardElementSize;
-                width: $standardElementSize;
+                height: $gatewayElementSizeFactor * 1em;
+                width: $gatewayElementSizeFactor * 1em;
                 transform: rotate(45deg);
                 margin: 0 $gatewayElementMargin;
                 display: flex;
@@ -60,7 +61,7 @@
                 &:before {
                     content: "X";
                     transform: rotate(-45deg);
-                    font: bold 2.25em Arial, sans-serif;
+                    font: bold 1.8em Arial, sans-serif;
                     color: $standardElementColor;
                 }
             }
@@ -93,6 +94,10 @@
             height: $strokeStrength;
             min-width: $strokeLength;
             flex-grow: 1;
+
+            &.converging-gateway {
+                min-width: $gatewayElementMargin;
+            }
         }
         & .stroke-vertical {
             width: $strokeStrength;

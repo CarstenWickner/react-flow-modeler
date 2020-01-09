@@ -30,7 +30,9 @@ exports[`renders correctly with all render props 1`] = `
     key="3-1"
     rowStartIndex={3}
   >
-    <Component>
+    <Component
+      type="diverging"
+    >
       <label>
         Alternatives
       </label>
@@ -50,17 +52,28 @@ exports[`renders correctly with all render props 1`] = `
     </Component>
   </Component>
   <Component
-    colEndIndex={8}
+    colEndIndex={7}
     colStartIndex={5}
     key="5-1"
     rowStartIndex={1}
   >
-    <Component />
+    <Component
+      connectionType={1}
+    />
+  </Component>
+  <Component
+    colStartIndex={7}
+    key="7-1"
+    rowStartIndex={3}
+  >
+    <Component
+      type="converging"
+    />
   </Component>
   <Component
     colStartIndex={8}
     key="8-1"
-    rowStartIndex={1}
+    rowStartIndex={3}
   >
     <Component />
   </Component>
@@ -93,22 +106,8 @@ exports[`renders correctly with all render props 1`] = `
     rowStartIndex={2}
   >
     <Component
-      connectionType={1}
+      connectionType={2}
     />
-  </Component>
-  <Component
-    colStartIndex={7}
-    key="7-2"
-    rowStartIndex={3}
-  >
-    <Component />
-  </Component>
-  <Component
-    colStartIndex={8}
-    key="8-2"
-    rowStartIndex={3}
-  >
-    <Component />
   </Component>
   <Component
     colStartIndex={4}
@@ -169,7 +168,9 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowEndIndex={4}
     rowStartIndex={1}
   >
-    <Component />
+    <Component
+      type="diverging"
+    />
   </Component>
   <Component
     colStartIndex={4}
@@ -182,18 +183,30 @@ exports[`renders correctly with minimal/default props 1`] = `
     />
   </Component>
   <Component
-    colEndIndex={8}
+    colEndIndex={7}
     colStartIndex={5}
     key="5-1"
     rowEndIndex={2}
     rowStartIndex={1}
   >
-    <Component />
+    <Component
+      connectionType={1}
+    />
+  </Component>
+  <Component
+    colStartIndex={7}
+    key="7-1"
+    rowEndIndex={4}
+    rowStartIndex={1}
+  >
+    <Component
+      type="converging"
+    />
   </Component>
   <Component
     colStartIndex={8}
     key="8-1"
-    rowEndIndex={2}
+    rowEndIndex={4}
     rowStartIndex={1}
   >
     <Component />
@@ -226,24 +239,8 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowStartIndex={2}
   >
     <Component
-      connectionType={1}
+      connectionType={2}
     />
-  </Component>
-  <Component
-    colStartIndex={7}
-    key="7-2"
-    rowEndIndex={4}
-    rowStartIndex={2}
-  >
-    <Component />
-  </Component>
-  <Component
-    colStartIndex={8}
-    key="8-2"
-    rowEndIndex={4}
-    rowStartIndex={2}
-  >
-    <Component />
   </Component>
   <Component
     colStartIndex={4}

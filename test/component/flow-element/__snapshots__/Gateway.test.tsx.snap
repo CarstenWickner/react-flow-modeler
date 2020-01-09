@@ -1,12 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly without props 1`] = `
+exports[`renders correctly as converging gateway 1`] = `
 <Fragment>
   <div
     className="arrow"
   />
   <div
-    className="flow-element gateway-element"
+    className="flow-element gateway-element converging"
+  />
+</Fragment>
+`;
+
+exports[`renders correctly as diverging gateway 1`] = `
+<Fragment>
+  <div
+    className="arrow"
+  />
+  <div
+    className="flow-element gateway-element diverging"
   />
   <HorizontalStroke
     incomingConnection={null}

@@ -66,16 +66,20 @@ const validatePaths = ({ firstElementId, elements }: FlowModelerProps["flow"]): 
     }
 };
 
+const getColumnIndexAfter = (element: FlowElement): number => element.getColumnIndex() + (element.getFollowingElements().length > 1 ? 2 : 1);
+
 const collectGridCellData = (
     renderElement: FlowElement,
+    indexInDivergingParentGateway: number | undefined,
     triggeringRenderElement: FlowElement,
     elements: { [key: string]: FlowContent | FlowGatewayDiverging },
-    connectorColumnIndexes: Set<number>,
-    totalColumnCount: number,
     rowStartIndex: number,
     renderData: Array<GridCellData>
 ): void => {
-    if (renderElement.getPrecedingElements().length > 1 && renderElement.getPrecedingElements()[0] !== triggeringRenderElement) {
+    if (
+        renderElement.getPrecedingElements().length > 1 &&
+        (renderElement.getPrecedingElements()[0] !== triggeringRenderElement || indexInDivergingParentGateway > 0)
+    ) {
         // avoid rendering the same converging gateway and its children multiple times
         return;
     }
@@ -89,7 +93,7 @@ const collectGridCellData = (
                 thisChildStartRowIndex + (precedingElement.getFollowingElements().length > 1 ? 1 : precedingElement.getRowCount());
             // render element-to-gateway connector
             renderData.push({
-                colStartIndex: precedingElement.getColumnIndex() + (precedingElement.getFollowingElements().length === 1 ? 1 : 2),
+                colStartIndex: getColumnIndexAfter(precedingElement),
                 colEndIndex: renderElement.getColumnIndex() - 1,
                 rowStartIndex: thisChildStartRowIndex,
                 rowEndIndex: nextChildRowStartIndex,
@@ -106,22 +110,11 @@ const collectGridCellData = (
             rowEndIndex,
             type: ElementType.GatewayConverging
         });
-    } else if (
-        triggeringRenderElement &&
-        renderElement.getPrecedingElements().length === 1 &&
-        triggeringRenderElement.getFollowingElements().length === 1 &&
-        connectorColumnIndexes.has(renderElement.getColumnIndex() - 1)
-    ) {
+    } else if (triggeringRenderElement && getColumnIndexAfter(triggeringRenderElement) < renderElement.getColumnIndex()) {
+        // fill gaps between elements
         renderData.push({
-            colStartIndex: renderElement.getColumnIndex() - 1,
-            rowStartIndex,
-            rowEndIndex,
-            type: ElementType.StrokeExtension
-        });
-    } else if (!targetElement && renderElement.getColumnIndex() < totalColumnCount) {
-        renderData.push({
-            colStartIndex: renderElement.getColumnIndex(),
-            colEndIndex: totalColumnCount,
+            colStartIndex: getColumnIndexAfter(triggeringRenderElement),
+            colEndIndex: renderElement.getColumnIndex(),
             rowStartIndex,
             rowEndIndex,
             type: ElementType.StrokeExtension
@@ -129,7 +122,7 @@ const collectGridCellData = (
     }
     if (!targetElement) {
         renderData.push({
-            colStartIndex: totalColumnCount,
+            colStartIndex: renderElement.getColumnIndex(),
             rowStartIndex,
             rowEndIndex,
             type: ElementType.End
@@ -164,15 +157,7 @@ const collectGridCellData = (
                     childIndex === 0 ? ConnectionType.First : childIndex + 1 < children.length ? ConnectionType.Middle : ConnectionType.Last
             });
             // render next element
-            collectGridCellData(
-                childRenderElement,
-                renderElement,
-                elements,
-                connectorColumnIndexes,
-                totalColumnCount,
-                thisChildStartRowIndex,
-                renderData
-            );
+            collectGridCellData(childRenderElement, childIndex, renderElement, elements, thisChildStartRowIndex, renderData);
         });
     } else {
         // render content element
@@ -185,41 +170,20 @@ const collectGridCellData = (
             elementId: renderElement.getId()
         });
         // render next element
-        collectGridCellData(
-            renderElement.getFollowingElements()[0],
-            renderElement,
-            elements,
-            connectorColumnIndexes,
-            totalColumnCount,
-            rowStartIndex,
-            renderData
-        );
+        collectGridCellData(renderElement.getFollowingElements()[0], undefined, renderElement, elements, rowStartIndex, renderData);
     }
 };
 
 const sortGridCellDataByPosition = (a: GridCellData, b: GridCellData): number =>
     a.rowStartIndex - b.rowStartIndex || a.colStartIndex - b.colStartIndex;
 
+const getMaxColumnIndex = (element: FlowElement): number =>
+    Math.max(element.getColumnIndex(), ...element.getFollowingElements().map(getMaxColumnIndex));
+
 export const buildRenderData = (flow: FlowModelerProps["flow"]): { gridCellData: Array<GridCellData>; columnCount: number } => {
     validatePaths(flow);
     const treeRootElement = createElementTree(flow);
     const result: Array<GridCellData> = [];
-    const connectorColumnsIndexes = new Set<number>();
-    let totalColumnCount = 1;
-    const checkColumns = (element: FlowElement): void => {
-        if (element.getPrecedingElements().length > 1) {
-            connectorColumnsIndexes.add(element.getColumnIndex() - 1);
-        }
-        if (element.getFollowingElements().length > 1) {
-            connectorColumnsIndexes.add(element.getColumnIndex() + 1);
-        }
-        if (element.getFollowingElements().length === 0) {
-            totalColumnCount = Math.max(totalColumnCount, element.getColumnIndex());
-        } else {
-            element.getFollowingElements().forEach(checkColumns);
-        }
-    };
-    checkColumns(treeRootElement);
     // add single start element
     result.push({
         colStartIndex: 1,
@@ -228,8 +192,8 @@ export const buildRenderData = (flow: FlowModelerProps["flow"]): { gridCellData:
         type: ElementType.Start
     });
     const { elements } = flow;
-    collectGridCellData(treeRootElement, undefined, elements, connectorColumnsIndexes, totalColumnCount, 1, result);
+    collectGridCellData(treeRootElement, undefined, undefined, elements, 1, result);
     // for a more readable resulting html structure, sort the grid elements first from top to bottom and within each row from left to right
     result.sort(sortGridCellDataByPosition);
-    return { gridCellData: result, columnCount: totalColumnCount };
+    return { gridCellData: result, columnCount: getMaxColumnIndex(treeRootElement) };
 };

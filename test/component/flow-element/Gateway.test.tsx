@@ -4,8 +4,12 @@ import { shallow } from "enzyme";
 import { Gateway } from "../../../src/component/flow-element/Gateway";
 
 describe("renders correctly", () => {
-    it("without props", () => {
-        const component = shallow(<Gateway>text</Gateway>);
+    it("as converging gateway", () => {
+        const component = shallow(<Gateway type="converging" />);
+        expect(component).toMatchSnapshot();
+    });
+    it("as diverging gateway", () => {
+        const component = shallow(<Gateway type="diverging">text</Gateway>);
         expect(component).toMatchSnapshot();
     });
 });

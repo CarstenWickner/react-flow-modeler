@@ -27,7 +27,7 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
             case ElementType.GatewayDiverging:
                 const { renderGatewayConditionType } = this.props;
                 return (
-                    <Gateway>
+                    <Gateway type="diverging">
                         {renderGatewayConditionType &&
                             renderGatewayConditionType({
                                 gatewayData: cellData.data,
@@ -50,7 +50,7 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
             case ElementType.ConnectElementToGateway:
                 return <ElementToGatewayConnector connectionType={cellData.connectionType} />;
             case ElementType.GatewayConverging:
-                return <Gateway />;
+                return <Gateway type="converging" />;
             case ElementType.StrokeExtension:
                 return <StrokeExtension />;
             case ElementType.End:

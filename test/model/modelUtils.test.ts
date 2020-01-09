@@ -54,7 +54,7 @@ describe("createElementTree()", () => {
         expect(cElement.getPrecedingElements()[0]).toBe(bElement);
         expect(cElement.getFollowingElements()).toHaveLength(1);
         const endElement = cElement.getFollowingElements()[0];
-        expect(endElement.getId()).toBeUndefined();
+        expect(endElement.getId()).toBe(null);
         expect(endElement.getColumnIndex()).toBe(5);
         expect(endElement.getRowCount()).toBe(1);
         expect(endElement.getPrecedingElements()).toHaveLength(1);

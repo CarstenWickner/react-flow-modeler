@@ -14,6 +14,7 @@ Introducing a component for viewing/editing simple flows.
     <Story name="show-case">
         <FlowModeler
             flow={{
+                firstElementId: "1",
                 elements: {
                     "1": { data: { label: "First Node" }, nextElementId: "2" },
                     "2": { data: { label: "Second Node" }, nextElementId: "3" },
@@ -23,12 +24,11 @@ Introducing a component for viewing/editing simple flows.
                     "4.1": { data: { label: "Optional Node 1" }, nextElementId: "5.1" },
                     "4.2": { data: { label: "Optional Node 2" }},
                     "5.1": { data: { label: "Last Node"}}
-                },
-                firstElementId: "1"
+                }
             }}
-            renderContent={({ elementData }) => <span>{elementData.label}</span>}
-            renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData.label}</label>}
-            renderGatewayConditionValue={({ conditionData }) => <label>{conditionData.label}</label>}
+            renderContent={({ elementData }) => <span>{elementData && elementData.label}</span>}
+            renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData && gatewayData.label}</label>}
+            renderGatewayConditionValue={({ conditionData }) => <label>{conditionData && conditionData.label}</label>}
         />
     </Story>
 </Preview>
