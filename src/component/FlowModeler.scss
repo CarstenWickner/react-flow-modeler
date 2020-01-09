@@ -98,6 +98,9 @@
             &.converging-gateway {
                 min-width: $gatewayElementMargin;
             }
+            &.optional {
+                min-width: 0;
+            }
         }
         & .stroke-vertical {
             width: $strokeStrength;

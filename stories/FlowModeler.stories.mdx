@@ -16,14 +16,14 @@ Introducing a component for viewing/editing simple flows.
             flow={{
                 firstElementId: "1",
                 elements: {
-                    "1": { data: { label: "First Node" }, nextElementId: "2" },
-                    "2": { data: { label: "Second Node" }, nextElementId: "3" },
+                    "1": { data: { label: "First" }, nextElementId: "2" },
+                    "2": { data: { label: "Second" }, nextElementId: "3" },
                     "3": { data: { label: "Condition" }, nextElements: [
                         { id: "4.1", conditionData: { label: "Fulfilled" } },
                         { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
-                    "4.1": { data: { label: "Optional Node 1" }, nextElementId: "5.1" },
-                    "4.2": { data: { label: "Optional Node 2" }},
-                    "5.1": { data: { label: "Last Node"}}
+                    "4.1": { data: { label: "Option 1" }, nextElementId: "5.1" },
+                    "4.2": { data: { label: "Option 2" }},
+                    "5.1": { data: { label: "Follow-Up"}}
                 }
             }}
             renderContent={({ elementData }) => <span>{elementData && elementData.label}</span>}

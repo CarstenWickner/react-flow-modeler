@@ -1,0 +1,90 @@
+import { action } from '@storybook/addon-actions';
+import { Meta, Preview, Story, Props } from '@storybook/addon-docs/blocks';
+import "./style-overrides.css";
+
+import { FlowModeler } from "../src/index";
+
+<Meta title='Examples' component={FlowModeler} />
+
+# FlowModeler
+## Example flows
+
+<Props of={FlowModeler} exclude={Object.keys(FlowModeler.propTypes).filter(propName => propName !== "flow")} />
+
+----
+
+### Simple
+
+<Preview>
+    <Story name="simple">
+        <FlowModeler
+            flow={{
+                firstElementId: "1",
+                elements: {
+                    "1": { data: { label: "First" }, nextElementId: "2" },
+                    "2": { data: { label: "Second" }, nextElementId: "3" },
+                    "3": { data: { label: "Third" } }
+                }
+            }}
+            renderContent={({ elementData }) => <span>{elementData.label}</span>}
+        />
+    </Story>
+</Preview>
+
+### With diverging gateway
+Diverging gateways need to be specifically mentioned. Converging gateways are automatically inserted where one element is referenced multiple times
+including the "unmentioned" and also automatically inserted end node.
+
+<Preview>
+    <Story name="with-gateways">
+        <FlowModeler
+            flow={{
+                firstElementId: "1",
+                elements: {
+                    "1": { data: { label: "First" }, nextElementId: "2" },
+                    "2": { data: { label: "Condition" }, nextElements: [
+                        { id: "3.1", conditionData: { label: "Fulfilled" } },
+                        { id: "3.2", conditionData: { label: "n/a" } },
+                        { id: "3.3", conditionData: { label: "Not fulfilled" } }] },
+                    "3.1": { data: { label: "Option 1" } },
+                    "3.2": { data: { label: "Option 2"} },
+                    "3.3": { data: { label: "Option 3"} }
+                }
+            }}
+            renderContent={({ elementData }) => <span>{elementData.label}</span>}
+            renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData.label}</label>}
+            renderGatewayConditionValue={({ conditionData }) => <label>{conditionData.label}</label>}
+        />
+    </Story>
+</Preview>
+
+----
+
+### Complex
+
+<Preview>
+    <Story name="complex">
+        <FlowModeler
+            flow={{
+                firstElementId: "1",
+                elements: {
+                    "1": {
+                        nextElements: [{ id: "2.1" }, { id: "3.1" }, { id: "2.3" }]
+                    },
+                    "2.1": {
+                        nextElementId: "3.1"
+                    },
+                    "2.3": {
+                        nextElements: [{}, { id: "3.3.2" }]
+                    },
+                    "3.1": {},
+                    "3.3.2": {
+                        nextElements: [{}, { id: "4.3.2.2" }, {}]
+                    },
+                    "4.3.2.2": {}
+                }
+            }}  
+            renderContent={({ elementData }) => <span>{elementData && elementData.label}</span>}
+        />
+    </Story>
+</Preview>

@@ -14,8 +14,10 @@ const getConnectionClassName = (connectionType: ConnectionType): string => {
 };
 
 export class HorizontalStroke extends React.Component<
-    | { incomingConnection: null | ConnectionType; outgoingConnection: null; children?: React.ReactChild }
-    | { incomingConnection: null; outgoingConnection: ConnectionType },
+    { className?: string } & (
+        | { incomingConnection: null | ConnectionType; outgoingConnection: null; children?: React.ReactChild }
+        | { incomingConnection: null; outgoingConnection: ConnectionType }
+    ),
     { wrapperTopHeight: number }
 > {
     readonly topLabelRef = React.createRef<HTMLDivElement>();
@@ -34,24 +36,25 @@ export class HorizontalStroke extends React.Component<
     }
 
     render(): React.ReactChild {
-        const { incomingConnection, outgoingConnection, children } = this.props;
+        const { className, incomingConnection, outgoingConnection, children } = this.props;
+        const classNameSuffix = className ? ` ${className}` : "";
         return (
             <>
-                {incomingConnection !== null && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}`} />}
-                {!children && <div className="stroke-horizontal" />}
+                {incomingConnection !== null && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}${classNameSuffix}`} />}
+                {!children && <div className={`stroke-horizontal${classNameSuffix}`} />}
                 {children && (
-                    <div className="centered-line-wrapper">
+                    <div className={`centered-line-wrapper${classNameSuffix}`}>
                         <div className="wrapper-top-label" ref={this.topLabelRef}>
                             {children}
                         </div>
-                        <div className="stroke-horizontal" />
+                        <div className={`stroke-horizontal${classNameSuffix}`} />
                         <div
                             className="wrapper-bottom-spacing"
                             style={(this.topLabelRef.current && { height: `${this.state.wrapperTopHeight}px` }) || undefined}
                         />
                     </div>
                 )}
-                {outgoingConnection !== null && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}`} />}
+                {outgoingConnection !== null && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}${classNameSuffix}`} />}
             </>
         );
     }

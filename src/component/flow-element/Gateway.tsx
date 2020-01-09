@@ -6,6 +6,6 @@ export const Gateway: React.FunctionComponent<{ type: "converging" } | { type: "
     <>
         <div className="arrow" />
         <div className={`flow-element gateway-element ${type}`} />
-        {type === "diverging" && <HorizontalStroke>{children}</HorizontalStroke>}
+        <HorizontalStroke className={type === "converging" ? "optional" : ""}>{children}</HorizontalStroke>
     </>
 );
