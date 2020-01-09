@@ -5,28 +5,56 @@ export interface GridCellCoordinates {
     rowEndIndex?: number;
 }
 
+export const enum ElementType {
+    Start = 1,
+    Content,
+    GatewayDiverging,
+    GatewayConverging,
+    ConnectGatewayToElement,
+    ConnectElementToGateway,
+    StrokeExtension,
+    End
+}
+
 export interface SimpleElement extends GridCellCoordinates {
-    elementType: "start" | "end" | "stroke-extension";
+    type: ElementType.Start | ElementType.End | ElementType.StrokeExtension;
 }
 
-/*
- * contextual information concerning a flow element
- */
 export interface ContentCellData extends GridCellCoordinates {
-    elementType: "content";
+    type: ElementType.Content;
     elementId: string;
-    elementData: { [key: string]: unknown };
+    data?: { [key: string]: unknown };
 }
-export interface GatewayCellData extends GridCellCoordinates {
-    elementType: "gateway";
-    elementId: string;
-    elementData: { [key: string]: unknown };
+export interface GatewayDivergingCellData extends GridCellCoordinates {
+    type: ElementType.GatewayDiverging;
+    gatewayId: string;
+    data?: { [key: string]: unknown };
 }
-export interface GatewayConnectorCellData extends GridCellCoordinates {
-    elementType: "gateway-connector";
+export const enum ConnectionType {
+    First = 1,
+    Middle,
+    Last
+}
+export interface GatewayToElementConnectorCellData extends GridCellCoordinates {
+    type: ElementType.ConnectGatewayToElement;
+    gatewayId: string;
+    elementId?: string;
+    data?: { [key: string]: unknown };
+    connectionType: ConnectionType;
+}
+export interface ElementToGatewayConnectorCellData extends GridCellCoordinates {
+    type: ElementType.ConnectElementToGateway;
     elementId: string;
-    elementData: { [key: string]: unknown };
-    connectionType: "first" | "middle" | "last";
+    connectionType: ConnectionType;
+}
+export interface GatewayConvergingCellData extends GridCellCoordinates {
+    type: ElementType.GatewayConverging;
 }
 
-export type GridCellData = SimpleElement | ContentCellData | GatewayCellData | GatewayConnectorCellData;
+export type GridCellData =
+    | SimpleElement
+    | ContentCellData
+    | GatewayDivergingCellData
+    | GatewayToElementConnectorCellData
+    | GatewayConvergingCellData
+    | ElementToGatewayConnectorCellData;

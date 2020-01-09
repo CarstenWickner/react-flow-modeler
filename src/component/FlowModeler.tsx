@@ -1,43 +1,75 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 
-import { Start, ContentElement, Gateway, GatewayConnector, StrokeExtension, End } from "./flow-element";
+import { Start, ContentElement, Gateway, GatewayToElementConnector, ElementToGatewayConnector, StrokeExtension, End } from "./flow-element";
 import { GridCell } from "./GridCell";
 import { buildRenderData } from "./renderDataUtils";
-import { GridCellData } from "../types/GridCellData";
+import { GridCellData, ElementType } from "../types/GridCellData";
 import { FlowModelerProps } from "../types/FlowModelerProps";
 
 import "./FlowModeler.scss";
 
 export class FlowModeler extends React.Component<FlowModelerProps> {
     renderFlowElement(cellData: GridCellData): React.ReactChild {
-        switch (cellData.elementType) {
-            case "start":
+        switch (cellData.type) {
+            case ElementType.Start:
                 return <Start />;
-            case "content":
+            case ElementType.Content:
                 const { renderContent } = this.props;
-                return <ContentElement>{renderContent(cellData.elementData, cellData.elementId)}</ContentElement>;
-            case "gateway":
+                return (
+                    <ContentElement>
+                        {renderContent({
+                            elementData: cellData.data,
+                            contentElementId: cellData.elementId
+                        })}
+                    </ContentElement>
+                );
+            case ElementType.GatewayDiverging:
                 const { renderGatewayConditionType } = this.props;
-                return <Gateway>{renderGatewayConditionType && renderGatewayConditionType(cellData.elementData, cellData.elementId)}</Gateway>;
-            case "gateway-connector":
+                return (
+                    <Gateway type="diverging">
+                        {renderGatewayConditionType &&
+                            renderGatewayConditionType({
+                                gatewayData: cellData.data,
+                                gatewayElementId: cellData.gatewayId
+                            })}
+                    </Gateway>
+                );
+            case ElementType.ConnectGatewayToElement:
                 const { renderGatewayConditionValue } = this.props;
                 return (
-                    <GatewayConnector incomingConnection={cellData.connectionType}>
-                        {renderGatewayConditionValue && renderGatewayConditionValue(cellData.elementData, cellData.elementId)}
-                    </GatewayConnector>
+                    <GatewayToElementConnector connectionType={cellData.connectionType}>
+                        {renderGatewayConditionValue &&
+                            renderGatewayConditionValue({
+                                conditionData: cellData.data,
+                                branchElementId: cellData.elementId,
+                                gatewayElementId: cellData.gatewayId
+                            })}
+                    </GatewayToElementConnector>
                 );
-            case "stroke-extension":
+            case ElementType.ConnectElementToGateway:
+                return <ElementToGatewayConnector connectionType={cellData.connectionType} />;
+            case ElementType.GatewayConverging:
+                return <Gateway type="converging" />;
+            case ElementType.StrokeExtension:
                 return <StrokeExtension />;
-            case "end":
+            case ElementType.End:
                 return <End />;
         }
     }
 
     renderGridCell = ((cellData: GridCellData): React.ReactChild => {
-        const { colStartIndex, rowStartIndex, rowEndIndex } = cellData;
+        const { options } = this.props;
+        const verticalAlign = options && options.verticalAlign;
+        const { colStartIndex, colEndIndex, rowStartIndex, rowEndIndex } = cellData;
         return (
-            <GridCell colStartIndex={colStartIndex} rowStartIndex={rowStartIndex} rowEndIndex={rowEndIndex} key={`${colStartIndex}-${rowStartIndex}`}>
+            <GridCell
+                colStartIndex={colStartIndex}
+                colEndIndex={colEndIndex}
+                rowStartIndex={verticalAlign === "bottom" && rowEndIndex ? rowEndIndex - 1 : rowStartIndex}
+                rowEndIndex={verticalAlign === "top" || verticalAlign === "bottom" ? undefined : rowEndIndex}
+                key={`${colStartIndex}-${rowStartIndex}`}
+            >
                 {this.renderFlowElement(cellData)}
             </GridCell>
         );
@@ -74,6 +106,9 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
                 ])
             ).isRequired
         }).isRequired,
+        options: PropTypes.shape({
+            verticalAlign: PropTypes.oneOf(["top", "middle", "bottom"])
+        }),
         renderContent: PropTypes.func.isRequired,
         renderGatewayConditionType: PropTypes.func,
         renderGatewayConditionValue: PropTypes.func

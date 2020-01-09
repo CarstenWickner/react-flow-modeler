@@ -5,23 +5,21 @@ exports[`renders correctly with all render props 1`] = `
   className="flow-modeler"
   style={
     Object {
-      "gridTemplateColumns": "repeat(6, max-content)",
+      "gridTemplateColumns": "repeat(8, max-content)",
     }
   }
 >
   <Component
     colStartIndex={1}
     key="1-1"
-    rowEndIndex={3}
-    rowStartIndex={1}
+    rowStartIndex={3}
   >
     <Component />
   </Component>
   <Component
     colStartIndex={2}
     key="2-1"
-    rowEndIndex={3}
-    rowStartIndex={1}
+    rowStartIndex={3}
   >
     <Component>
       First Node
@@ -30,10 +28,11 @@ exports[`renders correctly with all render props 1`] = `
   <Component
     colStartIndex={3}
     key="3-1"
-    rowEndIndex={3}
-    rowStartIndex={1}
+    rowStartIndex={3}
   >
-    <Component>
+    <Component
+      type="diverging"
+    >
       <label>
         Alternatives
       </label>
@@ -42,11 +41,10 @@ exports[`renders correctly with all render props 1`] = `
   <Component
     colStartIndex={4}
     key="4-1"
-    rowEndIndex={2}
     rowStartIndex={1}
   >
     <Component
-      incomingConnection="first"
+      connectionType={1}
     >
       <span>
         Stop Here
@@ -54,27 +52,38 @@ exports[`renders correctly with all render props 1`] = `
     </Component>
   </Component>
   <Component
+    colEndIndex={7}
     colStartIndex={5}
     key="5-1"
     rowStartIndex={1}
   >
-    <Component />
+    <Component
+      connectionType={1}
+    />
   </Component>
   <Component
-    colStartIndex={6}
-    key="6-1"
-    rowStartIndex={1}
+    colStartIndex={7}
+    key="7-1"
+    rowStartIndex={3}
+  >
+    <Component
+      type="converging"
+    />
+  </Component>
+  <Component
+    colStartIndex={8}
+    key="8-1"
+    rowStartIndex={3}
   >
     <Component />
   </Component>
   <Component
     colStartIndex={4}
     key="4-2"
-    rowEndIndex={3}
     rowStartIndex={2}
   >
     <Component
-      incomingConnection="last"
+      connectionType={2}
     >
       <span>
         Continue
@@ -84,7 +93,6 @@ exports[`renders correctly with all render props 1`] = `
   <Component
     colStartIndex={5}
     key="5-2"
-    rowEndIndex={3}
     rowStartIndex={2}
   >
     <Component>
@@ -92,11 +100,37 @@ exports[`renders correctly with all render props 1`] = `
     </Component>
   </Component>
   <Component
+    colEndIndex={7}
     colStartIndex={6}
     key="6-2"
     rowStartIndex={2}
   >
-    <Component />
+    <Component
+      connectionType={2}
+    />
+  </Component>
+  <Component
+    colStartIndex={4}
+    key="4-3"
+    rowStartIndex={3}
+  >
+    <Component
+      connectionType={3}
+    >
+      <span>
+        Unless it is already done
+      </span>
+    </Component>
+  </Component>
+  <Component
+    colEndIndex={7}
+    colStartIndex={5}
+    key="5-3"
+    rowStartIndex={3}
+  >
+    <Component
+      connectionType={3}
+    />
   </Component>
 </div>
 `;
@@ -106,14 +140,14 @@ exports[`renders correctly with minimal/default props 1`] = `
   className="flow-modeler"
   style={
     Object {
-      "gridTemplateColumns": "repeat(6, max-content)",
+      "gridTemplateColumns": "repeat(8, max-content)",
     }
   }
 >
   <Component
     colStartIndex={1}
     key="1-1"
-    rowEndIndex={3}
+    rowEndIndex={4}
     rowStartIndex={1}
   >
     <Component />
@@ -121,7 +155,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   <Component
     colStartIndex={2}
     key="2-1"
-    rowEndIndex={3}
+    rowEndIndex={4}
     rowStartIndex={1}
   >
     <Component>
@@ -131,10 +165,12 @@ exports[`renders correctly with minimal/default props 1`] = `
   <Component
     colStartIndex={3}
     key="3-1"
-    rowEndIndex={3}
+    rowEndIndex={4}
     rowStartIndex={1}
   >
-    <Component />
+    <Component
+      type="diverging"
+    />
   </Component>
   <Component
     colStartIndex={4}
@@ -143,19 +179,34 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowStartIndex={1}
   >
     <Component
-      incomingConnection="first"
+      connectionType={1}
     />
   </Component>
   <Component
+    colEndIndex={7}
     colStartIndex={5}
     key="5-1"
+    rowEndIndex={2}
     rowStartIndex={1}
   >
-    <Component />
+    <Component
+      connectionType={1}
+    />
   </Component>
   <Component
-    colStartIndex={6}
-    key="6-1"
+    colStartIndex={7}
+    key="7-1"
+    rowEndIndex={4}
+    rowStartIndex={1}
+  >
+    <Component
+      type="converging"
+    />
+  </Component>
+  <Component
+    colStartIndex={8}
+    key="8-1"
+    rowEndIndex={4}
     rowStartIndex={1}
   >
     <Component />
@@ -167,7 +218,7 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowStartIndex={2}
   >
     <Component
-      incomingConnection="last"
+      connectionType={2}
     />
   </Component>
   <Component
@@ -181,11 +232,36 @@ exports[`renders correctly with minimal/default props 1`] = `
     </Component>
   </Component>
   <Component
+    colEndIndex={7}
     colStartIndex={6}
     key="6-2"
+    rowEndIndex={3}
     rowStartIndex={2}
   >
-    <Component />
+    <Component
+      connectionType={2}
+    />
+  </Component>
+  <Component
+    colStartIndex={4}
+    key="4-3"
+    rowEndIndex={4}
+    rowStartIndex={3}
+  >
+    <Component
+      connectionType={3}
+    />
+  </Component>
+  <Component
+    colEndIndex={7}
+    colStartIndex={5}
+    key="5-3"
+    rowEndIndex={4}
+    rowStartIndex={3}
+  >
+    <Component
+      connectionType={3}
+    />
   </Component>
 </div>
 `;

@@ -1,24 +1,26 @@
 import * as React from "react";
 
-function getConnectionClassName(connectionType: "first" | "middle" | "last"): string {
+import { ConnectionType } from "../../types/GridCellData";
+
+const getConnectionClassName = (connectionType: ConnectionType): string => {
     switch (connectionType) {
-        case "first":
+        case ConnectionType.First:
             return "bottom-half";
-        case "middle":
+        case ConnectionType.Middle:
             return "full-height";
-        case "last":
+        case ConnectionType.Last:
             return "top-half";
     }
-}
+};
 
 export class HorizontalStroke extends React.Component<
-    {
-        incomingConnection: "single" | "first" | "middle" | "last";
-        children?: React.ReactChild;
-    },
+    { className?: string } & (
+        | { incomingConnection: null | ConnectionType; outgoingConnection: null; children?: React.ReactChild }
+        | { incomingConnection: null; outgoingConnection: ConnectionType }
+    ),
     { wrapperTopHeight: number }
 > {
-    topLabelRef = React.createRef<HTMLDivElement>();
+    readonly topLabelRef = React.createRef<HTMLDivElement>();
     state = { wrapperTopHeight: 0 };
 
     componentDidMount(): void {
@@ -34,24 +36,34 @@ export class HorizontalStroke extends React.Component<
     }
 
     render(): React.ReactChild {
-        const { incomingConnection, children } = this.props;
+        const { className, incomingConnection, outgoingConnection, children } = this.props;
+        const classNameSuffix = className ? ` ${className}` : "";
         return (
             <>
-                {incomingConnection !== "single" && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}`} />}
-                {!children && <div className="stroke-horizontal" />}
+                {incomingConnection !== null && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}${classNameSuffix}`} />}
+                {!children && <div className={`stroke-horizontal${classNameSuffix}`} />}
                 {children && (
-                    <div className="centered-line-wrapper">
+                    <div className={`centered-line-wrapper${classNameSuffix}`}>
                         <div className="wrapper-top-label" ref={this.topLabelRef}>
                             {children}
                         </div>
-                        <div className="stroke-horizontal" />
+                        <div className={`stroke-horizontal${classNameSuffix}`} />
                         <div
                             className="wrapper-bottom-spacing"
                             style={(this.topLabelRef.current && { height: `${this.state.wrapperTopHeight}px` }) || undefined}
                         />
                     </div>
                 )}
+                {outgoingConnection !== null && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}${classNameSuffix}`} />}
             </>
         );
     }
+
+    static defaultProps: {
+        incomingConnection: null;
+        outgoingConnection: null;
+    } = {
+        incomingConnection: null,
+        outgoingConnection: null
+    };
 }

@@ -1,0 +1,94 @@
+import { action } from '@storybook/addon-actions';
+import { Meta, Preview, Story, Props } from '@storybook/addon-docs/blocks';
+import "./style-overrides.css";
+
+import { FlowModeler } from "../src/index";
+
+<Meta title='FlowModeler (options)' component={FlowModeler} />
+
+# FlowModeler
+## Focus: Display options
+
+<Props of={FlowModeler} exclude={Object.keys(FlowModeler.propTypes).filter(propName => propName !== "options")} />
+
+----
+
+### Vertical Alignment: "top"
+
+<Preview>
+    <Story name="verticalAlign: top">
+        <FlowModeler
+            flow={{
+                firstElementId: "1",
+                elements: {
+                    "1": { data: { label: "First" }, nextElementId: "2" },
+                    "2": { data: { label: "Second" }, nextElementId: "3" },
+                    "3": { data: { label: "Condition" }, nextElements: [
+                        { id: "4.1", conditionData: { label: "Fulfilled" } },
+                        { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
+                    "4.1": { data: { label: "Option 1" }, nextElementId: "5.1" },
+                    "4.2": { data: { label: "Option 2" }},
+                    "5.1": { data: { label: "Follow-Up"}}
+                }
+            }}
+            options={{ verticalAlign: "top" }}
+            renderContent={({ elementData }) => <span>{elementData.label}</span>}
+            renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData.label}</label>}
+            renderGatewayConditionValue={({ conditionData }) => <label>{conditionData.label}</label>}
+        />
+    </Story>
+</Preview>
+
+### Vertical Alignment: "middle" (default)
+If no `options`/`options.verticalAlign` prop is defined, the paths will be vertically centered.
+
+<Preview>
+    <Story name="verticalAlign: middle">
+        <FlowModeler
+            flow={{
+                firstElementId: "1",
+                elements: {
+                    "1": { data: { label: "First" }, nextElementId: "2" },
+                    "2": { data: { label: "Second" }, nextElementId: "3" },
+                    "3": { data: { label: "Condition" }, nextElements: [
+                        { id: "4.1", conditionData: { label: "Fulfilled" } },
+                        { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
+                    "4.1": { data: { label: "Option 1" }, nextElementId: "5.1" },
+                    "4.2": { data: { label: "Option 2" }},
+                    "5.1": { data: { label: "Follow-Up"}}
+                }
+            }}
+            renderContent={({ elementData }) => <span>{elementData.label}</span>}
+            renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData.label}</label>}
+            renderGatewayConditionValue={({ conditionData }) => <label>{conditionData.label}</label>}
+        />
+    </Story>
+</Preview>
+
+----
+
+### Vertical Alignment: bottom
+
+<Preview>
+    <Story name="verticalAlign: bottom">
+        <FlowModeler
+            flow={{
+                firstElementId: "1",
+                elements: {
+                    "1": { data: { label: "First" }, nextElementId: "2" },
+                    "2": { data: { label: "Second" }, nextElementId: "3" },
+                    "3": { data: { label: "Condition" }, nextElements: [
+                        { id: "4.1", conditionData: { label: "Fulfilled" } },
+                        { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
+                    "4.1": { data: { label: "Option 1" }, nextElementId: "5.1" },
+                    "4.2": { data: { label: "Option 2" }},
+                    "5.1": { data: { label: "Follow-Up"}}
+                }
+            }}
+            options={{ verticalAlign: "bottom" }}
+            renderContent={({ elementData }) => <span>{elementData.label}</span>}
+            renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData.label}</label>}
+            renderGatewayConditionValue={({ conditionData }) => <label>{conditionData.label}</label>}
+        />
+    </Story>
+</Preview>

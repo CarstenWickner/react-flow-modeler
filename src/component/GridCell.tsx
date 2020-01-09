@@ -11,7 +11,7 @@ export const GridCell: React.FunctionComponent<{
         className="grid-cell"
         style={
             {
-                "grid-area": `${rowStartIndex} / ${colStartIndex} / ${rowEndIndex || "auto"} / ${colEndIndex || "auto"}`
+                gridArea: `${rowStartIndex} / ${colStartIndex} / ${rowEndIndex || "auto"} / ${colEndIndex || "auto"}`
             } as React.CSSProperties
         }
     >

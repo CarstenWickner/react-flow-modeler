@@ -6,3 +6,7 @@ div.css-1dm44cd {
 .css-1enb6fx > * {
     max-width: 100%;
 }
+
+.content-element > * {
+    margin: 0.25em;
+}

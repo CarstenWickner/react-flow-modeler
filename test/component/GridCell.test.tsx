@@ -19,7 +19,7 @@ describe("renders correctly", () => {
             </GridCell>
         );
         expect(component.prop("style")).toBeDefined();
-        expect(component.prop("style")["grid-area"]).toEqual("3 / 2 / 5 / auto");
+        expect(component.prop("style")["gridArea"]).toEqual("3 / 2 / 5 / auto");
     });
     it("with rowStartIndex = 2 and no rowEndIndex", () => {
         const component = shallow(
@@ -28,6 +28,6 @@ describe("renders correctly", () => {
             </GridCell>
         );
         expect(component.prop("style")).toBeDefined();
-        expect(component.prop("style")["grid-area"]).toEqual("3 / 2 / auto / 5");
+        expect(component.prop("style")["gridArea"]).toEqual("3 / 2 / auto / 5");
     });
 });
