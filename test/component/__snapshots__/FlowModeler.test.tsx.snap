@@ -14,7 +14,9 @@ exports[`renders correctly with all render props 1`] = `
     key="1-1"
     rowStartIndex={3}
   >
-    <Component />
+    <div
+      className="flow-element start-element"
+    />
   </Component>
   <Component
     colStartIndex={2}
@@ -75,7 +77,12 @@ exports[`renders correctly with all render props 1`] = `
     key="8-1"
     rowStartIndex={3}
   >
-    <Component />
+    <div
+      className="arrow"
+    />
+    <div
+      className="flow-element end-element"
+    />
   </Component>
   <Component
     colStartIndex={4}
@@ -150,7 +157,9 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowEndIndex={4}
     rowStartIndex={1}
   >
-    <Component />
+    <div
+      className="flow-element start-element"
+    />
   </Component>
   <Component
     colStartIndex={2}
@@ -209,7 +218,12 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowEndIndex={4}
     rowStartIndex={1}
   >
-    <Component />
+    <div
+      className="arrow"
+    />
+    <div
+      className="flow-element end-element"
+    />
   </Component>
   <Component
     colStartIndex={4}

@@ -1,8 +1,8 @@
 import * as React from "react";
 import { shallow, mount } from "enzyme";
 
-import { HorizontalStroke } from "../../../src/component/flow-element/HorizontalStroke";
-import { ConnectionType } from "../../../src/types/GridCellData";
+import { HorizontalStroke } from "../../src/component/HorizontalStroke";
+import { ConnectionType } from "../../src/types/GridCellData";
 
 describe("renders correctly", () => {
     it("with minimal/default props", () => {

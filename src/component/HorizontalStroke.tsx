@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ConnectionType } from "../../types/GridCellData";
+import { ConnectionType } from "../types/GridCellData";
 
 const getConnectionClassName = (connectionType: ConnectionType): string => {
     switch (connectionType) {

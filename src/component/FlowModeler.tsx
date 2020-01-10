@@ -1,7 +1,9 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 
-import { Start, ContentElement, Gateway, HorizontalStroke, StrokeExtension, End } from "./flow-element";
+import { ContentElement } from "./ContentElement";
+import { Gateway } from "./Gateway";
+import { HorizontalStroke } from "./HorizontalStroke";
 import { GridCell } from "./GridCell";
 import { buildRenderData } from "./renderDataUtils";
 import { GridCellData, ElementType } from "../types/GridCellData";
@@ -13,7 +15,7 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
     renderFlowElement(cellData: GridCellData): React.ReactNode {
         switch (cellData.type) {
             case ElementType.Start:
-                return <Start />;
+                return <div className="flow-element start-element" />;
             case ElementType.Content:
                 const { renderContent } = this.props;
                 return (
@@ -35,6 +37,8 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
                             })}
                     </Gateway>
                 );
+            case ElementType.GatewayConverging:
+                return <Gateway type="converging" />;
             case ElementType.ConnectGatewayToElement:
                 const { renderGatewayConditionValue } = this.props;
                 return (
@@ -49,12 +53,15 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
                 );
             case ElementType.ConnectElementToGateway:
                 return <HorizontalStroke outgoingConnection={cellData.connectionType} />;
-            case ElementType.GatewayConverging:
-                return <Gateway type="converging" />;
             case ElementType.StrokeExtension:
-                return <StrokeExtension />;
+                return <div className="stroke-horizontal" />;
             case ElementType.End:
-                return <End />;
+                return (
+                    <>
+                        <div className="arrow" />
+                        <div className="flow-element end-element" />
+                    </>
+                );
         }
     }
 
