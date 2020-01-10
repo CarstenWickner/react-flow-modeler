@@ -10,8 +10,6 @@ exports[`renders correctly as converging gateway 1`] = `
   />
   <HorizontalStroke
     className="optional"
-    incomingConnection={null}
-    outgoingConnection={null}
   />
 </Fragment>
 `;
@@ -24,10 +22,7 @@ exports[`renders correctly as diverging gateway 1`] = `
   <div
     className="flow-element gateway-element diverging"
   />
-  <HorizontalStroke
-    incomingConnection={null}
-    outgoingConnection={null}
-  >
+  <HorizontalStroke>
     text
   </HorizontalStroke>
 </Fragment>

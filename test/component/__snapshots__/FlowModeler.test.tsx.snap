@@ -43,13 +43,13 @@ exports[`renders correctly with all render props 1`] = `
     key="4-1"
     rowStartIndex={1}
   >
-    <Component
-      connectionType={1}
+    <HorizontalStroke
+      incomingConnection={1}
     >
       <span>
         Stop Here
       </span>
-    </Component>
+    </HorizontalStroke>
   </Component>
   <Component
     colEndIndex={7}
@@ -57,8 +57,8 @@ exports[`renders correctly with all render props 1`] = `
     key="5-1"
     rowStartIndex={1}
   >
-    <Component
-      connectionType={1}
+    <HorizontalStroke
+      outgoingConnection={1}
     />
   </Component>
   <Component
@@ -82,13 +82,13 @@ exports[`renders correctly with all render props 1`] = `
     key="4-2"
     rowStartIndex={2}
   >
-    <Component
-      connectionType={2}
+    <HorizontalStroke
+      incomingConnection={2}
     >
       <span>
         Continue
       </span>
-    </Component>
+    </HorizontalStroke>
   </Component>
   <Component
     colStartIndex={5}
@@ -105,8 +105,8 @@ exports[`renders correctly with all render props 1`] = `
     key="6-2"
     rowStartIndex={2}
   >
-    <Component
-      connectionType={2}
+    <HorizontalStroke
+      outgoingConnection={2}
     />
   </Component>
   <Component
@@ -114,13 +114,13 @@ exports[`renders correctly with all render props 1`] = `
     key="4-3"
     rowStartIndex={3}
   >
-    <Component
-      connectionType={3}
+    <HorizontalStroke
+      incomingConnection={3}
     >
       <span>
         Unless it is already done
       </span>
-    </Component>
+    </HorizontalStroke>
   </Component>
   <Component
     colEndIndex={7}
@@ -128,8 +128,8 @@ exports[`renders correctly with all render props 1`] = `
     key="5-3"
     rowStartIndex={3}
   >
-    <Component
-      connectionType={3}
+    <HorizontalStroke
+      outgoingConnection={3}
     />
   </Component>
 </div>
@@ -178,8 +178,8 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowEndIndex={2}
     rowStartIndex={1}
   >
-    <Component
-      connectionType={1}
+    <HorizontalStroke
+      incomingConnection={1}
     />
   </Component>
   <Component
@@ -189,8 +189,8 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowEndIndex={2}
     rowStartIndex={1}
   >
-    <Component
-      connectionType={1}
+    <HorizontalStroke
+      outgoingConnection={1}
     />
   </Component>
   <Component
@@ -217,8 +217,8 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowEndIndex={3}
     rowStartIndex={2}
   >
-    <Component
-      connectionType={2}
+    <HorizontalStroke
+      incomingConnection={2}
     />
   </Component>
   <Component
@@ -238,8 +238,8 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowEndIndex={3}
     rowStartIndex={2}
   >
-    <Component
-      connectionType={2}
+    <HorizontalStroke
+      outgoingConnection={2}
     />
   </Component>
   <Component
@@ -248,8 +248,8 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowEndIndex={4}
     rowStartIndex={3}
   >
-    <Component
-      connectionType={3}
+    <HorizontalStroke
+      incomingConnection={3}
     />
   </Component>
   <Component
@@ -259,8 +259,8 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowEndIndex={4}
     rowStartIndex={3}
   >
-    <Component
-      connectionType={3}
+    <HorizontalStroke
+      outgoingConnection={3}
     />
   </Component>
 </div>

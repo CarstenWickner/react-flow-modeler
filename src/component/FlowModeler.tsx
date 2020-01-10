@@ -1,7 +1,7 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 
-import { Start, ContentElement, Gateway, GatewayToElementConnector, ElementToGatewayConnector, StrokeExtension, End } from "./flow-element";
+import { Start, ContentElement, Gateway, HorizontalStroke, StrokeExtension, End } from "./flow-element";
 import { GridCell } from "./GridCell";
 import { buildRenderData } from "./renderDataUtils";
 import { GridCellData, ElementType } from "../types/GridCellData";
@@ -38,17 +38,17 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
             case ElementType.ConnectGatewayToElement:
                 const { renderGatewayConditionValue } = this.props;
                 return (
-                    <GatewayToElementConnector connectionType={cellData.connectionType}>
+                    <HorizontalStroke incomingConnection={cellData.connectionType}>
                         {renderGatewayConditionValue &&
                             renderGatewayConditionValue({
                                 conditionData: cellData.data,
                                 branchElementId: cellData.elementId,
                                 gatewayElementId: cellData.gatewayId
                             })}
-                    </GatewayToElementConnector>
+                    </HorizontalStroke>
                 );
             case ElementType.ConnectElementToGateway:
-                return <ElementToGatewayConnector connectionType={cellData.connectionType} />;
+                return <HorizontalStroke outgoingConnection={cellData.connectionType} />;
             case ElementType.GatewayConverging:
                 return <Gateway type="converging" />;
             case ElementType.StrokeExtension:
