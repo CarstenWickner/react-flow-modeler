@@ -19,11 +19,11 @@ export interface FlowModelerProps {
     options?: {
         verticalAlign?: "top" | "middle" | "bottom";
     };
-    renderContent: (params: { elementData: { [key: string]: unknown }; contentElementId: string }) => React.ReactChild;
-    renderGatewayConditionType?: (params: { gatewayData: { [key: string]: unknown }; gatewayElementId: string }) => React.ReactChild;
+    renderContent: (params: { elementData: { [key: string]: unknown }; contentElementId: string }) => React.ReactNode;
+    renderGatewayConditionType?: (params: { gatewayData: { [key: string]: unknown }; gatewayElementId: string }) => React.ReactNode;
     renderGatewayConditionValue?: (params: {
         conditionData: { [key: string]: unknown };
         branchElementId: string;
         gatewayElementId: string;
-    }) => React.ReactChild;
+    }) => React.ReactNode;
 }

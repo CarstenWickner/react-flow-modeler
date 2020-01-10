@@ -1,7 +1,7 @@
 import * as React from "react";
 
 export const ContentElement: React.FunctionComponent<{
-    children: React.ReactChild;
+    children: React.ReactNode;
 }> = ({ children }) => (
     <>
         <div className="arrow" />

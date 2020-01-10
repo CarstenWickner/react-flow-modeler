@@ -10,7 +10,7 @@ import { FlowModelerProps } from "../types/FlowModelerProps";
 import "./FlowModeler.scss";
 
 export class FlowModeler extends React.Component<FlowModelerProps> {
-    renderFlowElement(cellData: GridCellData): React.ReactChild {
+    renderFlowElement(cellData: GridCellData): React.ReactNode {
         switch (cellData.type) {
             case ElementType.Start:
                 return <Start />;
@@ -58,7 +58,7 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
         }
     }
 
-    renderGridCell = ((cellData: GridCellData): React.ReactChild => {
+    renderGridCell = ((cellData: GridCellData): React.ReactNode => {
         const { options } = this.props;
         const verticalAlign = options && options.verticalAlign;
         const { colStartIndex, colEndIndex, rowStartIndex, rowEndIndex } = cellData;

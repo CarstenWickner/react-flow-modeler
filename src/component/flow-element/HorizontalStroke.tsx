@@ -14,9 +14,10 @@ const getConnectionClassName = (connectionType: ConnectionType): string => {
 };
 
 export class HorizontalStroke extends React.Component<
-    { className?: string } & (
-        | { incomingConnection: null | ConnectionType; outgoingConnection: null; children?: React.ReactChild }
-        | { incomingConnection: null; outgoingConnection: ConnectionType }
+    { className?: string; children?: React.ReactNode } & (
+        | { incomingConnection: ConnectionType; outgoingConnection?: never }
+        | { incomingConnection?: never; outgoingConnection?: never }
+        | { incomingConnection?: never; outgoingConnection: ConnectionType }
     ),
     { wrapperTopHeight: number }
 > {
@@ -35,12 +36,12 @@ export class HorizontalStroke extends React.Component<
         }
     }
 
-    render(): React.ReactChild {
+    render(): React.ReactNode {
         const { className, incomingConnection, outgoingConnection, children } = this.props;
         const classNameSuffix = className ? ` ${className}` : "";
         return (
             <>
-                {incomingConnection !== null && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}${classNameSuffix}`} />}
+                {incomingConnection && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}${classNameSuffix}`} />}
                 {!children && <div className={`stroke-horizontal${classNameSuffix}`} />}
                 {children && (
                     <div className={`centered-line-wrapper${classNameSuffix}`}>
@@ -54,16 +55,8 @@ export class HorizontalStroke extends React.Component<
                         />
                     </div>
                 )}
-                {outgoingConnection !== null && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}${classNameSuffix}`} />}
+                {outgoingConnection && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}${classNameSuffix}`} />}
             </>
         );
     }
-
-    static defaultProps: {
-        incomingConnection: null;
-        outgoingConnection: null;
-    } = {
-        incomingConnection: null,
-        outgoingConnection: null
-    };
 }
