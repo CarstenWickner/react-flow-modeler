@@ -16,7 +16,7 @@ describe("isDivergingGateway()", () => {
 });
 describe("createElementTree()", () => {
     it("returns empty element if no matching firstElement found", () => {
-        const rootElement = createElementTree({ firstElementId: "a", elements: {} });
+        const rootElement = createElementTree({ firstElementId: "a", elements: {} }, "top");
         expect(rootElement).toBeDefined();
         expect(rootElement.getId()).toBe("a");
         expect(rootElement.getColumnIndex()).toBe(2);
@@ -25,14 +25,17 @@ describe("createElementTree()", () => {
         expect(rootElement.getFollowingElements()).toHaveLength(0);
     });
     it("can handle chained content elements", () => {
-        const rootElement = createElementTree({
-            firstElementId: "a",
-            elements: {
-                a: { nextElementId: "b" },
-                b: { nextElementId: "c" },
-                c: {}
-            }
-        });
+        const rootElement = createElementTree(
+            {
+                firstElementId: "a",
+                elements: {
+                    a: { nextElementId: "b" },
+                    b: { nextElementId: "c" },
+                    c: {}
+                }
+            },
+            "top"
+        );
         expect(rootElement).toBeDefined();
         expect(rootElement.getId()).toBe("a");
         expect(rootElement.getColumnIndex()).toBe(2);
@@ -62,21 +65,24 @@ describe("createElementTree()", () => {
         expect(endElement.getFollowingElements()).toHaveLength(0);
     });
     it("can handle mixed gateways", () => {
-        const rootElement = createElementTree({
-            firstElementId: "div-gw-1",
-            elements: {
-                "div-gw-1": { nextElements: [{ id: "cont-1" }, { id: "cont-3" }] },
-                "cont-1": { nextElementId: "cont-2" },
-                "cont-2": { nextElementId: "conv-gw-1/div-gw-2" },
-                "cont-3": { nextElementId: "conv-gw-1/div-gw-2" },
-                "conv-gw-1/div-gw-2": { nextElements: [{ id: "cont-4" }, { id: "cont-5" }, { id: "cont-6" }, { id: "cont-7" }] },
-                "cont-4": { nextElementId: "conv-gw-2" },
-                "cont-5": { nextElementId: "conv-gw-2" },
-                "cont-6": { nextElementId: "conv-gw-2" },
-                "cont-7": { nextElementId: "conv-gw-2" },
-                "conv-gw-2": {}
-            }
-        });
+        const rootElement = createElementTree(
+            {
+                firstElementId: "div-gw-1",
+                elements: {
+                    "div-gw-1": { nextElements: [{ id: "cont-1" }, { id: "cont-3" }] },
+                    "cont-1": { nextElementId: "cont-2" },
+                    "cont-2": { nextElementId: "conv-gw-1/div-gw-2" },
+                    "cont-3": { nextElementId: "conv-gw-1/div-gw-2" },
+                    "conv-gw-1/div-gw-2": { nextElements: [{ id: "cont-4" }, { id: "cont-5" }, { id: "cont-6" }, { id: "cont-7" }] },
+                    "cont-4": { nextElementId: "conv-gw-2" },
+                    "cont-5": { nextElementId: "conv-gw-2" },
+                    "cont-6": { nextElementId: "conv-gw-2" },
+                    "cont-7": { nextElementId: "conv-gw-2" },
+                    "conv-gw-2": {}
+                }
+            },
+            "bottom"
+        );
         expect(rootElement.getFollowingElements()).toHaveLength(2);
         const cont1 = rootElement.getFollowingElements()[0];
         expect(cont1.getFollowingElements()).toHaveLength(1);
@@ -103,9 +109,9 @@ describe("createElementTree()", () => {
         const end = convGw2.getFollowingElements()[0];
 
         expect(rootElement.getRowCount()).toBe(4);
-        expect(cont1.getRowCount()).toBe(1);
-        expect(cont2.getRowCount()).toBe(1);
-        expect(cont3.getRowCount()).toBe(3);
+        expect(cont1.getRowCount()).toBe(3);
+        expect(cont2.getRowCount()).toBe(3);
+        expect(cont3.getRowCount()).toBe(1);
         expect(convGw1.getRowCount()).toBe(4);
         expect(cont4.getRowCount()).toBe(1);
         expect(cont5.getRowCount()).toBe(1);
@@ -115,46 +121,49 @@ describe("createElementTree()", () => {
         expect(end.getRowCount()).toBe(4);
     });
     it("can handle overlapping gateways", () => {
-        const element1 = createElementTree({
-            firstElementId: "1",
-            elements: {
-                "1": {
-                    nextElements: [
-                        { id: "2.1" },
-                        {
-                            /*id: "2.2-end"*/
-                        },
-                        { id: "2.3" }
-                    ]
-                },
-                "2.1": { nextElementId: "3.1" },
-                "2.3": {
-                    nextElements: [
-                        {
-                            /*id: "3.3.1-end"*/
-                        },
-                        { id: "3.3.2" }
-                    ]
-                },
-                "3.1": {
-                    /*nextElementId: "4.1-end"*/
-                },
-                "3.3.2": {
-                    nextElements: [
-                        {
-                            /*id: "4.3.2.1-end"*/
-                        },
-                        { id: "4.3.2.2" },
-                        {
-                            /*id: "4.3.2.3-end"*/
-                        }
-                    ]
-                },
-                "4.3.2.2": {
-                    /*nextElementId: "5.3.2.2-end"*/
+        const element1 = createElementTree(
+            {
+                firstElementId: "1",
+                elements: {
+                    "1": {
+                        nextElements: [
+                            { id: "2.1" },
+                            {
+                                /*id: "2.2-end"*/
+                            },
+                            { id: "2.3" }
+                        ]
+                    },
+                    "2.1": { nextElementId: "3.1" },
+                    "2.3": {
+                        nextElements: [
+                            {
+                                /*id: "3.3.1-end"*/
+                            },
+                            { id: "3.3.2" }
+                        ]
+                    },
+                    "3.1": {
+                        /*nextElementId: "4.1-end"*/
+                    },
+                    "3.3.2": {
+                        nextElements: [
+                            {
+                                /*id: "4.3.2.1-end"*/
+                            },
+                            { id: "4.3.2.2" },
+                            {
+                                /*id: "4.3.2.3-end"*/
+                            }
+                        ]
+                    },
+                    "4.3.2.2": {
+                        /*nextElementId: "5.3.2.2-end"*/
+                    }
                 }
-            }
-        });
+            },
+            "top"
+        );
         const element21 = element1.getFollowingElements()[0];
         const element31 = element21.getFollowingElements()[0];
         const convGwEnd = element31.getFollowingElements()[0];

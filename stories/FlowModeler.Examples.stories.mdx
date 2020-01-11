@@ -46,9 +46,10 @@ including the "unmentioned" and also automatically inserted end node.
                         { id: "3.1", conditionData: { label: "Fulfilled" } },
                         { id: "3.2", conditionData: { label: "n/a" } },
                         { id: "3.3", conditionData: { label: "Not fulfilled" } }] },
-                    "3.1": { data: { label: "Option 1" } },
-                    "3.2": { data: { label: "Option 2"} },
-                    "3.3": { data: { label: "Option 3"} }
+                    "3.1": { data: { label: "Option 1" }, nextElementId: "4" },
+                    "3.2": { data: { label: "Option 2" }, nextElementId: "4" },
+                    "3.3": { data: { label: "Option 3" }, nextElementId: "4" },
+                    "4": { data: { label: "Last" } }
                 }
             }}
             renderContent={({ elementData }) => <span>{elementData.label}</span>}
@@ -72,16 +73,17 @@ including the "unmentioned" and also automatically inserted end node.
                         nextElements: [{ id: "2.1" }, { id: "3.1" }, { id: "2.3" }]
                     },
                     "2.1": {
-                        nextElementId: "3.1"
+                        nextElementId: "3.1",
+                        data: { label: "Step A" }
                     },
                     "2.3": {
                         nextElements: [{}, { id: "3.3.2" }]
                     },
-                    "3.1": {},
+                    "3.1": { data: { label: "Step B" } },
                     "3.3.2": {
                         nextElements: [{}, { id: "4.3.2.2" }, {}]
                     },
-                    "4.3.2.2": {}
+                    "4.3.2.2": { data: { label: "Step C" } }
                 }
             }}  
             renderContent={({ elementData }) => <span>{elementData && elementData.label}</span>}

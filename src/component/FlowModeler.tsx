@@ -1,7 +1,9 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 
-import { Start, ContentElement, Gateway, GatewayToElementConnector, ElementToGatewayConnector, StrokeExtension, End } from "./flow-element";
+import { ContentElement } from "./ContentElement";
+import { Gateway } from "./Gateway";
+import { HorizontalStroke } from "./HorizontalStroke";
 import { GridCell } from "./GridCell";
 import { buildRenderData } from "./renderDataUtils";
 import { GridCellData, ElementType } from "../types/GridCellData";
@@ -10,10 +12,10 @@ import { FlowModelerProps } from "../types/FlowModelerProps";
 import "./FlowModeler.scss";
 
 export class FlowModeler extends React.Component<FlowModelerProps> {
-    renderFlowElement(cellData: GridCellData): React.ReactChild {
+    renderFlowElement(cellData: GridCellData): React.ReactNode {
         switch (cellData.type) {
             case ElementType.Start:
-                return <Start />;
+                return <div className="flow-element start-element" />;
             case ElementType.Content:
                 const { renderContent } = this.props;
                 return (
@@ -35,30 +37,35 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
                             })}
                     </Gateway>
                 );
+            case ElementType.GatewayConverging:
+                return <Gateway type="converging" />;
             case ElementType.ConnectGatewayToElement:
                 const { renderGatewayConditionValue } = this.props;
                 return (
-                    <GatewayToElementConnector connectionType={cellData.connectionType}>
+                    <HorizontalStroke incomingConnection={cellData.connectionType}>
                         {renderGatewayConditionValue &&
                             renderGatewayConditionValue({
                                 conditionData: cellData.data,
                                 branchElementId: cellData.elementId,
                                 gatewayElementId: cellData.gatewayId
                             })}
-                    </GatewayToElementConnector>
+                    </HorizontalStroke>
                 );
             case ElementType.ConnectElementToGateway:
-                return <ElementToGatewayConnector connectionType={cellData.connectionType} />;
-            case ElementType.GatewayConverging:
-                return <Gateway type="converging" />;
+                return <HorizontalStroke outgoingConnection={cellData.connectionType} />;
             case ElementType.StrokeExtension:
-                return <StrokeExtension />;
+                return <div className="stroke-horizontal" />;
             case ElementType.End:
-                return <End />;
+                return (
+                    <>
+                        <div className="arrow" />
+                        <div className="flow-element end-element" />
+                    </>
+                );
         }
     }
 
-    renderGridCell = ((cellData: GridCellData): React.ReactChild => {
+    renderGridCell = ((cellData: GridCellData): React.ReactNode => {
         const { options } = this.props;
         const verticalAlign = options && options.verticalAlign;
         const { colStartIndex, colEndIndex, rowStartIndex, rowEndIndex } = cellData;
@@ -76,8 +83,9 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
     }).bind(this);
 
     render(): React.ReactElement {
-        const { flow } = this.props;
-        const { gridCellData, columnCount } = buildRenderData(flow);
+        const { flow, options } = this.props;
+        const verticalModelAlign = options && options.verticalAlign === "bottom" ? "bottom" : "top";
+        const { gridCellData, columnCount } = buildRenderData(flow, verticalModelAlign);
         return (
             <div className="flow-modeler" style={{ gridTemplateColumns: `repeat(${columnCount}, max-content)` }}>
                 {gridCellData.map(this.renderGridCell)}

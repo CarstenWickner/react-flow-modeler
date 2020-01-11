@@ -46,7 +46,6 @@
                 border-radius: 0.25em;
                 min-width: $standardElementSize;
                 min-height: $standardElementSize / 2;
-                flex-grow: 1;
             }
             &.gateway-element {
                 border: ($strokeStrength / 2) solid $standardElementColor;
