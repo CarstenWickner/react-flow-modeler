@@ -83,8 +83,9 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
     }).bind(this);
 
     render(): React.ReactElement {
-        const { flow } = this.props;
-        const { gridCellData, columnCount } = buildRenderData(flow);
+        const { flow, options } = this.props;
+        const verticalModelAlign = options && options.verticalAlign === "bottom" ? "bottom" : "top";
+        const { gridCellData, columnCount } = buildRenderData(flow, verticalModelAlign);
         return (
             <div className="flow-modeler" style={{ gridTemplateColumns: `repeat(${columnCount}, max-content)` }}>
                 {gridCellData.map(this.renderGridCell)}

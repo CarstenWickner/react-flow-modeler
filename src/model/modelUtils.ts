@@ -60,7 +60,7 @@ const determineColumnIndex = (target: FlowElement): number => {
     return target.getColumnIndex();
 };
 
-export const createElementTree = ({ firstElementId, elements }: FlowModelerProps["flow"]): FlowElement => {
+export const createElementTree = ({ firstElementId, elements }: FlowModelerProps["flow"], verticalAlign: "top" | "bottom"): FlowElement => {
     const firstElement = new FlowElement(firstElementId);
     // creating elements with links in both directions
     const createdElementsInTree = new Map<string, FlowElement>().set(firstElementId, firstElement);
@@ -68,7 +68,7 @@ export const createElementTree = ({ firstElementId, elements }: FlowModelerProps
 
     createdElementsInTree.forEach(determineColumnIndex);
 
-    determineRowCounts(firstElement, createdElementsInTree.forEach.bind(createdElementsInTree));
+    determineRowCounts(firstElement, verticalAlign, createdElementsInTree.forEach.bind(createdElementsInTree));
 
     return firstElement;
 };

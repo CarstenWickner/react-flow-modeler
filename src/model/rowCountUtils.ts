@@ -14,18 +14,24 @@ const sumUpSingleFollowingElementRowCount = sumUpSingleElementRowCount(getPreced
 
 const sumUpAllElementRowCount = (sum: number, element: FlowElement): number => sum + element.getRowCount();
 
-const addExcessRowCountToTrailingNeighbour = (
+const addExcessRowCountToNeighbour = (
     referenceLookUp: (element: FlowElement) => Array<FlowElement>,
-    backLink: (element: FlowElement) => Array<FlowElement>
-) => (element: FlowElement): boolean => {
+    backLink: (element: FlowElement) => Array<FlowElement>,
+    verticalAlign: "top" | "bottom",
+    element: FlowElement
+): boolean => {
+    // look-up the parents/children
     const referenceList = referenceLookUp(element);
     if (referenceList.length === 1) {
         const reference = referenceList[0];
+        // look-up the siblings of the given element
         const siblings = backLink(reference);
-        if (siblings.length > 1 && siblings[siblings.length - 1] === element) {
+        // only do this calculation for one sibling to minimize unnecessary round-trips
+        // consider the first element to align to the bottom, otherwise consider the last element to align to the top
+        if (siblings.length > 1 && siblings[verticalAlign === "bottom" ? 0 : siblings.length - 1] === element) {
             const siblingSumRowCount = siblings.reduce(sumUpAllElementRowCount, 0);
             if (siblingSumRowCount < reference.getRowCount()) {
-                // increase the row count for the last element so that the sum of children adds up to the parent
+                // increase the row count for leading or trailing element so that the sum of children adds up to the parent
                 element.setRowCount(element.getRowCount() + (reference.getRowCount() - siblingSumRowCount));
                 return true;
             }
@@ -34,10 +40,11 @@ const addExcessRowCountToTrailingNeighbour = (
     return false;
 };
 
-const addPrecedingExcessRowCountToTrailingNeighbour = addExcessRowCountToTrailingNeighbour(getPreceding, getFollowing);
-const addFollowingExcessRowCountToTrailingNeighbour = addExcessRowCountToTrailingNeighbour(getFollowing, getPreceding);
-
-export const determineRowCounts = (firstElement: FlowElement, forEachElementInTree: (callback: (element: FlowElement) => void) => void): void => {
+export const determineRowCounts = (
+    firstElement: FlowElement,
+    verticalAlign: "top" | "bottom",
+    forEachElementInTree: (callback: (element: FlowElement) => void) => void
+): void => {
     // third iteration: assign minimum row counts to each element on its own
     forEachElementInTree(assignMinimumIndependentRowCount);
     if (firstElement.getFollowingElements().length === 0) {
@@ -57,8 +64,8 @@ export const determineRowCounts = (firstElement: FlowElement, forEachElementInTr
         }
     };
     const fixGatewayRowCountGaps = (element: FlowElement): void => {
-        someRowCountChanged = addPrecedingExcessRowCountToTrailingNeighbour(element) || someRowCountChanged;
-        someRowCountChanged = addFollowingExcessRowCountToTrailingNeighbour(element) || someRowCountChanged;
+        someRowCountChanged = addExcessRowCountToNeighbour(getPreceding, getFollowing, verticalAlign, element) || someRowCountChanged;
+        someRowCountChanged = addExcessRowCountToNeighbour(getFollowing, getPreceding, verticalAlign, element) || someRowCountChanged;
     };
     // fourth iteration: propagate minimum row counts to ensure the elements in all columns fill up the same number of rows
     do {

@@ -118,9 +118,12 @@ const sortGridCellDataByPosition = (a: GridCellData, b: GridCellData): number =>
 const getMaxColumnIndex = (element: FlowElement): number =>
     Math.max(element.getColumnIndex(), ...element.getFollowingElements().map(getMaxColumnIndex));
 
-export const buildRenderData = (flow: FlowModelerProps["flow"]): { gridCellData: Array<GridCellData>; columnCount: number } => {
+export const buildRenderData = (
+    flow: FlowModelerProps["flow"],
+    verticalAlign: "top" | "bottom"
+): { gridCellData: Array<GridCellData>; columnCount: number } => {
     validatePaths(flow);
-    const treeRootElement = createElementTree(flow);
+    const treeRootElement = createElementTree(flow, verticalAlign);
     const result: Array<GridCellData> = [];
     // add single start element
     result.push({
