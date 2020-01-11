@@ -21,14 +21,19 @@ import { FlowModeler } from "../src/index";
             flow={{
                 firstElementId: "1",
                 elements: {
-                    "1": { data: { label: "First" }, nextElementId: "2" },
-                    "2": { data: { label: "Second" }, nextElementId: "3" },
-                    "3": { data: { label: "Condition" }, nextElements: [
-                        { id: "4.1", conditionData: { label: "Fulfilled" } },
-                        { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
-                    "4.1": { data: { label: "Option 1" }, nextElementId: "5.1" },
-                    "4.2": { data: { label: "Option 2" }},
-                    "5.1": { data: { label: "Follow-Up"}}
+                    "1": { data: { label: "Step A" }, nextElementId: "2" },
+                    "2": { data: { label: "Q1" }, nextElements: [
+                        { id: "3.1", conditionData: { label: "Yes" } },
+                        { id: "3.2", conditionData: { label: "No" } }] },
+                    "3.1": { data: { label: "Opt. B" }, nextElementId: "4" },
+                    "3.2": { data: { label: "Opt. C" }, nextElementId: "4" },
+                    "4": { data: { label: "Q2" }, nextElements: [
+                        { id: "5.1", conditionData: { label: "Yes" } },
+                        { id: "5.2", conditionData: { label: "No" } },
+                        { id: "5.3", conditionData: { label: "N/A" } }] },
+                    "5.1": { data: { label: "Opt. D" } },
+                    "5.2": { data: { label: "Opt. E" } },
+                    "5.3": { data: { label: "Opt. F" } }
                 }
             }}
             options={{ verticalAlign: "top" }}
@@ -48,14 +53,19 @@ If no `options`/`options.verticalAlign` prop is defined, the paths will be verti
             flow={{
                 firstElementId: "1",
                 elements: {
-                    "1": { data: { label: "First" }, nextElementId: "2" },
-                    "2": { data: { label: "Second" }, nextElementId: "3" },
-                    "3": { data: { label: "Condition" }, nextElements: [
-                        { id: "4.1", conditionData: { label: "Fulfilled" } },
-                        { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
-                    "4.1": { data: { label: "Option 1" }, nextElementId: "5.1" },
-                    "4.2": { data: { label: "Option 2" }},
-                    "5.1": { data: { label: "Follow-Up"}}
+                    "1": { data: { label: "Step A" }, nextElementId: "2" },
+                    "2": { data: { label: "Q1" }, nextElements: [
+                        { id: "3.1", conditionData: { label: "Yes" } },
+                        { id: "3.2", conditionData: { label: "No" } }] },
+                    "3.1": { data: { label: "Opt. B" }, nextElementId: "4" },
+                    "3.2": { data: { label: "Opt. C" }, nextElementId: "4" },
+                    "4": { data: { label: "Q2" }, nextElements: [
+                        { id: "5.1", conditionData: { label: "Yes" } },
+                        { id: "5.2", conditionData: { label: "No" } },
+                        { id: "5.3", conditionData: { label: "N/A" } }] },
+                    "5.1": { data: { label: "Opt. D" } },
+                    "5.2": { data: { label: "Opt. E" } },
+                    "5.3": { data: { label: "Opt. F" } }
                 }
             }}
             renderContent={({ elementData }) => <span>{elementData.label}</span>}
@@ -75,14 +85,19 @@ If no `options`/`options.verticalAlign` prop is defined, the paths will be verti
             flow={{
                 firstElementId: "1",
                 elements: {
-                    "1": { data: { label: "First" }, nextElementId: "2" },
-                    "2": { data: { label: "Second" }, nextElementId: "3" },
-                    "3": { data: { label: "Condition" }, nextElements: [
-                        { id: "4.1", conditionData: { label: "Fulfilled" } },
-                        { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
-                    "4.1": { data: { label: "Option 1" }, nextElementId: "5.1" },
-                    "4.2": { data: { label: "Option 2" }},
-                    "5.1": { data: { label: "Follow-Up"}}
+                    "1": { data: { label: "Step A" }, nextElementId: "2" },
+                    "2": { data: { label: "Q1" }, nextElements: [
+                        { id: "3.1", conditionData: { label: "Yes" } },
+                        { id: "3.2", conditionData: { label: "No" } }] },
+                    "3.1": { data: { label: "Opt. B" }, nextElementId: "4" },
+                    "3.2": { data: { label: "Opt. C" }, nextElementId: "4" },
+                    "4": { data: { label: "Q2" }, nextElements: [
+                        { id: "5.1", conditionData: { label: "Yes" } },
+                        { id: "5.2", conditionData: { label: "No" } },
+                        { id: "5.3", conditionData: { label: "N/A" } }] },
+                    "5.1": { data: { label: "Opt. D" } },
+                    "5.2": { data: { label: "Opt. E" } },
+                    "5.3": { data: { label: "Opt. F" } }
                 }
             }}
             options={{ verticalAlign: "bottom" }}
