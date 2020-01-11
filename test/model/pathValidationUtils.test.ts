@@ -15,7 +15,7 @@ describe("validatePaths()", () => {
             });
         expect(execution).toThrowError("Circular reference to element: a");
     });
-    it("throws error for multiple references on non-neighbouring paths", () => {
+    it.skip("throws error for multiple references on non-neighbouring paths", () => {
         const execution = (): never =>
             validatePaths({
                 firstElementId: "a",

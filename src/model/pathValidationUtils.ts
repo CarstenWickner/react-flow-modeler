@@ -31,7 +31,7 @@ const recursivelyCollectPaths = (
         recursivelyCollectPaths(targetElement.nextElementId, elements, currentPath, otherPaths);
     }
 };
-
+/*
 const filterPathsWithDifferingStart = ([elementId, pathsIncludingElement]: [string, Array<Array<string>>]): boolean => {
     if (pathsIncludingElement.length < 2) {
         return false;
@@ -43,10 +43,12 @@ const filterPathsWithDifferingStart = ([elementId, pathsIncludingElement]: [stri
     const leadingPathPart = pathsIncludingElement[0].slice(0, elementIndex);
     return pathsIncludingElement.some((path) => leadingPathPart.some((value, index) => value !== path[index]));
 };
+*/
 
 export const validatePaths = ({ firstElementId, elements }: FlowModelerProps["flow"]): void => {
     const paths: Array<Array<string>> = [];
     recursivelyCollectPaths(firstElementId, elements, [], paths);
+    /*
     const elementsOnMultiplePaths = Object.keys(elements)
         .map((elementId) => [elementId, paths.filter((path) => path.includes(elementId))] as [string, Array<Array<string>>])
         .filter(filterPathsWithDifferingStart);
@@ -62,4 +64,5 @@ export const validatePaths = ({ firstElementId, elements }: FlowModelerProps["fl
                 .join("', '")}'`
         );
     }
+    */
 };
