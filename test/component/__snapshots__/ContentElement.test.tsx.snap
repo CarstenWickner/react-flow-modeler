@@ -10,5 +10,8 @@ exports[`renders correctly without props 1`] = `
   >
     text
   </div>
+  <HorizontalStroke
+    className="optional"
+  />
 </Fragment>
 `;
