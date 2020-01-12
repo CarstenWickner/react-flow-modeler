@@ -724,7 +724,7 @@ describe("buildRenderData()", () => {
             );
         expect(execution).toThrowError("Circular reference to element: a");
     });
-    it.skip("throws error for multiple references on non-neighbouring paths", () => {
+    it("throws error for multiple references on non-neighbouring paths", () => {
         const execution = (): never =>
             buildRenderData(
                 {
