@@ -33,36 +33,6 @@ describe("checkForCircularReference()", () => {
 });
 
 describe("validatePaths()", () => {
-    const elementsForLinkingGatewayAndItsChild = {
-        a: { nextElements: [{ id: "b" }, { id: "c" }] },
-        b: ref("c"),
-        c: {}
-    };
-    const elementsForLinkingNeighbouringChildren = {
-        a: { nextElements: [{ id: "b" }, { id: "c" }] },
-        b: ref("d"),
-        c: ref("d"),
-        d: {}
-    };
-    const elementsForLinkingMultipleAncestorsOfNestedGateways = {
-        a: { nextElements: [{ id: "b" }, { id: "c" }, { id: "d" }, { id: "e" }] },
-        b: ref("bc"),
-        c: ref("bc"),
-        bc: ref("f"),
-        d: ref("de"),
-        e: ref("de"),
-        de: ref("f"),
-        f: {}
-    };
-    const elementsForLinkingNonNeighbouringPaths = {
-        a: { nextElements: [{ id: "b" }, { id: "c" }, { id: "d" }, { id: "e" }] },
-        b: ref("f"),
-        c: {},
-        d: ref("f"),
-        e: ref("b"),
-        f: {}
-    };
-
     describe.each`
         testDescription                | firstElementId | additionalElements
         ${"root"}                      | ${"a"}         | ${{}}
@@ -74,7 +44,9 @@ describe("validatePaths()", () => {
             it("accepts link between diverging gateway and one of its children", () => {
                 const elements = {
                     ...additionalElements,
-                    ...elementsForLinkingGatewayAndItsChild
+                    a: { nextElements: [{ id: "b" }, { id: "c" }] },
+                    b: ref("c"),
+                    c: {}
                 };
                 const treeRootElement = createElementTree({ firstElementId, elements }, "top");
                 const execution = (): never => validatePaths(treeRootElement);
@@ -83,7 +55,10 @@ describe("validatePaths()", () => {
             it("accepts link between neighbouring children of diverging gateway", () => {
                 const elements = {
                     ...additionalElements,
-                    ...elementsForLinkingNeighbouringChildren
+                    a: { nextElements: [{ id: "b" }, { id: "c" }] },
+                    b: ref("d"),
+                    c: ref("d"),
+                    d: {}
                 };
                 const treeRootElement = createElementTree({ firstElementId, elements }, "top");
                 const execution = (): never => validatePaths(treeRootElement);
@@ -92,7 +67,14 @@ describe("validatePaths()", () => {
             it("accepts links between multiple ancestors of nested diverging gateways", () => {
                 const elements = {
                     ...additionalElements,
-                    ...elementsForLinkingMultipleAncestorsOfNestedGateways
+                    a: { nextElements: [{ id: "b" }, { id: "c" }, { id: "d" }, { id: "e" }] },
+                    b: ref("bc"),
+                    c: ref("bc"),
+                    bc: ref("f"),
+                    d: ref("de"),
+                    e: ref("de"),
+                    de: ref("f"),
+                    f: {}
                 };
                 const treeRootElement = createElementTree({ firstElementId, elements }, "top");
                 const execution = (): never => validatePaths(treeRootElement);
@@ -101,16 +83,12 @@ describe("validatePaths()", () => {
             it("throws error for multiple references on non-neighbouring paths", () => {
                 const elements = {
                     ...additionalElements,
-                    ...elementsForLinkingNonNeighbouringPaths
-                };
-                const treeRootElement = createElementTree({ firstElementId, elements }, "top");
-                const execution = (): never => validatePaths(treeRootElement);
-                expect(execution).toThrowError("Multiple references only valid from neighbouring paths. Invalid references to: 'b', 'f'");
-            });
-            it("throws error for multiple references on non-neighbouring paths", () => {
-                const elements = {
-                    ...additionalElements,
-                    ...elementsForLinkingNonNeighbouringPaths
+                    a: { nextElements: [{ id: "b" }, { id: "c" }, { id: "d" }, { id: "e" }] },
+                    b: ref("f"),
+                    c: {},
+                    d: ref("f"),
+                    e: ref("b"),
+                    f: {}
                 };
                 const treeRootElement = createElementTree({ firstElementId, elements }, "top");
                 const execution = (): never => validatePaths(treeRootElement);
