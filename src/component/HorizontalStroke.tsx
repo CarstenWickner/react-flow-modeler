@@ -36,26 +36,38 @@ export class HorizontalStroke extends React.Component<
         }
     }
 
+    renderVerticalStroke(connectionType: ConnectionType, classNameSuffix: string): React.ReactNode {
+        if (connectionType) {
+            return (
+                <div className={`stroke-vertical ${getConnectionClassName(connectionType)}${classNameSuffix}`}>
+                    <div className="top" />
+                    <div className="center" />
+                    <div className="bottom" />
+                </div>
+            );
+        }
+        return null;
+    }
+
     render(): React.ReactNode {
         const { className, incomingConnection, outgoingConnection, children } = this.props;
         const classNameSuffix = className ? ` ${className}` : "";
         return (
             <>
-                {incomingConnection && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}${classNameSuffix}`} />}
+                {this.renderVerticalStroke(incomingConnection, classNameSuffix)}
                 {!children && <div className={`stroke-horizontal${classNameSuffix}`} />}
                 {children && (
                     <div className={`centered-line-wrapper${classNameSuffix}`}>
-                        <div className="wrapper-top-label" ref={this.topLabelRef}>
-                            {children}
+                        <div className="wrapper-top-label">
+                            <div ref={this.topLabelRef}>{children}</div>
                         </div>
-                        <div className={`stroke-horizontal${classNameSuffix}`} />
                         <div
                             className="wrapper-bottom-spacing"
-                            style={(this.topLabelRef.current && { height: `${this.state.wrapperTopHeight}px` }) || undefined}
+                            style={(this.topLabelRef.current && { minHeight: `${this.state.wrapperTopHeight}px` }) || undefined}
                         />
                     </div>
                 )}
-                {outgoingConnection && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}${classNameSuffix}`} />}
+                {this.renderVerticalStroke(outgoingConnection, classNameSuffix)}
             </>
         );
     }

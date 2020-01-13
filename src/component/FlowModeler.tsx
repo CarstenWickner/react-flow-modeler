@@ -54,7 +54,7 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
             case ElementType.ConnectElementToGateway:
                 return <HorizontalStroke outgoingConnection={cellData.connectionType} />;
             case ElementType.StrokeExtension:
-                return <div className="stroke-horizontal" />;
+                return <div className="stroke-horizontal optional" />;
             case ElementType.End:
                 return (
                     <>

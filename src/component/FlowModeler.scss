@@ -10,7 +10,7 @@
     $strokeColor: #01579b;
     $strokeStrength: 0.25em;
     $arrowSize: 1.5 * $strokeStrength;
-    $strokeLength: 2em - $arrowSize;
+    $strokeLength: 1.5em - $arrowSize;
     $standardElementSize: 2.5em;
     $gatewayElementSizeFactor: 2;
     $gatewayElementMargin: (sqrt($gatewayElementSizeFactor * $gatewayElementSizeFactor * 2) - $gatewayElementSizeFactor) * 1em / 2;
@@ -67,7 +67,8 @@
         }
         & .arrow,
         & .stroke-horizontal,
-        & .stroke-vertical {
+        & .stroke-vertical > *,
+        & .centered-line-wrapper::before {
             background-color: $strokeColor;
         }
         & .arrow {
@@ -92,7 +93,7 @@
         & .stroke-horizontal {
             height: $strokeStrength;
             min-width: $strokeLength;
-            flex-grow: 1;
+            flex: 1 0 auto;
 
             &.converging-gateway {
                 min-width: $gatewayElementMargin;
@@ -102,42 +103,50 @@
             }
         }
         & .stroke-vertical {
+            display: flex;
+            flex-direction: column;
+            align-self: stretch;
             width: $strokeStrength;
-            &.full-height {
-                height: 100%;
+            & .center {
+                height: $strokeStrength;
+                width: $strokeStrength;
             }
-            &.bottom-half,
-            &.top-half {
-                height: calc(50% + #{$strokeStrength / 2});
+            & .top,
+            & .bottom {
+                flex-grow: 1;
+                width: $strokeStrength;
             }
-            &.bottom-half {
-                margin-top: auto;
-            }
-            &.top-half {
-                margin-bottom: auto;
+            &.bottom-half .top,
+            &.top-half .bottom {
+                background-color: transparent;
             }
             & + .arrow {
                 margin-left: -$strokeStrength;
             }
         }
         & .centered-line-wrapper {
+            position: relative;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-    
-            & .wrapper-top-label,
-            & .wrapper-bottom-spacing {
-                flex-grow: 1;
-            }
+
             & .wrapper-top-label {
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-end;
                 align-content: center;
                 padding: 0 0.25em;
+                margin-bottom: $strokeStrength / 2;
             }
-            & .stroke-horizontal {
-                flex-grow: 0;
+            &::before {
+                position: absolute;
+                content: "";
+                height: $strokeStrength;
+                width: 100%;
+                top: calc(50% - #{$strokeStrength / 2});
+            }
+            & .wrapper-bottom-spacing {
+                margin-top: $strokeStrength / 2;
             }
         }
     }
