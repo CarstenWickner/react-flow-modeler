@@ -8,16 +8,15 @@ exports[`renders correctly for incomingConnection = single 1`] = `
     <div
       className="wrapper-top-label"
     >
-      text
+      <div>
+        text
+      </div>
     </div>
-    <div
-      className="stroke-horizontal"
-    />
     <div
       className="wrapper-bottom-spacing"
       style={
         Object {
-          "height": "30px",
+          "minHeight": "30px",
         }
       }
     />
@@ -33,11 +32,10 @@ exports[`renders correctly with minimal/default props 1`] = `
     <div
       className="wrapper-top-label"
     >
-      label
+      <div>
+        label
+      </div>
     </div>
-    <div
-      className="stroke-horizontal"
-    />
     <div
       className="wrapper-bottom-spacing"
     />

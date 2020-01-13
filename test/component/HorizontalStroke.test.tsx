@@ -55,16 +55,17 @@ describe("applies given className", () => {
         );
         expect(component.find(".stroke-vertical.bottom-half.test-class").exists()).toBe(true);
         expect(component.find(".centered-line-wrapper.test-class").exists()).toBe(true);
-        expect(component.find(".stroke-horizontal.test-class").exists()).toBe(true);
-        expect(component.find(".centered-line-wrapper.test-class .stroke-horizontal.test-class").exists()).toBe(true);
+        expect(component.find(".stroke-horizontal.test-class").exists()).toBe(false);
     });
     it("for outgoing connection", () => {
         const component = shallow(<HorizontalStroke className="test-class" outgoingConnection={ConnectionType.Last} />);
+        expect(component.find(".centered-line-wrapper.test-class").exists()).toBe(false);
         expect(component.find(".stroke-horizontal.test-class").exists()).toBe(true);
         expect(component.find(".stroke-vertical.top-half.test-class").exists()).toBe(true);
     });
     it("when there is no connection", () => {
         const component = shallow(<HorizontalStroke className="test-class" outgoingConnection={ConnectionType.Last} />);
+        expect(component.find(".centered-line-wrapper.test-class").exists()).toBe(false);
         expect(component.find(".stroke-horizontal.test-class").exists()).toBe(true);
     });
 });
