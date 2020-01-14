@@ -36,25 +36,12 @@ export class HorizontalStroke extends React.Component<
         }
     }
 
-    renderVerticalStroke(connectionType: ConnectionType, classNameSuffix: string): React.ReactNode {
-        if (connectionType) {
-            return (
-                <div className={`stroke-vertical ${getConnectionClassName(connectionType)}${classNameSuffix}`}>
-                    <div className="top" />
-                    <div className="center" />
-                    <div className="bottom" />
-                </div>
-            );
-        }
-        return null;
-    }
-
     render(): React.ReactNode {
         const { className, incomingConnection, outgoingConnection, children } = this.props;
         const classNameSuffix = className ? ` ${className}` : "";
         return (
             <>
-                {this.renderVerticalStroke(incomingConnection, classNameSuffix)}
+                {incomingConnection && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}${classNameSuffix}`} />}
                 {!children && <div className={`stroke-horizontal${classNameSuffix}`} />}
                 {children && (
                     <div className={`centered-line-wrapper${classNameSuffix}`}>
@@ -67,7 +54,7 @@ export class HorizontalStroke extends React.Component<
                         />
                     </div>
                 )}
-                {this.renderVerticalStroke(outgoingConnection, classNameSuffix)}
+                {outgoingConnection && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}${classNameSuffix}`} />}
             </>
         );
     }
