@@ -16,7 +16,12 @@ module.exports = async ({ config }) => {
         test: /\.tsx?$/,
         use: [
             {
-                loader: "awesome-typescript-loader"
+                loader: "awesome-typescript-loader",
+                options: {
+                    useBabel: true,
+                    babelOptions: { presets: ["@babel/env"] },
+                    babelCore: "@babel/core"
+                }
             }, {
                 loader: "react-docgen-typescript-loader",
                 options: {

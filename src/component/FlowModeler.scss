@@ -67,7 +67,7 @@
         }
         & .arrow,
         & .stroke-horizontal,
-        & .stroke-vertical > *,
+        & .stroke-vertical::before,
         & .centered-line-wrapper::before {
             background-color: $strokeColor;
         }
@@ -77,7 +77,7 @@
             position: relative;
             margin-right: $arrowSize;
     
-            &:after {
+            &::after {
                 content: "";
                 height: 0;
                 width: 0;
@@ -103,22 +103,27 @@
             }
         }
         & .stroke-vertical {
+            position: relative;
             display: flex;
             flex-direction: column;
             align-self: stretch;
             width: $strokeStrength;
-            & .center {
-                height: $strokeStrength;
+            &::before {
+                position: absolute;
+                content: "";
                 width: $strokeStrength;
             }
-            & .top,
-            & .bottom {
-                flex-grow: 1;
-                width: $strokeStrength;
+            &.top-half::before {
+                height: calc(50% + #{$strokeStrength / 2});
+                top: 0;
             }
-            &.bottom-half .top,
-            &.top-half .bottom {
-                background-color: transparent;
+            &.full-height::before {
+                height: 100%;
+                top: 0;
+            }
+            &.bottom-half::before {
+                height: calc(50% + #{$strokeStrength / 2});
+                bottom: 0;
             }
             & + .arrow {
                 margin-left: -$strokeStrength;
