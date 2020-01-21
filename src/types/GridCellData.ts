@@ -49,6 +49,7 @@ export interface ElementToGatewayConnectorCellData extends GridCellCoordinates {
 }
 export interface GatewayConvergingCellData extends GridCellCoordinates {
     type: ElementType.GatewayConverging;
+    followingElementId?: string;
 }
 
 export type GridCellData =

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ConnectionType } from "../types/GridCellData";
+import { ConnectionType, ElementType } from "../types/GridCellData";
 
 const getConnectionClassName = (connectionType: ConnectionType): string => {
     switch (connectionType) {
@@ -14,11 +14,19 @@ const getConnectionClassName = (connectionType: ConnectionType): string => {
 };
 
 export class HorizontalStroke extends React.Component<
-    { className?: string; children?: React.ReactNode } & (
-        | { incomingConnection: ConnectionType; outgoingConnection?: never }
-        | { incomingConnection?: never; outgoingConnection?: never }
-        | { incomingConnection?: never; outgoingConnection: ConnectionType }
-    ),
+    | ({
+          outgoingConnection?: never;
+          optional?: never;
+          selected: boolean;
+          onSelect: (followingElementId?: string) => void;
+      } & (
+          | { incomingConnection?: ConnectionType; followingElementId?: string; gatewayId?: never }
+          | { incomingConnection?: never; followingElementId?: never; gatewayId: string }
+      ))
+    | ({ incomingConnection?: never; followingElementId?: never; selected?: never; onSelect?: never } & (
+          | { outgoingConnection?: never; optional?: boolean }
+          | { outgoingConnection: ConnectionType; optional?: never }
+      )),
     { wrapperTopHeight: number }
 > {
     readonly topLabelRef = React.createRef<HTMLDivElement>();
@@ -36,25 +44,34 @@ export class HorizontalStroke extends React.Component<
         }
     }
 
+    onTopLabelClick = (event: React.MouseEvent): void => {
+        const { onSelect, followingElementId } = this.props;
+        console.log(`selecting connector to: ${followingElementId}`);
+        onSelect(followingElementId);
+        event.stopPropagation();
+    };
+
     render(): React.ReactNode {
-        const { className, incomingConnection, outgoingConnection, children } = this.props;
-        const classNameSuffix = className ? ` ${className}` : "";
+        const { incomingConnection, outgoingConnection, optional, selected, children } = this.props;
         return (
             <>
-                {incomingConnection && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}${classNameSuffix}`} />}
-                {!children && <div className={`stroke-horizontal${classNameSuffix}`} />}
-                {children && (
-                    <div className={`centered-line-wrapper${classNameSuffix}`}>
-                        <div className="wrapper-top-label">
-                            <div ref={this.topLabelRef}>{children}</div>
-                        </div>
-                        <div
-                            className="wrapper-bottom-spacing"
-                            style={(this.topLabelRef.current && { minHeight: `${this.state.wrapperTopHeight}px` }) || undefined}
-                        />
-                    </div>
-                )}
-                {outgoingConnection && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}${classNameSuffix}`} />}
+                {incomingConnection && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}`} />}
+                <div className={`stroke-horizontal${selected ? " selected" : ""}${optional ? " optional" : ""}`}>
+                    {children && (
+                        <>
+                            <div className="top-label" onClick={this.onTopLabelClick}>
+                                <div ref={this.topLabelRef} onClick={this.onTopLabelClick}>
+                                    {children}
+                                </div>
+                            </div>
+                            <div
+                                className="bottom-spacing"
+                                style={(this.topLabelRef.current && { minHeight: `${this.state.wrapperTopHeight}px` }) || undefined}
+                            />
+                        </>
+                    )}
+                </div>
+                {outgoingConnection && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}`} />}
             </>
         );
     }

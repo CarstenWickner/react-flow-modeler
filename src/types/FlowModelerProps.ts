@@ -18,6 +18,7 @@ export interface FlowModelerProps {
     };
     options?: {
         verticalAlign?: "top" | "middle" | "bottom";
+        readOnly?: boolean;
     };
     renderContent: (params: { elementData: { [key: string]: unknown }; contentElementId: string }) => React.ReactNode;
     renderGatewayConditionType?: (params: { gatewayData: { [key: string]: unknown }; gatewayElementId: string }) => React.ReactNode;

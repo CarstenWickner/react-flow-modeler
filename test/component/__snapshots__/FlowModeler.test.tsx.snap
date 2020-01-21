@@ -3,6 +3,7 @@
 exports[`renders correctly with all render props 1`] = `
 <div
   className="flow-modeler"
+  onClick={[Function]}
   style={
     Object {
       "gridTemplateColumns": "repeat(8, max-content)",
@@ -16,6 +17,7 @@ exports[`renders correctly with all render props 1`] = `
   >
     <div
       className="flow-element start-element"
+      onClick={[Function]}
     />
   </Component>
   <Component
@@ -23,22 +25,29 @@ exports[`renders correctly with all render props 1`] = `
     key="2-1"
     rowStartIndex={3}
   >
-    <Component>
+    <ContentElement
+      elementId="1"
+      onSelect={[Function]}
+      selected={false}
+    >
       First Node
-    </Component>
+    </ContentElement>
   </Component>
   <Component
     colStartIndex={3}
     key="3-1"
     rowStartIndex={3}
   >
-    <Component
-      type="diverging"
+    <Gateway
+      gatewayId="2"
+      onSelect={[Function]}
+      selected={false}
+      type={3}
     >
       <label>
         Alternatives
       </label>
-    </Component>
+    </Gateway>
   </Component>
   <Component
     colStartIndex={4}
@@ -46,7 +55,10 @@ exports[`renders correctly with all render props 1`] = `
     rowStartIndex={1}
   >
     <HorizontalStroke
+      followingElementId={null}
       incomingConnection={1}
+      onSelect={[Function]}
+      selected={false}
     >
       <span>
         Stop Here
@@ -68,8 +80,11 @@ exports[`renders correctly with all render props 1`] = `
     key="7-1"
     rowStartIndex={3}
   >
-    <Component
-      type="converging"
+    <Gateway
+      followingElementId={null}
+      onSelect={[Function]}
+      selected={false}
+      type={4}
     />
   </Component>
   <Component
@@ -78,10 +93,11 @@ exports[`renders correctly with all render props 1`] = `
     rowStartIndex={3}
   >
     <div
-      className="arrow"
+      className="stroke-horizontal arrow"
     />
     <div
       className="flow-element end-element"
+      onClick={[Function]}
     />
   </Component>
   <Component
@@ -90,7 +106,10 @@ exports[`renders correctly with all render props 1`] = `
     rowStartIndex={2}
   >
     <HorizontalStroke
+      followingElementId="3.2"
       incomingConnection={2}
+      onSelect={[Function]}
+      selected={false}
     >
       <span>
         Continue
@@ -102,9 +121,13 @@ exports[`renders correctly with all render props 1`] = `
     key="5-2"
     rowStartIndex={2}
   >
-    <Component>
+    <ContentElement
+      elementId="3.2"
+      onSelect={[Function]}
+      selected={false}
+    >
       Second Node
-    </Component>
+    </ContentElement>
   </Component>
   <Component
     colEndIndex={7}
@@ -122,7 +145,10 @@ exports[`renders correctly with all render props 1`] = `
     rowStartIndex={3}
   >
     <HorizontalStroke
+      followingElementId={null}
       incomingConnection={3}
+      onSelect={[Function]}
+      selected={false}
     >
       <span>
         Unless it is already done
@@ -145,6 +171,7 @@ exports[`renders correctly with all render props 1`] = `
 exports[`renders correctly with minimal/default props 1`] = `
 <div
   className="flow-modeler"
+  onClick={[Function]}
   style={
     Object {
       "gridTemplateColumns": "repeat(8, max-content)",
@@ -159,6 +186,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   >
     <div
       className="flow-element start-element"
+      onClick={[Function]}
     />
   </Component>
   <Component
@@ -167,9 +195,13 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowEndIndex={4}
     rowStartIndex={1}
   >
-    <Component>
+    <ContentElement
+      elementId="1"
+      onSelect={[Function]}
+      selected={false}
+    >
       First Node
-    </Component>
+    </ContentElement>
   </Component>
   <Component
     colStartIndex={3}
@@ -177,8 +209,11 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowEndIndex={4}
     rowStartIndex={1}
   >
-    <Component
-      type="diverging"
+    <Gateway
+      gatewayId="2"
+      onSelect={[Function]}
+      selected={false}
+      type={3}
     />
   </Component>
   <Component
@@ -188,7 +223,10 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowStartIndex={1}
   >
     <HorizontalStroke
+      followingElementId={null}
       incomingConnection={1}
+      onSelect={[Function]}
+      selected={false}
     />
   </Component>
   <Component
@@ -208,8 +246,11 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowEndIndex={4}
     rowStartIndex={1}
   >
-    <Component
-      type="converging"
+    <Gateway
+      followingElementId={null}
+      onSelect={[Function]}
+      selected={false}
+      type={4}
     />
   </Component>
   <Component
@@ -219,10 +260,11 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowStartIndex={1}
   >
     <div
-      className="arrow"
+      className="stroke-horizontal arrow"
     />
     <div
       className="flow-element end-element"
+      onClick={[Function]}
     />
   </Component>
   <Component
@@ -232,7 +274,10 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowStartIndex={2}
   >
     <HorizontalStroke
+      followingElementId="3.2"
       incomingConnection={2}
+      onSelect={[Function]}
+      selected={false}
     />
   </Component>
   <Component
@@ -241,9 +286,13 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowEndIndex={3}
     rowStartIndex={2}
   >
-    <Component>
+    <ContentElement
+      elementId="3.2"
+      onSelect={[Function]}
+      selected={false}
+    >
       Second Node
-    </Component>
+    </ContentElement>
   </Component>
   <Component
     colEndIndex={7}
@@ -263,7 +312,10 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowStartIndex={3}
   >
     <HorizontalStroke
+      followingElementId={null}
       incomingConnection={3}
+      onSelect={[Function]}
+      selected={false}
     />
   </Component>
   <Component

@@ -11,15 +11,76 @@ import { FlowModelerProps } from "../types/FlowModelerProps";
 
 import "./FlowModeler.scss";
 
-export class FlowModeler extends React.Component<FlowModelerProps> {
+type SelectableElementType =
+    | ElementType.Start
+    | ElementType.Content
+    | ElementType.GatewayDiverging
+    | ElementType.GatewayConverging
+    | ElementType.ConnectGatewayToElement
+    | ElementType.End;
+
+interface FlowModelerState {
+    selectedType: SelectableElementType;
+    selectedId?: string;
+}
+
+export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerState> {
+    state: FlowModelerState = { selectedType: null, selectedId: null };
+
+    isTargetSelected(type: SelectableElementType, id?: string): boolean {
+        return this.state.selectedType === type && this.state.selectedId === id;
+    }
+
+    onSelect = (selectedType: SelectableElementType, selectedId?: string): void => {
+        const { options } = this.props;
+        if ((!options || !options.readOnly) && !this.isTargetSelected(selectedType, selectedId)) {
+            this.setState({
+                selectedType,
+                selectedId
+            });
+        }
+    };
+
+    onClickStart = (event: React.MouseEvent): void => {
+        this.onSelect(ElementType.Start);
+        event.stopPropagation();
+    };
+
+    onClickEnd = (event: React.MouseEvent): void => {
+        this.onSelect(ElementType.End);
+        event.stopPropagation();
+    };
+
+    onSelectContent = (elementId: string): void => this.onSelect(ElementType.Content, elementId);
+
+    onSelectGatewayDiverging = (gatewayId: string): void => this.onSelect(ElementType.GatewayDiverging, gatewayId);
+
+    onSelectGatewayConverging = (followingElementId?: string): void => this.onSelect(ElementType.GatewayConverging, followingElementId);
+
+    onSelectConnectGatewayToElement = (followingElementId?: string): void => this.onSelect(ElementType.ConnectGatewayToElement, followingElementId);
+
+    clearSelection = (event: React.MouseEvent): void => {
+        this.onSelect(ElementType.Content, null);
+        event.stopPropagation();
+    };
+
     renderFlowElement(cellData: GridCellData): React.ReactNode {
         switch (cellData.type) {
             case ElementType.Start:
-                return <div className="flow-element start-element" />;
+                const startSelected = this.isTargetSelected(cellData.type);
+                return (
+                    <>
+                        <div className={`flow-element start-element${startSelected ? " selected" : ""}`} onClick={this.onClickStart} />
+                    </>
+                );
             case ElementType.Content:
                 const { renderContent } = this.props;
                 return (
-                    <ContentElement>
+                    <ContentElement
+                        elementId={cellData.elementId}
+                        selected={this.isTargetSelected(cellData.type, cellData.elementId)}
+                        onSelect={this.onSelectContent}
+                    >
                         {renderContent({
                             elementData: cellData.data,
                             contentElementId: cellData.elementId
@@ -29,7 +90,12 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
             case ElementType.GatewayDiverging:
                 const { renderGatewayConditionType } = this.props;
                 return (
-                    <Gateway type="diverging">
+                    <Gateway
+                        type={cellData.type}
+                        gatewayId={cellData.gatewayId}
+                        selected={this.isTargetSelected(cellData.type, cellData.gatewayId)}
+                        onSelect={this.onSelectGatewayDiverging}
+                    >
                         {renderGatewayConditionType &&
                             renderGatewayConditionType({
                                 gatewayData: cellData.data,
@@ -38,16 +104,29 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
                     </Gateway>
                 );
             case ElementType.GatewayConverging:
-                return <Gateway type="converging" />;
+                return (
+                    <Gateway
+                        type={cellData.type}
+                        followingElementId={cellData.followingElementId}
+                        selected={this.isTargetSelected(cellData.type, cellData.followingElementId)}
+                        onSelect={this.onSelectGatewayConverging}
+                    />
+                );
             case ElementType.ConnectGatewayToElement:
                 const { renderGatewayConditionValue } = this.props;
+                const branchElementId = cellData.elementId;
                 return (
-                    <HorizontalStroke incomingConnection={cellData.connectionType}>
+                    <HorizontalStroke
+                        incomingConnection={cellData.connectionType}
+                        followingElementId={branchElementId}
+                        selected={this.isTargetSelected(cellData.type, branchElementId)}
+                        onSelect={this.onSelectConnectGatewayToElement}
+                    >
                         {renderGatewayConditionValue &&
                             renderGatewayConditionValue({
                                 conditionData: cellData.data,
-                                branchElementId: cellData.elementId,
-                                gatewayElementId: cellData.gatewayId
+                                gatewayElementId: cellData.gatewayId,
+                                branchElementId
                             })}
                     </HorizontalStroke>
                 );
@@ -58,37 +137,42 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
             case ElementType.End:
                 return (
                     <>
-                        <div className="arrow" />
-                        <div className="flow-element end-element" />
+                        <div className="stroke-horizontal arrow" />
+                        <div
+                            className={`flow-element end-element${this.isTargetSelected(cellData.type) ? " selected" : ""}`}
+                            onClick={this.onClickEnd}
+                        />
                     </>
                 );
         }
     }
 
-    renderGridCell = ((cellData: GridCellData): React.ReactNode => {
+    renderGridCell = (): ((cellData: GridCellData) => React.ReactNode) => {
         const { options } = this.props;
-        const verticalAlign = options && options.verticalAlign;
-        const { colStartIndex, colEndIndex, rowStartIndex, rowEndIndex } = cellData;
-        return (
-            <GridCell
-                colStartIndex={colStartIndex}
-                colEndIndex={colEndIndex}
-                rowStartIndex={verticalAlign === "bottom" && rowEndIndex ? rowEndIndex - 1 : rowStartIndex}
-                rowEndIndex={verticalAlign === "top" || verticalAlign === "bottom" ? undefined : rowEndIndex}
-                key={`${colStartIndex}-${rowStartIndex}`}
-            >
-                {this.renderFlowElement(cellData)}
-            </GridCell>
-        );
-    }).bind(this);
+        const { verticalAlign } = options || {};
+        return (cellData: GridCellData): React.ReactNode => {
+            const { colStartIndex, colEndIndex, rowStartIndex, rowEndIndex } = cellData;
+            return (
+                <GridCell
+                    colStartIndex={colStartIndex}
+                    colEndIndex={colEndIndex}
+                    rowStartIndex={verticalAlign === "bottom" && rowEndIndex ? rowEndIndex - 1 : rowStartIndex}
+                    rowEndIndex={verticalAlign === "top" || verticalAlign === "bottom" ? undefined : rowEndIndex}
+                    key={`${colStartIndex}-${rowStartIndex}`}
+                >
+                    {this.renderFlowElement(cellData)}
+                </GridCell>
+            );
+        };
+    };
 
     render(): React.ReactElement {
         const { flow, options } = this.props;
         const verticalModelAlign = options && options.verticalAlign === "bottom" ? "bottom" : "top";
         const { gridCellData, columnCount } = buildRenderData(flow, verticalModelAlign);
         return (
-            <div className="flow-modeler" style={{ gridTemplateColumns: `repeat(${columnCount}, max-content)` }}>
-                {gridCellData.map(this.renderGridCell)}
+            <div className="flow-modeler" onClick={this.clearSelection} style={{ gridTemplateColumns: `repeat(${columnCount}, max-content)` }}>
+                {gridCellData.map(this.renderGridCell())}
             </div>
         );
     }
@@ -115,7 +199,8 @@ export class FlowModeler extends React.Component<FlowModelerProps> {
             ).isRequired
         }).isRequired,
         options: PropTypes.shape({
-            verticalAlign: PropTypes.oneOf(["top", "middle", "bottom"])
+            verticalAlign: PropTypes.oneOf(["top", "middle", "bottom"]),
+            readOnly: PropTypes.bool
         }),
         renderContent: PropTypes.func.isRequired,
         renderGatewayConditionType: PropTypes.func,

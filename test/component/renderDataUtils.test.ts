@@ -120,6 +120,7 @@ describe("buildRenderData()", () => {
                 },
                 Object {
                   "colStartIndex": 5,
+                  "followingElementId": null,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
                   "type": 4,
@@ -215,6 +216,7 @@ describe("buildRenderData()", () => {
                 },
                 Object {
                   "colStartIndex": 6,
+                  "followingElementId": null,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
                   "type": 4,
@@ -316,6 +318,7 @@ describe("buildRenderData()", () => {
                 },
                 Object {
                   "colStartIndex": 6,
+                  "followingElementId": null,
                   "rowEndIndex": 4,
                   "rowStartIndex": 1,
                   "type": 4,
@@ -458,6 +461,7 @@ describe("buildRenderData()", () => {
                 },
                 Object {
                   "colStartIndex": 10,
+                  "followingElementId": null,
                   "rowEndIndex": 7,
                   "rowStartIndex": 1,
                   "type": 4,
@@ -670,6 +674,7 @@ describe("buildRenderData()", () => {
                 },
                 Object {
                   "colStartIndex": 6,
+                  "followingElementId": "c",
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
                   "type": 4,

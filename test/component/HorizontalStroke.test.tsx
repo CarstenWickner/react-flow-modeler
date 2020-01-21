@@ -6,11 +6,11 @@ import { ConnectionType } from "../../src/types/GridCellData";
 
 describe("renders correctly", () => {
     it("with minimal/default props", () => {
-        const component = shallow(<HorizontalStroke incomingConnection={null}>label</HorizontalStroke>);
+        const component = shallow(<HorizontalStroke>label</HorizontalStroke>);
         expect(component).toMatchSnapshot();
     });
     it("for incomingConnection = single", () => {
-        const component = mount(<HorizontalStroke incomingConnection={null}>text</HorizontalStroke>);
+        const component = mount(<HorizontalStroke>text</HorizontalStroke>);
         expect(component.find(".stroke-vertical").exists()).toBe(false);
         const renderedInstance = component.instance() as HorizontalStroke;
         expect(renderedInstance.state.wrapperTopHeight).toBe(0);
@@ -31,7 +31,9 @@ describe("renders correctly", () => {
             ${"w/o"}
         `("$withLabel label", ({ withLabel }) => {
             const component = shallow(
-                <HorizontalStroke incomingConnection={incomingConnection}>{withLabel === "w/" ? "text" : null}</HorizontalStroke>
+                <HorizontalStroke incomingConnection={incomingConnection} selected={false} onSelect={(): void => {}}>
+                    {withLabel === "w/" ? "text" : null}
+                </HorizontalStroke>
             );
             expect(component.find(`.stroke-vertical.${verticalStrokeClassName}`).exists()).toBe(true);
         });
@@ -46,26 +48,9 @@ describe("renders correctly", () => {
         expect(component.find(`.stroke-vertical.${verticalStrokeClassName}`).exists()).toBe(true);
     });
 });
-describe("applies given className", () => {
-    it("for incoming connection", () => {
-        const component = shallow(
-            <HorizontalStroke className="test-class" incomingConnection={ConnectionType.First}>
-                {"child text"}
-            </HorizontalStroke>
-        );
-        expect(component.find(".stroke-vertical.bottom-half.test-class").exists()).toBe(true);
-        expect(component.find(".centered-line-wrapper.test-class").exists()).toBe(true);
-        expect(component.find(".stroke-horizontal.test-class").exists()).toBe(false);
-    });
-    it("for outgoing connection", () => {
-        const component = shallow(<HorizontalStroke className="test-class" outgoingConnection={ConnectionType.Last} />);
-        expect(component.find(".centered-line-wrapper.test-class").exists()).toBe(false);
-        expect(component.find(".stroke-horizontal.test-class").exists()).toBe(true);
-        expect(component.find(".stroke-vertical.top-half.test-class").exists()).toBe(true);
-    });
+describe("marks optional stroke via css class", () => {
     it("when there is no connection", () => {
-        const component = shallow(<HorizontalStroke className="test-class" outgoingConnection={ConnectionType.Last} />);
-        expect(component.find(".centered-line-wrapper.test-class").exists()).toBe(false);
-        expect(component.find(".stroke-horizontal.test-class").exists()).toBe(true);
+        const component = shallow(<HorizontalStroke optional />);
+        expect(component.find(".stroke-horizontal.optional").exists()).toBe(true);
     });
 });

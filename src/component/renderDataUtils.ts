@@ -46,7 +46,8 @@ const collectGridCellData = (
             colStartIndex: renderElement.getColumnIndex() - 1,
             rowStartIndex,
             rowEndIndex,
-            type: ElementType.GatewayConverging
+            type: ElementType.GatewayConverging,
+            followingElementId: renderElement.getId()
         });
     } else if (triggeringRenderElement && getColumnIndexAfter(triggeringRenderElement) < renderElement.getColumnIndex()) {
         // fill gaps between elements

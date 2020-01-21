@@ -5,7 +5,6 @@ export const GridCell: React.FunctionComponent<{
     colEndIndex?: number;
     rowStartIndex: number;
     rowEndIndex?: number;
-    children: React.ReactNode;
 }> = ({ colStartIndex, colEndIndex, rowStartIndex, rowEndIndex, children }) => (
     <div
         className="grid-cell"

@@ -9,7 +9,7 @@ exports[`renders correctly as converging gateway 1`] = `
     className="flow-element gateway-element converging"
   />
   <HorizontalStroke
-    className="optional"
+    optional={true}
   />
 </Fragment>
 `;

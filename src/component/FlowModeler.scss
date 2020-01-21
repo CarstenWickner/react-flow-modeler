@@ -3,26 +3,29 @@
 .flow-modeler {
     display: grid;
     padding: 1em;
-    overflow-y: auto;
     align-content: stretch;
     justify-content: stretch;
 
     $strokeColor: #01579b;
     $strokeStrength: 0.25em;
     $arrowSize: 1.5 * $strokeStrength;
-    $strokeLength: 1.5em - $arrowSize;
-    $standardElementSize: 2.5em;
-    $gatewayElementSizeFactor: 2;
-    $gatewayElementMargin: (sqrt($gatewayElementSizeFactor * $gatewayElementSizeFactor * 2) - $gatewayElementSizeFactor) * 1em / 2;
+    $strokeLength: 1.75em;
+    $elementSizeFactor: 2.5;
+    $standardElementSize: $elementSizeFactor * 1em;
+    $gatewayBorderSize: sqrt($elementSizeFactor * $elementSizeFactor * 2) * 1em / 2;
     $standardElementColor: #808080;
+    $selectionColor: #ffab00;
 
     & .grid-cell {
         display: flex;
         align-items: center;
         align-content: center;
         min-height: $strokeLength;
+        position: relative;
+
         & .flow-element {
             display: flex;
+            position: relative;
             background-color: white;
             margin: $strokeStrength 0;
 
@@ -40,6 +43,10 @@
                 width: $standardElementSize - (4 * 0.9 * $strokeStrength);
                 border-radius: 50%;
                 margin: $strokeStrength ($strokeStrength * 0.9);
+
+                &.selected {
+                    box-shadow: 0 0 0 ($strokeStrength * 0.9) $selectionColor;
+                }
             }
             &.content-element {
                 border: ($strokeStrength / 3) solid $standardElementColor;
@@ -48,58 +55,102 @@
                 min-height: $standardElementSize / 2;
             }
             &.gateway-element {
-                border: ($strokeStrength / 2) solid $standardElementColor;
-                height: $gatewayElementSizeFactor * 1em;
-                width: $gatewayElementSizeFactor * 1em;
-                transform: rotate(45deg);
-                margin: 0 $gatewayElementMargin;
+                position: relative;
+                height: $standardElementSize;
+                width: $standardElementSize;
+                margin: 0 $strokeStrength / 2;
+                z-index: 1;
+
                 display: flex;
                 align-items: center;
                 justify-content: center;
 
-                &:before {
+                &::before {
+                    content: "";
+                    position: absolute;
+                    transform: rotate(45deg);
+                    border: ($strokeStrength / 2) solid $standardElementColor;
+                    height: $gatewayBorderSize;
+                    width: $gatewayBorderSize;
+                    background-color: transparent;
+                }
+                &::after {
                     content: "X";
-                    transform: rotate(-45deg);
-                    font: bold 1.8em Arial, sans-serif;
+                    position: absolute;
+                    font: bold 1.75em Arial, sans-serif;
                     color: $standardElementColor;
                 }
             }
+            &.start-element.selected,
+            &.content-element.selected,
+            &.gateway-element.selected::before {
+                border-color: $selectionColor;
+            }
         }
-        & .arrow,
-        & .stroke-horizontal,
-        & .stroke-vertical::before,
-        & .centered-line-wrapper::before {
+        & .menu {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            left: calc(100% + #{$strokeStrength});
+            width: 1em;
+            margin: auto;
+            border: ($strokeStrength / 3) solid $selectionColor;
+            border-radius: 0.25em;
+            background-color: white;
+            z-index: 1;
+            padding: $strokeStrength;
+        }
+        & .stroke-horizontal::before,
+        & .stroke-vertical::before {
             background-color: $strokeColor;
         }
-        & .arrow {
-            height: $strokeStrength;
-            width: $strokeLength;
-            position: relative;
-            margin-right: $arrowSize;
-    
-            &::after {
-                content: "";
-                height: 0;
-                width: 0;
-                position: absolute;
-                right: 0;
-                top: -$strokeStrength;
-                margin-right: -$arrowSize;
-                border-top: $arrowSize solid transparent;
-                border-left: $arrowSize solid $strokeColor;
-                border-bottom: $arrowSize solid transparent;
-            }
+        & .stroke-horizontal.selected::before {
+            background-color: $selectionColor;
         }
         & .stroke-horizontal {
-            height: $strokeStrength;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
             min-width: $strokeLength;
-            flex: 1 0 auto;
 
-            &.converging-gateway {
-                min-width: $gatewayElementMargin;
-            }
             &.optional {
                 min-width: 0;
+            }
+            &.arrow {
+                margin-right: $arrowSize;
+        
+                &::after {
+                    content: "";
+                    height: 0;
+                    width: 0;
+                    position: absolute;
+                    right: 0;
+                    top: calc(50% - #{$arrowSize});
+                    margin-right: -$arrowSize;
+                    border-top: $arrowSize solid transparent;
+                    border-left: $arrowSize solid $strokeColor;
+                    border-bottom: $arrowSize solid transparent;
+                }
+            }
+            &::before {
+                position: absolute;
+                content: "";
+                height: $strokeStrength;
+                width: 100%;
+                top: calc(50% - #{$strokeStrength / 2});
+            }
+            & > .top-label {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                align-content: center;
+                padding: 0 0.25em;
+                margin-bottom: $strokeStrength / 2;
+            }
+            & > .bottom-spacing {
+                margin-top: $strokeStrength / 2;
             }
         }
         & .stroke-vertical {
@@ -125,34 +176,8 @@
                 height: calc(50% + #{$strokeStrength / 2});
                 bottom: 0;
             }
-            & + .arrow {
-                margin-left: -$strokeStrength;
-            }
         }
-        & .centered-line-wrapper {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
 
-            & .wrapper-top-label {
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end;
-                align-content: center;
-                padding: 0 0.25em;
-                margin-bottom: $strokeStrength / 2;
-            }
-            &::before {
-                position: absolute;
-                content: "";
-                height: $strokeStrength;
-                width: 100%;
-                top: calc(50% - #{$strokeStrength / 2});
-            }
-            & .wrapper-bottom-spacing {
-                margin-top: $strokeStrength / 2;
-            }
         }
     }
 }

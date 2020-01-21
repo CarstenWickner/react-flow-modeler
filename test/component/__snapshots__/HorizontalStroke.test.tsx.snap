@@ -3,23 +3,28 @@
 exports[`renders correctly for incomingConnection = single 1`] = `
 <React.Fragment>
   <div
-    className="centered-line-wrapper"
+    className="stroke-horizontal"
   >
-    <div
-      className="wrapper-top-label"
-    >
-      <div>
-        text
+    <React.Fragment>
+      <div
+        className="top-label"
+        onClick={[Function]}
+      >
+        <div
+          onClick={[Function]}
+        >
+          text
+        </div>
       </div>
-    </div>
-    <div
-      className="wrapper-bottom-spacing"
-      style={
-        Object {
-          "minHeight": "30px",
+      <div
+        className="bottom-spacing"
+        style={
+          Object {
+            "minHeight": "30px",
+          }
         }
-      }
-    />
+      />
+    </React.Fragment>
   </div>
 </React.Fragment>
 `;
@@ -27,17 +32,20 @@ exports[`renders correctly for incomingConnection = single 1`] = `
 exports[`renders correctly with minimal/default props 1`] = `
 <Fragment>
   <div
-    className="centered-line-wrapper"
+    className="stroke-horizontal"
   >
     <div
-      className="wrapper-top-label"
+      className="top-label"
+      onClick={[Function]}
     >
-      <div>
+      <div
+        onClick={[Function]}
+      >
         label
       </div>
     </div>
     <div
-      className="wrapper-bottom-spacing"
+      className="bottom-spacing"
     />
   </div>
 </Fragment>
