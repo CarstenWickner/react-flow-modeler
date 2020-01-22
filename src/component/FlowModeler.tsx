@@ -4,6 +4,7 @@ import * as React from "react";
 import { ContentElement } from "./ContentElement";
 import { Gateway } from "./Gateway";
 import { HorizontalStroke } from "./HorizontalStroke";
+import { EditMenu } from "./EditMenu";
 import { GridCell } from "./GridCell";
 import { buildRenderData } from "./renderDataUtils";
 import { GridCellData, ElementType } from "../types/GridCellData";
@@ -16,8 +17,7 @@ type SelectableElementType =
     | ElementType.Content
     | ElementType.GatewayDiverging
     | ElementType.GatewayConverging
-    | ElementType.ConnectGatewayToElement
-    | ElementType.End;
+    | ElementType.ConnectGatewayToElement;
 
 interface FlowModelerState {
     selectedType: SelectableElementType;
@@ -46,11 +46,6 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
         event.stopPropagation();
     };
 
-    onClickEnd = (event: React.MouseEvent): void => {
-        this.onSelect(ElementType.End);
-        event.stopPropagation();
-    };
-
     onSelectContent = (elementId: string): void => this.onSelect(ElementType.Content, elementId);
 
     onSelectGatewayDiverging = (gatewayId: string): void => this.onSelect(ElementType.GatewayDiverging, gatewayId);
@@ -64,23 +59,30 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
         event.stopPropagation();
     };
 
+    renderEditMenu = (targetType: SelectableElementType, referenceElementId?: string): React.ReactNode | undefined => {
+        if (!this.isTargetSelected(targetType, referenceElementId)) {
+            return undefined;
+        }
+        const { options } = this.props;
+        const menuOptions = options ? options.editActions : undefined;
+        return <EditMenu targetType={targetType} referenceElementId={referenceElementId} menuOptions={menuOptions} />;
+    };
+
     renderFlowElement(cellData: GridCellData): React.ReactNode {
         switch (cellData.type) {
             case ElementType.Start:
-                const startSelected = this.isTargetSelected(cellData.type);
+                const startEditMenu = this.renderEditMenu(cellData.type);
                 return (
                     <>
-                        <div className={`flow-element start-element${startSelected ? " selected" : ""}`} onClick={this.onClickStart} />
+                        <div className={`flow-element start-element${startEditMenu ? " selected" : ""}`} onClick={this.onClickStart} />
+                        {startEditMenu}
                     </>
                 );
             case ElementType.Content:
                 const { renderContent } = this.props;
+                const contentEditMenu = this.renderEditMenu(cellData.type, cellData.elementId);
                 return (
-                    <ContentElement
-                        elementId={cellData.elementId}
-                        selected={this.isTargetSelected(cellData.type, cellData.elementId)}
-                        onSelect={this.onSelectContent}
-                    >
+                    <ContentElement elementId={cellData.elementId} editMenu={contentEditMenu} onSelect={this.onSelectContent}>
                         {renderContent({
                             elementData: cellData.data,
                             contentElementId: cellData.elementId
@@ -89,11 +91,12 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
                 );
             case ElementType.GatewayDiverging:
                 const { renderGatewayConditionType } = this.props;
+                const divergingGatewayEditMenu = this.renderEditMenu(cellData.type, cellData.gatewayId);
                 return (
                     <Gateway
                         type={cellData.type}
                         gatewayId={cellData.gatewayId}
-                        selected={this.isTargetSelected(cellData.type, cellData.gatewayId)}
+                        editMenu={divergingGatewayEditMenu}
                         onSelect={this.onSelectGatewayDiverging}
                     >
                         {renderGatewayConditionType &&
@@ -104,22 +107,24 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
                     </Gateway>
                 );
             case ElementType.GatewayConverging:
+                const convergingGatewayEditMenu = this.renderEditMenu(cellData.type, cellData.followingElementId);
                 return (
                     <Gateway
                         type={cellData.type}
                         followingElementId={cellData.followingElementId}
-                        selected={this.isTargetSelected(cellData.type, cellData.followingElementId)}
+                        editMenu={convergingGatewayEditMenu}
                         onSelect={this.onSelectGatewayConverging}
                     />
                 );
             case ElementType.ConnectGatewayToElement:
                 const { renderGatewayConditionValue } = this.props;
                 const branchElementId = cellData.elementId;
+                const connectorEditMenu = this.renderEditMenu(cellData.type, branchElementId);
                 return (
                     <HorizontalStroke
                         incomingConnection={cellData.connectionType}
                         followingElementId={branchElementId}
-                        selected={this.isTargetSelected(cellData.type, branchElementId)}
+                        editMenu={connectorEditMenu}
                         onSelect={this.onSelectConnectGatewayToElement}
                     >
                         {renderGatewayConditionValue &&
@@ -138,10 +143,7 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
                 return (
                     <>
                         <div className="stroke-horizontal arrow" />
-                        <div
-                            className={`flow-element end-element${this.isTargetSelected(cellData.type) ? " selected" : ""}`}
-                            onClick={this.onClickEnd}
-                        />
+                        <div className="flow-element end-element" />
                     </>
                 );
         }

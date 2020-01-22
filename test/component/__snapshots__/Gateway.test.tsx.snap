@@ -1,28 +1,46 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly as converging gateway 1`] = `
+exports[`renders correctly as converging gateway with minimal props 1`] = `
 <Fragment>
   <div
-    className="arrow"
+    className="stroke-horizontal arrow"
   />
   <div
-    className="flow-element gateway-element converging"
-  />
+    className="flow-element gateway-element converging selected"
+    onClick={[Function]}
+  >
+    <div
+      className="edit-menu-placeholder"
+    />
+  </div>
   <HorizontalStroke
     optional={true}
   />
 </Fragment>
 `;
 
-exports[`renders correctly as diverging gateway 1`] = `
+exports[`renders correctly as diverging gateway with minimal props 1`] = `
 <Fragment>
   <div
-    className="arrow"
+    className="stroke-horizontal arrow"
   />
   <div
-    className="flow-element gateway-element diverging"
-  />
-  <HorizontalStroke>
+    className="flow-element gateway-element diverging selected"
+    onClick={[Function]}
+  >
+    <div
+      className="edit-menu-placeholder"
+    />
+  </div>
+  <HorizontalStroke
+    editMenu={
+      <div
+        className="edit-menu-placeholder"
+      />
+    }
+    gatewayId="gateway-id"
+    onSelect={[Function]}
+  >
     text
   </HorizontalStroke>
 </Fragment>

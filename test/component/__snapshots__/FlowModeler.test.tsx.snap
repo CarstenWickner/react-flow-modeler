@@ -28,7 +28,6 @@ exports[`renders correctly with all render props 1`] = `
     <ContentElement
       elementId="1"
       onSelect={[Function]}
-      selected={false}
     >
       First Node
     </ContentElement>
@@ -41,7 +40,6 @@ exports[`renders correctly with all render props 1`] = `
     <Gateway
       gatewayId="2"
       onSelect={[Function]}
-      selected={false}
       type={3}
     >
       <label>
@@ -58,7 +56,6 @@ exports[`renders correctly with all render props 1`] = `
       followingElementId={null}
       incomingConnection={1}
       onSelect={[Function]}
-      selected={false}
     >
       <span>
         Stop Here
@@ -83,7 +80,6 @@ exports[`renders correctly with all render props 1`] = `
     <Gateway
       followingElementId={null}
       onSelect={[Function]}
-      selected={false}
       type={4}
     />
   </Component>
@@ -97,7 +93,6 @@ exports[`renders correctly with all render props 1`] = `
     />
     <div
       className="flow-element end-element"
-      onClick={[Function]}
     />
   </Component>
   <Component
@@ -109,7 +104,6 @@ exports[`renders correctly with all render props 1`] = `
       followingElementId="3.2"
       incomingConnection={2}
       onSelect={[Function]}
-      selected={false}
     >
       <span>
         Continue
@@ -124,7 +118,6 @@ exports[`renders correctly with all render props 1`] = `
     <ContentElement
       elementId="3.2"
       onSelect={[Function]}
-      selected={false}
     >
       Second Node
     </ContentElement>
@@ -148,7 +141,6 @@ exports[`renders correctly with all render props 1`] = `
       followingElementId={null}
       incomingConnection={3}
       onSelect={[Function]}
-      selected={false}
     >
       <span>
         Unless it is already done
@@ -198,7 +190,6 @@ exports[`renders correctly with minimal/default props 1`] = `
     <ContentElement
       elementId="1"
       onSelect={[Function]}
-      selected={false}
     >
       First Node
     </ContentElement>
@@ -212,7 +203,6 @@ exports[`renders correctly with minimal/default props 1`] = `
     <Gateway
       gatewayId="2"
       onSelect={[Function]}
-      selected={false}
       type={3}
     />
   </Component>
@@ -226,7 +216,6 @@ exports[`renders correctly with minimal/default props 1`] = `
       followingElementId={null}
       incomingConnection={1}
       onSelect={[Function]}
-      selected={false}
     />
   </Component>
   <Component
@@ -249,7 +238,6 @@ exports[`renders correctly with minimal/default props 1`] = `
     <Gateway
       followingElementId={null}
       onSelect={[Function]}
-      selected={false}
       type={4}
     />
   </Component>
@@ -264,7 +252,6 @@ exports[`renders correctly with minimal/default props 1`] = `
     />
     <div
       className="flow-element end-element"
-      onClick={[Function]}
     />
   </Component>
   <Component
@@ -277,7 +264,6 @@ exports[`renders correctly with minimal/default props 1`] = `
       followingElementId="3.2"
       incomingConnection={2}
       onSelect={[Function]}
-      selected={false}
     />
   </Component>
   <Component
@@ -289,7 +275,6 @@ exports[`renders correctly with minimal/default props 1`] = `
     <ContentElement
       elementId="3.2"
       onSelect={[Function]}
-      selected={false}
     >
       Second Node
     </ContentElement>
@@ -315,7 +300,6 @@ exports[`renders correctly with minimal/default props 1`] = `
       followingElementId={null}
       incomingConnection={3}
       onSelect={[Function]}
-      selected={false}
     />
   </Component>
   <Component

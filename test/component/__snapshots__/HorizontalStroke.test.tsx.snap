@@ -5,26 +5,22 @@ exports[`renders correctly for incomingConnection = single 1`] = `
   <div
     className="stroke-horizontal"
   >
-    <React.Fragment>
-      <div
-        className="top-label"
-        onClick={[Function]}
-      >
-        <div
-          onClick={[Function]}
-        >
-          text
-        </div>
+    <div
+      className="top-label"
+      onClick={[Function]}
+    >
+      <div>
+        text
       </div>
-      <div
-        className="bottom-spacing"
-        style={
-          Object {
-            "minHeight": "30px",
-          }
+    </div>
+    <div
+      className="bottom-spacing"
+      style={
+        Object {
+          "minHeight": "30px",
         }
-      />
-    </React.Fragment>
+      }
+    />
   </div>
 </React.Fragment>
 `;
@@ -38,9 +34,7 @@ exports[`renders correctly with minimal/default props 1`] = `
       className="top-label"
       onClick={[Function]}
     >
-      <div
-        onClick={[Function]}
-      >
+      <div>
         label
       </div>
     </div>

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ConnectionType, ElementType } from "../types/GridCellData";
+import { ConnectionType } from "../types/GridCellData";
 
 const getConnectionClassName = (connectionType: ConnectionType): string => {
     switch (connectionType) {
@@ -17,13 +17,12 @@ export class HorizontalStroke extends React.Component<
     | ({
           outgoingConnection?: never;
           optional?: never;
-          selected: boolean;
-          onSelect: (followingElementId?: string) => void;
+          editMenu: React.ReactNode | undefined;
       } & (
-          | { incomingConnection?: ConnectionType; followingElementId?: string; gatewayId?: never }
-          | { incomingConnection?: never; followingElementId?: never; gatewayId: string }
+          | { incomingConnection?: ConnectionType; followingElementId?: string; gatewayId?: never; onSelect: (followingElementId?: string) => void }
+          | { incomingConnection?: never; followingElementId?: never; gatewayId: string; onSelect: (gatewayId?: string) => void }
       ))
-    | ({ incomingConnection?: never; followingElementId?: never; selected?: never; onSelect?: never } & (
+    | ({ incomingConnection?: never; followingElementId?: never; gatewayId?: never; editMenu?: never; onSelect?: never } & (
           | { outgoingConnection?: never; optional?: boolean }
           | { outgoingConnection: ConnectionType; optional?: never }
       )),
@@ -45,32 +44,26 @@ export class HorizontalStroke extends React.Component<
     }
 
     onTopLabelClick = (event: React.MouseEvent): void => {
-        const { onSelect, followingElementId } = this.props;
-        console.log(`selecting connector to: ${followingElementId}`);
-        onSelect(followingElementId);
+        const { onSelect, gatewayId, followingElementId } = this.props;
+        onSelect(gatewayId || followingElementId);
         event.stopPropagation();
     };
 
     render(): React.ReactNode {
-        const { incomingConnection, outgoingConnection, optional, selected, children } = this.props;
+        const { incomingConnection, outgoingConnection, optional, editMenu, children } = this.props;
         return (
             <>
                 {incomingConnection && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}`} />}
-                <div className={`stroke-horizontal${selected ? " selected" : ""}${optional ? " optional" : ""}`}>
-                    {children && (
-                        <>
-                            <div className="top-label" onClick={this.onTopLabelClick}>
-                                <div ref={this.topLabelRef} onClick={this.onTopLabelClick}>
-                                    {children}
-                                </div>
-                            </div>
-                            <div
-                                className="bottom-spacing"
-                                style={(this.topLabelRef.current && { minHeight: `${this.state.wrapperTopHeight}px` }) || undefined}
-                            />
-                        </>
-                    )}
+                <div className={`stroke-horizontal${editMenu ? " selected" : ""}${optional ? " optional" : ""}`}>
+                    <div className="top-label" onClick={this.onTopLabelClick}>
+                        {children && <div ref={this.topLabelRef}>{children}</div>}
+                    </div>
+                    <div
+                        className="bottom-spacing"
+                        style={(children && this.topLabelRef.current && { minHeight: `${this.state.wrapperTopHeight}px` }) || undefined}
+                    />
                 </div>
+                {incomingConnection && editMenu}
                 {outgoingConnection && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}`} />}
             </>
         );

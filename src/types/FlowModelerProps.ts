@@ -1,3 +1,5 @@
+import { ElementType } from "./GridCellData";
+
 export interface FlowContent {
     nextElementId?: string;
     data?: { [key: string]: unknown };
@@ -11,6 +13,12 @@ export interface FlowGatewayDiverging {
     data?: { [key: string]: unknown };
 }
 
+export interface MenuOptions {
+    className?: string;
+    title?: string;
+    isActionAllowed?: (contextType: ElementType, referenceElementId: string) => boolean;
+}
+
 export interface FlowModelerProps {
     flow: {
         firstElementId: string;
@@ -19,6 +27,13 @@ export interface FlowModelerProps {
     options?: {
         verticalAlign?: "top" | "middle" | "bottom";
         readOnly?: boolean;
+        editActions?: {
+            addDivergingBranch?: MenuOptions;
+            addFollowingContentElement?: MenuOptions;
+            addFollowingDivergingGateway?: MenuOptions;
+            changeNextElement?: MenuOptions;
+            removeElement?: MenuOptions;
+        };
     };
     renderContent: (params: { elementData: { [key: string]: unknown }; contentElementId: string }) => React.ReactNode;
     renderGatewayConditionType?: (params: { gatewayData: { [key: string]: unknown }; gatewayElementId: string }) => React.ReactNode;

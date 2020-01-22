@@ -2,11 +2,9 @@ import * as React from "react";
 
 import { HorizontalStroke } from "./HorizontalStroke";
 
-import { ElementType } from "../types/GridCellData";
-
 export class ContentElement extends React.Component<{
     elementId: string;
-    selected: boolean;
+    editMenu: React.ReactNode | undefined;
     onSelect: (elementId: string) => void;
 }> {
     onClick = (event: React.MouseEvent): void => {
@@ -16,13 +14,14 @@ export class ContentElement extends React.Component<{
     };
 
     render(): React.ReactNode {
-        const { selected, children } = this.props;
+        const { editMenu, children } = this.props;
         return (
             <>
                 <div className="stroke-horizontal arrow" />
-                <div className={`flow-element content-element${selected ? " selected" : ""}`} onClick={this.onClick}>
+                <div className={`flow-element content-element${editMenu ? " selected" : ""}`} onClick={this.onClick}>
                     {children}
                 </div>
+                {editMenu}
                 <HorizontalStroke optional />
             </>
         );
