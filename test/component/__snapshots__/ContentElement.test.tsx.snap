@@ -6,14 +6,18 @@ exports[`renders correctly with minimal props 1`] = `
     className="stroke-horizontal arrow"
   />
   <div
-    className="flow-element content-element selected"
-    onClick={[Function]}
+    className="flow-element-wrapper"
   >
-    text
+    <div
+      className="flow-element content-element selected"
+      onClick={[Function]}
+    >
+      text
+    </div>
+    <div
+      className="edit-menu-placeholder"
+    />
   </div>
-  <div
-    className="edit-menu-placeholder"
-  />
   <HorizontalStroke
     optional={true}
   />

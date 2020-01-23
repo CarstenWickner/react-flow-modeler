@@ -41,6 +41,7 @@ export interface GatewayToElementConnectorCellData extends GridCellCoordinates {
     elementId?: string;
     data?: { [key: string]: unknown };
     connectionType: ConnectionType;
+    branchIndex: number;
 }
 export interface ElementToGatewayConnectorCellData extends GridCellCoordinates {
     type: ElementType.ConnectElementToGateway;

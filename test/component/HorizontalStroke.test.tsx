@@ -26,13 +26,13 @@ describe("renders correctly", () => {
         ${ConnectionType.Last}   | ${"top-half"}
     `("for incomingConnection = $incomingConnection", ({ incomingConnection, verticalStrokeClassName }) => {
         it.each`
-            withLabel
-            ${"w/"}
-            ${"w/o"}
-        `("$withLabel label", ({ withLabel }) => {
+            testDescription | label
+            ${"with"}       | ${"text"}
+            ${"without"}    | ${null}
+        `("$testDescription label", ({ label }) => {
             const component = shallow(
-                <HorizontalStroke incomingConnection={incomingConnection} editMenu={undefined} onSelect={(): void => {}}>
-                    {withLabel === "w/" ? "text" : null}
+                <HorizontalStroke incomingConnection={incomingConnection} gatewayId="id" editMenu={undefined} onSelect={(): void => {}}>
+                    {label}
                 </HorizontalStroke>
             );
             expect(component.find(`.stroke-vertical.${verticalStrokeClassName}`).exists()).toBe(true);
@@ -52,18 +52,13 @@ describe("renders correctly", () => {
         expect(component.find(".stroke-horizontal.optional").exists()).toBe(true);
     });
     it.each`
-        testDescription             | incomingConnection
-        ${"no connection"}          | ${undefined}
-        ${"an incoming connection"} | ${ConnectionType.First}
-    `("marks selected stroke via css class when there is $testDescription", ({ incomingConnection }) => {
-        const component = shallow(
-            <HorizontalStroke
-                editMenu={<div className="edit-menu-placeholder" />}
-                incomingConnection={incomingConnection}
-                onSelect={(): void => {}}
-            />
-        );
+        testDescription   | includingMenu | editMenu
+        ${"an edit menu"} | ${true}       | ${(): React.ReactNode => <div className="edit-menu-placeholder" />}
+        ${"no edit menu"} | ${false}      | ${(): React.ReactNode => null}
+    `("marks selected stroke via css class when there is $testDescription", ({ includingMenu, editMenu }) => {
+        const component = shallow(<HorizontalStroke gatewayId="id" editMenu={editMenu} onSelect={(): void => {}} />);
         expect(component.find(".stroke-horizontal.selected").exists()).toBe(true);
+        expect(component.find(".edit-menu-placeholder").exists()).toBe(includingMenu);
     });
 });
 describe("calls onSelect", () => {
@@ -71,21 +66,23 @@ describe("calls onSelect", () => {
     const event = ({ stopPropagation: jest.fn(() => {}) } as unknown) as React.MouseEvent;
     it("on click event when representing gateway condition", () => {
         const component = shallow(
-            <HorizontalStroke editMenu={undefined} gatewayId={"gateway-id"} onSelect={onSelect}>
+            <HorizontalStroke editMenu={undefined} gatewayId="gateway-id" onSelect={onSelect}>
                 {"text"}
             </HorizontalStroke>
         );
         component.find(".top-label").prop("onClick")(event);
         expect(onSelect.mock.calls).toHaveLength(1);
-        expect(onSelect.mock.calls[0]).toHaveLength(1);
+        expect(onSelect.mock.calls[0]).toHaveLength(2);
         expect(onSelect.mock.calls[0][0]).toEqual("gateway-id");
+        expect(onSelect.mock.calls[0][1]).toBeUndefined();
     });
-    it("on click event when representing connection to gateway branch", () => {
+    it("on click event when representing connection from gateway to one of its branches", () => {
         const component = shallow(
             <HorizontalStroke
                 editMenu={undefined}
                 incomingConnection={ConnectionType.First}
-                followingElementId={"following-element-id"}
+                gatewayId={"leading-gateway-id"}
+                branchIndex={0}
                 onSelect={onSelect}
             >
                 {"text"}
@@ -93,7 +90,8 @@ describe("calls onSelect", () => {
         );
         component.find(".top-label").prop("onClick")(event);
         expect(onSelect.mock.calls).toHaveLength(1);
-        expect(onSelect.mock.calls[0]).toHaveLength(1);
-        expect(onSelect.mock.calls[0][0]).toEqual("following-element-id");
+        expect(onSelect.mock.calls[0]).toHaveLength(2);
+        expect(onSelect.mock.calls[0][0]).toEqual("leading-gateway-id");
+        expect(onSelect.mock.calls[0][1]).toEqual(0);
     });
 });

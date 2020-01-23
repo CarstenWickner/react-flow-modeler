@@ -93,7 +93,8 @@ const collectGridCellData = (
                 type: ElementType.ConnectGatewayToElement,
                 data: ((targetElement as FlowGatewayDiverging).nextElements[childIndex] || {}).conditionData,
                 connectionType:
-                    childIndex === 0 ? ConnectionType.First : childIndex + 1 < children.length ? ConnectionType.Middle : ConnectionType.Last
+                    childIndex === 0 ? ConnectionType.First : childIndex + 1 < children.length ? ConnectionType.Middle : ConnectionType.Last,
+                branchIndex: childIndex
             });
             // render next element
             collectGridCellData(childRenderElement, childIndex, renderElement, elements, thisChildStartRowIndex, renderData);

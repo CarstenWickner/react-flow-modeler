@@ -100,6 +100,7 @@ describe("buildRenderData()", () => {
                   "type": 3,
                 },
                 Object {
+                  "branchIndex": 0,
                   "colStartIndex": 3,
                   "connectionType": 1,
                   "data": undefined,
@@ -132,6 +133,7 @@ describe("buildRenderData()", () => {
                   "type": 8,
                 },
                 Object {
+                  "branchIndex": 1,
                   "colStartIndex": 3,
                   "connectionType": 3,
                   "data": undefined,
@@ -184,6 +186,7 @@ describe("buildRenderData()", () => {
                   "type": 3,
                 },
                 Object {
+                  "branchIndex": 0,
                   "colStartIndex": 3,
                   "connectionType": 1,
                   "data": Object {
@@ -228,6 +231,7 @@ describe("buildRenderData()", () => {
                   "type": 8,
                 },
                 Object {
+                  "branchIndex": 1,
                   "colStartIndex": 3,
                   "connectionType": 3,
                   "data": undefined,
@@ -286,6 +290,7 @@ describe("buildRenderData()", () => {
                   "type": 3,
                 },
                 Object {
+                  "branchIndex": 0,
                   "colStartIndex": 3,
                   "connectionType": 1,
                   "data": Object {
@@ -330,6 +335,7 @@ describe("buildRenderData()", () => {
                   "type": 8,
                 },
                 Object {
+                  "branchIndex": 1,
                   "colStartIndex": 3,
                   "connectionType": 2,
                   "data": Object {
@@ -351,6 +357,7 @@ describe("buildRenderData()", () => {
                   "type": 6,
                 },
                 Object {
+                  "branchIndex": 2,
                   "colStartIndex": 3,
                   "connectionType": 3,
                   "data": undefined,
@@ -425,6 +432,7 @@ describe("buildRenderData()", () => {
                   "type": 3,
                 },
                 Object {
+                  "branchIndex": 0,
                   "colStartIndex": 3,
                   "connectionType": 1,
                   "data": undefined,
@@ -473,6 +481,7 @@ describe("buildRenderData()", () => {
                   "type": 8,
                 },
                 Object {
+                  "branchIndex": 1,
                   "colStartIndex": 3,
                   "connectionType": 2,
                   "data": undefined,
@@ -492,6 +501,7 @@ describe("buildRenderData()", () => {
                   "type": 6,
                 },
                 Object {
+                  "branchIndex": 2,
                   "colStartIndex": 3,
                   "connectionType": 3,
                   "data": undefined,
@@ -510,6 +520,7 @@ describe("buildRenderData()", () => {
                   "type": 3,
                 },
                 Object {
+                  "branchIndex": 0,
                   "colStartIndex": 5,
                   "connectionType": 1,
                   "data": undefined,
@@ -529,6 +540,7 @@ describe("buildRenderData()", () => {
                   "type": 6,
                 },
                 Object {
+                  "branchIndex": 1,
                   "colStartIndex": 5,
                   "connectionType": 3,
                   "data": undefined,
@@ -547,6 +559,7 @@ describe("buildRenderData()", () => {
                   "type": 3,
                 },
                 Object {
+                  "branchIndex": 0,
                   "colStartIndex": 7,
                   "connectionType": 1,
                   "data": undefined,
@@ -566,6 +579,7 @@ describe("buildRenderData()", () => {
                   "type": 6,
                 },
                 Object {
+                  "branchIndex": 1,
                   "colStartIndex": 7,
                   "connectionType": 2,
                   "data": undefined,
@@ -593,6 +607,7 @@ describe("buildRenderData()", () => {
                   "type": 6,
                 },
                 Object {
+                  "branchIndex": 2,
                   "colStartIndex": 7,
                   "connectionType": 3,
                   "data": undefined,
@@ -646,6 +661,7 @@ describe("buildRenderData()", () => {
                   "type": 3,
                 },
                 Object {
+                  "branchIndex": 0,
                   "colStartIndex": 3,
                   "connectionType": 1,
                   "data": undefined,
@@ -694,6 +710,7 @@ describe("buildRenderData()", () => {
                   "type": 8,
                 },
                 Object {
+                  "branchIndex": 1,
                   "colStartIndex": 3,
                   "connectionType": 3,
                   "data": undefined,

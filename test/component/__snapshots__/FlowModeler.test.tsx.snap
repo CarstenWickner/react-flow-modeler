@@ -2,7 +2,7 @@
 
 exports[`renders correctly with all render props 1`] = `
 <div
-  className="flow-modeler"
+  className="flow-modeler editable"
   onClick={[Function]}
   style={
     Object {
@@ -53,7 +53,8 @@ exports[`renders correctly with all render props 1`] = `
     rowStartIndex={1}
   >
     <HorizontalStroke
-      followingElementId={null}
+      branchIndex={0}
+      gatewayId="2"
       incomingConnection={1}
       onSelect={[Function]}
     >
@@ -101,7 +102,8 @@ exports[`renders correctly with all render props 1`] = `
     rowStartIndex={2}
   >
     <HorizontalStroke
-      followingElementId="3.2"
+      branchIndex={1}
+      gatewayId="2"
       incomingConnection={2}
       onSelect={[Function]}
     >
@@ -138,7 +140,8 @@ exports[`renders correctly with all render props 1`] = `
     rowStartIndex={3}
   >
     <HorizontalStroke
-      followingElementId={null}
+      branchIndex={2}
+      gatewayId="2"
       incomingConnection={3}
       onSelect={[Function]}
     >
@@ -162,7 +165,7 @@ exports[`renders correctly with all render props 1`] = `
 
 exports[`renders correctly with minimal/default props 1`] = `
 <div
-  className="flow-modeler"
+  className="flow-modeler editable"
   onClick={[Function]}
   style={
     Object {
@@ -213,7 +216,8 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowStartIndex={1}
   >
     <HorizontalStroke
-      followingElementId={null}
+      branchIndex={0}
+      gatewayId="2"
       incomingConnection={1}
       onSelect={[Function]}
     />
@@ -261,7 +265,8 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowStartIndex={2}
   >
     <HorizontalStroke
-      followingElementId="3.2"
+      branchIndex={1}
+      gatewayId="2"
       incomingConnection={2}
       onSelect={[Function]}
     />
@@ -297,7 +302,8 @@ exports[`renders correctly with minimal/default props 1`] = `
     rowStartIndex={3}
   >
     <HorizontalStroke
-      followingElementId={null}
+      branchIndex={2}
+      gatewayId="2"
       incomingConnection={3}
       onSelect={[Function]}
     />

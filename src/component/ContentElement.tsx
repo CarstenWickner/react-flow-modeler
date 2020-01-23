@@ -4,7 +4,7 @@ import { HorizontalStroke } from "./HorizontalStroke";
 
 export class ContentElement extends React.Component<{
     elementId: string;
-    editMenu: React.ReactNode | undefined;
+    editMenu: (() => React.ReactNode) | undefined;
     onSelect: (elementId: string) => void;
 }> {
     onClick = (event: React.MouseEvent): void => {
@@ -18,10 +18,12 @@ export class ContentElement extends React.Component<{
         return (
             <>
                 <div className="stroke-horizontal arrow" />
-                <div className={`flow-element content-element${editMenu ? " selected" : ""}`} onClick={this.onClick}>
-                    {children}
+                <div className="flow-element-wrapper">
+                    <div className={`flow-element content-element${editMenu ? " selected" : ""}`} onClick={this.onClick}>
+                        {children}
+                    </div>
+                    {editMenu && editMenu()}
                 </div>
-                {editMenu}
                 <HorizontalStroke optional />
             </>
         );

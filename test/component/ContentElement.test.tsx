@@ -7,7 +7,7 @@ describe("renders correctly", () => {
     const onSelect = (): void => {};
     it("with minimal props", () => {
         const component = shallow(
-            <ContentElement elementId="element-id" editMenu={<div className="edit-menu-placeholder" />} onSelect={onSelect}>
+            <ContentElement elementId="element-id" editMenu={(): React.ReactNode => <div className="edit-menu-placeholder" />} onSelect={onSelect}>
                 {"text"}
             </ContentElement>
         );

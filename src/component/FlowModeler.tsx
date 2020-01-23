@@ -20,23 +20,26 @@ type SelectableElementType =
     | ElementType.ConnectGatewayToElement;
 
 interface FlowModelerState {
-    selectedType: SelectableElementType;
-    selectedId?: string;
+    selection: null | { type: SelectableElementType; id?: string; branchIndex?: number };
 }
 
 export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerState> {
-    state: FlowModelerState = { selectedType: null, selectedId: null };
+    state: FlowModelerState = { selection: null };
 
-    isTargetSelected(type: SelectableElementType, id?: string): boolean {
-        return this.state.selectedType === type && this.state.selectedId === id;
+    isTargetSelected(type: SelectableElementType, id?: string, branchIndex?: number): boolean {
+        return (
+            this.state.selection !== null &&
+            this.state.selection.type === type &&
+            this.state.selection.id === id &&
+            this.state.selection.branchIndex == branchIndex
+        );
     }
 
-    onSelect = (selectedType: SelectableElementType, selectedId?: string): void => {
+    onSelect = (type: SelectableElementType | null, id?: string, branchIndex?: number): void => {
         const { options } = this.props;
-        if ((!options || !options.readOnly) && !this.isTargetSelected(selectedType, selectedId)) {
+        if ((!options || !options.readOnly) && !this.isTargetSelected(type, id, branchIndex)) {
             this.setState({
-                selectedType,
-                selectedId
+                selection: type === null ? null : { type, id, branchIndex }
             });
         }
     };
@@ -50,22 +53,23 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
 
     onSelectGatewayDiverging = (gatewayId: string): void => this.onSelect(ElementType.GatewayDiverging, gatewayId);
 
-    onSelectGatewayConverging = (followingElementId?: string): void => this.onSelect(ElementType.GatewayConverging, followingElementId);
+    onSelectGatewayConverging = (followingElementId: string | null): void => this.onSelect(ElementType.GatewayConverging, followingElementId);
 
-    onSelectConnectGatewayToElement = (followingElementId?: string): void => this.onSelect(ElementType.ConnectGatewayToElement, followingElementId);
+    onSelectConnectGatewayToElement = (gatewayId: string, branchIndex: number): void =>
+        this.onSelect(ElementType.ConnectGatewayToElement, gatewayId, branchIndex);
 
     clearSelection = (event: React.MouseEvent): void => {
-        this.onSelect(ElementType.Content, null);
+        this.onSelect(null);
         event.stopPropagation();
     };
 
-    renderEditMenu = (targetType: SelectableElementType, referenceElementId?: string): React.ReactNode | undefined => {
-        if (!this.isTargetSelected(targetType, referenceElementId)) {
+    renderEditMenu = (targetType: SelectableElementType, referenceElementId?: string, branchIndex?: number): undefined | (() => React.ReactNode) => {
+        if (!this.isTargetSelected(targetType, referenceElementId, branchIndex)) {
             return undefined;
         }
         const { options } = this.props;
         const menuOptions = options ? options.editActions : undefined;
-        return <EditMenu targetType={targetType} referenceElementId={referenceElementId} menuOptions={menuOptions} />;
+        return (): React.ReactNode => <EditMenu targetType={targetType} referenceElementId={referenceElementId} menuOptions={menuOptions} />;
     };
 
     renderFlowElement(cellData: GridCellData): React.ReactNode {
@@ -75,7 +79,7 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
                 return (
                     <>
                         <div className={`flow-element start-element${startEditMenu ? " selected" : ""}`} onClick={this.onClickStart} />
-                        {startEditMenu}
+                        {startEditMenu && startEditMenu()}
                     </>
                 );
             case ElementType.Content:
@@ -118,27 +122,29 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
                 );
             case ElementType.ConnectGatewayToElement:
                 const { renderGatewayConditionValue } = this.props;
-                const branchElementId = cellData.elementId;
-                const connectorEditMenu = this.renderEditMenu(cellData.type, branchElementId);
+                const leadingGatewayId = cellData.gatewayId;
+                const branchIndex = cellData.branchIndex;
+                const connectorEditMenu = this.renderEditMenu(cellData.type, leadingGatewayId, branchIndex);
                 return (
                     <HorizontalStroke
                         incomingConnection={cellData.connectionType}
-                        followingElementId={branchElementId}
+                        gatewayId={leadingGatewayId}
+                        branchIndex={branchIndex}
                         editMenu={connectorEditMenu}
                         onSelect={this.onSelectConnectGatewayToElement}
                     >
                         {renderGatewayConditionValue &&
                             renderGatewayConditionValue({
                                 conditionData: cellData.data,
-                                gatewayElementId: cellData.gatewayId,
-                                branchElementId
+                                gatewayElementId: leadingGatewayId,
+                                branchElementId: cellData.elementId
                             })}
                     </HorizontalStroke>
                 );
             case ElementType.ConnectElementToGateway:
                 return <HorizontalStroke outgoingConnection={cellData.connectionType} />;
             case ElementType.StrokeExtension:
-                return <div className="stroke-horizontal optional" />;
+                return <HorizontalStroke optional />;
             case ElementType.End:
                 return (
                     <>
@@ -170,10 +176,14 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
 
     render(): React.ReactElement {
         const { flow, options } = this.props;
-        const verticalModelAlign = options && options.verticalAlign === "bottom" ? "bottom" : "top";
-        const { gridCellData, columnCount } = buildRenderData(flow, verticalModelAlign);
+        const { readOnly, verticalAlign } = options || {};
+        const { gridCellData, columnCount } = buildRenderData(flow, verticalAlign === "bottom" ? "bottom" : "top");
         return (
-            <div className="flow-modeler" onClick={this.clearSelection} style={{ gridTemplateColumns: `repeat(${columnCount}, max-content)` }}>
+            <div
+                className={`flow-modeler${readOnly ? "" : " editable"}`}
+                onClick={readOnly ? undefined : this.clearSelection}
+                style={{ gridTemplateColumns: `repeat(${columnCount}, max-content)` }}
+            >
                 {gridCellData.map(this.renderGridCell())}
             </div>
         );

@@ -4,8 +4,10 @@ import { HorizontalStroke } from "./HorizontalStroke";
 
 import { ElementType } from "../types/GridCellData";
 
+const returnNull = (): null => null;
+
 export class Gateway extends React.Component<
-    { editMenu: React.ReactNode | undefined } & (
+    { editMenu: (() => React.ReactNode) | undefined } & (
         | { type: ElementType.GatewayDiverging; gatewayId: string; followingElementId?: never; onSelect: (gatewayId: string) => void }
         | {
               type: ElementType.GatewayConverging;
@@ -27,12 +29,14 @@ export class Gateway extends React.Component<
         return (
             <>
                 <div className="stroke-horizontal arrow" />
-                <div className={`flow-element gateway-element ${cssType}${editMenu ? " selected" : ""}`} onClick={this.onClick}>
-                    {editMenu}
+                <div className="flow-element-wrapper">
+                    <div className={`flow-element gateway-element ${cssType}${editMenu ? " selected" : ""}`} onClick={this.onClick} />
+                    {editMenu && editMenu()}
                 </div>
                 {type === ElementType.GatewayConverging && <HorizontalStroke optional />}
                 {type === ElementType.GatewayDiverging && (
-                    <HorizontalStroke gatewayId={gatewayId} editMenu={children ? editMenu : undefined} onSelect={onSelect}>
+                    // if this gateway is selected, provide a function as editMenu to indicate that, but let the function not render a second menu
+                    <HorizontalStroke gatewayId={gatewayId} editMenu={children && editMenu ? returnNull : undefined} onSelect={onSelect}>
                         {children}
                     </HorizontalStroke>
                 )}

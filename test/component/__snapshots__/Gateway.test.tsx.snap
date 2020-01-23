@@ -6,9 +6,12 @@ exports[`renders correctly as converging gateway with minimal props 1`] = `
     className="stroke-horizontal arrow"
   />
   <div
-    className="flow-element gateway-element converging selected"
-    onClick={[Function]}
+    className="flow-element-wrapper"
   >
+    <div
+      className="flow-element gateway-element converging selected"
+      onClick={[Function]}
+    />
     <div
       className="edit-menu-placeholder"
     />
@@ -25,19 +28,18 @@ exports[`renders correctly as diverging gateway with minimal props 1`] = `
     className="stroke-horizontal arrow"
   />
   <div
-    className="flow-element gateway-element diverging selected"
-    onClick={[Function]}
+    className="flow-element-wrapper"
   >
+    <div
+      className="flow-element gateway-element diverging selected"
+      onClick={[Function]}
+    />
     <div
       className="edit-menu-placeholder"
     />
   </div>
   <HorizontalStroke
-    editMenu={
-      <div
-        className="edit-menu-placeholder"
-      />
-    }
+    editMenu={[Function]}
     gatewayId="gateway-id"
     onSelect={[Function]}
   >

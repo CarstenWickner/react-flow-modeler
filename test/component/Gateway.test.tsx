@@ -12,7 +12,7 @@ describe("renders correctly", () => {
                 <Gateway
                     type={ElementType.GatewayConverging}
                     followingElementId="following-element-id"
-                    editMenu={<div className="edit-menu-placeholder" />}
+                    editMenu={(): React.ReactNode => <div className="edit-menu-placeholder" />}
                     onSelect={onSelect}
                 />
             );
@@ -22,10 +22,8 @@ describe("renders correctly", () => {
             const component = shallow(
                 <Gateway type={ElementType.GatewayConverging} followingElementId="following-element-id" editMenu={undefined} onSelect={onSelect} />
             );
-            const gatewayElement = component.find(".gateway-element");
-            expect(gatewayElement.hasClass("selected")).toBe(false);
-            const editMenu = gatewayElement.find(".edit-menu-placeholder");
-            expect(editMenu.exists()).toBe(false);
+            expect(component.find(".gateway-element").hasClass("selected")).toBe(false);
+            expect(component.find(".edit-menu-placeholder").exists()).toBe(false);
         });
     });
     describe("as diverging gateway", () => {
@@ -34,7 +32,7 @@ describe("renders correctly", () => {
                 <Gateway
                     type={ElementType.GatewayDiverging}
                     gatewayId="gateway-id"
-                    editMenu={<div className="edit-menu-placeholder" />}
+                    editMenu={(): React.ReactNode => <div className="edit-menu-placeholder" />}
                     onSelect={onSelect}
                 >
                     {"text"}
@@ -47,14 +45,12 @@ describe("renders correctly", () => {
                 <Gateway
                     type={ElementType.GatewayDiverging}
                     gatewayId="gateway-id"
-                    editMenu={<div className="edit-menu-placeholder" />}
+                    editMenu={(): React.ReactNode => <div className="edit-menu-placeholder" />}
                     onSelect={onSelect}
                 />
             );
-            const gatewayElement = component.find(".gateway-element");
-            expect(gatewayElement.hasClass("selected")).toBe(true);
-            const editMenu = gatewayElement.find(".edit-menu-placeholder");
-            expect(editMenu.exists()).toBe(true);
+            expect(component.find(".gateway-element").hasClass("selected")).toBe(true);
+            expect(component.find(".edit-menu-placeholder").exists()).toBe(true);
             expect(component.find("HorizontalStroke").prop("editMenu")).toBe(undefined);
         });
         it("when not selected", () => {
@@ -63,10 +59,8 @@ describe("renders correctly", () => {
                     {"text"}
                 </Gateway>
             );
-            const gatewayElement = component.find(".gateway-element");
-            expect(gatewayElement.hasClass("selected")).toBe(false);
-            const editMenu = gatewayElement.find(".edit-menu-placeholder");
-            expect(editMenu.exists()).toBe(false);
+            expect(component.find(".gateway-element").hasClass("selected")).toBe(false);
+            expect(component.find(".edit-menu-placeholder").exists()).toBe(false);
             expect(component.find("HorizontalStroke").prop("editMenu")).toBe(undefined);
         });
     });
