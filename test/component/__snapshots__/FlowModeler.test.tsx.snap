@@ -2,8 +2,7 @@
 
 exports[`renders correctly with all render props 1`] = `
 <div
-  className="flow-modeler editable"
-  onClick={[Function]}
+  className="flow-modeler"
   style={
     Object {
       "gridTemplateColumns": "repeat(8, max-content)",
@@ -165,8 +164,7 @@ exports[`renders correctly with all render props 1`] = `
 
 exports[`renders correctly with minimal/default props 1`] = `
 <div
-  className="flow-modeler editable"
-  onClick={[Function]}
+  className="flow-modeler"
   style={
     Object {
       "gridTemplateColumns": "repeat(8, max-content)",

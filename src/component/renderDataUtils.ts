@@ -36,7 +36,7 @@ const collectGridCellData = (
                 rowStartIndex: thisChildStartRowIndex,
                 rowEndIndex: nextChildRowStartIndex,
                 type: ElementType.ConnectElementToGateway,
-                elementId: precedingElement.getId(),
+                element: precedingElement,
                 connectionType:
                     parentIndex === 0 ? ConnectionType.First : parentIndex + 1 < parents.length ? ConnectionType.Middle : ConnectionType.Last
             });
@@ -47,7 +47,7 @@ const collectGridCellData = (
             rowStartIndex,
             rowEndIndex,
             type: ElementType.GatewayConverging,
-            followingElementId: renderElement.getId()
+            followingElement: renderElement
         });
     } else if (triggeringRenderElement && getColumnIndexAfter(triggeringRenderElement) < renderElement.getColumnIndex()) {
         // fill gaps between elements
@@ -76,7 +76,7 @@ const collectGridCellData = (
             rowEndIndex,
             data: targetElement.data,
             type: ElementType.GatewayDiverging,
-            gatewayId: renderElement.getId()
+            gateway: renderElement
         });
         let nextChildRowStartIndex = rowStartIndex;
         renderElement.getFollowingElements().forEach((childRenderElement, childIndex, children) => {
@@ -88,8 +88,7 @@ const collectGridCellData = (
                 colStartIndex: renderElement.getColumnIndex() + 1,
                 rowStartIndex: thisChildStartRowIndex,
                 rowEndIndex: nextChildRowStartIndex,
-                gatewayId: renderElement.getId(),
-                elementId: childRenderElement.getId(),
+                gateway: renderElement,
                 type: ElementType.ConnectGatewayToElement,
                 data: ((targetElement as FlowGatewayDiverging).nextElements[childIndex] || {}).conditionData,
                 connectionType:
@@ -107,7 +106,7 @@ const collectGridCellData = (
             rowEndIndex,
             data: targetElement.data,
             type: ElementType.Content,
-            elementId: renderElement.getId()
+            element: renderElement
         });
         // render next element
         collectGridCellData(renderElement.getFollowingElements()[0], undefined, renderElement, elements, rowStartIndex, renderData);

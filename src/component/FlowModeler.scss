@@ -208,6 +208,7 @@
         & .top-label {
             cursor: context-menu;
         }
+        & .flow-element.end-element,
         & .selected.flow-element,
         & .selected > .top-label {
             cursor: inherit;

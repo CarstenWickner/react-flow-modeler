@@ -1,4 +1,5 @@
 import { ElementType } from "./GridCellData";
+import { FlowElementReference } from "../model/FlowElement";
 
 export interface FlowContent {
     nextElementId?: string;
@@ -16,7 +17,7 @@ export interface FlowGatewayDiverging {
 export interface MenuOptions {
     className?: string;
     title?: string;
-    isActionAllowed?: (contextType: ElementType, referenceElementId: string) => boolean;
+    isActionAllowed?: (contextType: ElementType, referenceElement?: FlowElementReference, branchIndex?: number) => boolean;
 }
 
 export interface FlowModelerProps {
@@ -26,7 +27,6 @@ export interface FlowModelerProps {
     };
     options?: {
         verticalAlign?: "top" | "middle" | "bottom";
-        readOnly?: boolean;
         editActions?: {
             addDivergingBranch?: MenuOptions;
             addFollowingContentElement?: MenuOptions;
@@ -42,4 +42,12 @@ export interface FlowModelerProps {
         branchElementId: string;
         gatewayElementId: string;
     }) => React.ReactNode;
+    onChange?: ({
+        changedFlow
+    }: {
+        changedFlow: {
+            firstElementId: string;
+            elements: { [key: string]: FlowContent | FlowGatewayDiverging };
+        };
+    }) => void;
 }

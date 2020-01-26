@@ -1,4 +1,10 @@
-export class FlowElement {
+export interface FlowElementReference {
+    getId: () => string;
+    getPrecedingElements: () => Array<FlowElementReference>;
+    getFollowingElements: () => Array<FlowElementReference>;
+}
+
+export class FlowElement implements FlowElementReference {
     private id: string;
     private columnIndex: number;
     private rowCount: number;
