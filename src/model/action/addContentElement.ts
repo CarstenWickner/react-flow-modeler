@@ -1,10 +1,10 @@
 import { v4 } from "uuid";
 import cloneDeep from "lodash.clonedeep";
 
-import { FlowElementReference } from "./FlowElement";
-import { isDivergingGateway } from "./modelUtils";
-import { FlowModelerProps } from "../types/FlowModelerProps";
-import { ElementType } from "../types/GridCellData";
+import { FlowElementReference } from "../FlowElement";
+import { isDivergingGateway } from "../modelUtils";
+import { FlowModelerProps } from "../../types/FlowModelerProps";
+import { ElementType } from "../../types/GridCellData";
 
 export const addContentElement = (
     originalFlow: FlowModelerProps["flow"],
@@ -28,13 +28,16 @@ export const addContentElement = (
         case ElementType.GatewayConverging:
             const followingElementId = referenceElement.getId();
             flowCopy.elements[newElementId] = { data, nextElementId: followingElementId };
+            const nextElementExists = followingElementId in flowCopy.elements;
             referenceElement
                 .getPrecedingElements()
                 .map((precedingElement) => flowCopy.elements[precedingElement.getId()])
                 .forEach((precedingElement) => {
                     if (isDivergingGateway(precedingElement)) {
                         precedingElement.nextElements
-                            .filter((possibleLink) => possibleLink.id === followingElementId)
+                            .filter((possibleLink) =>
+                                nextElementExists ? possibleLink.id === followingElementId : !(possibleLink.id in flowCopy.elements)
+                            )
                             .forEach((link) => (link.id = newElementId));
                     } else {
                         precedingElement.nextElementId = newElementId;

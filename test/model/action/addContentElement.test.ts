@@ -1,7 +1,7 @@
-import { addContentElement } from "../../src/model/addContentElement";
-import { ElementType } from "../../src/types/GridCellData";
-import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../src/types/FlowModelerProps";
-import { createElementTree } from "../../src/model/modelUtils";
+import { addContentElement } from "../../../src/model/action/addContentElement";
+import { ElementType } from "../../../src/types/GridCellData";
+import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../../src/types/FlowModelerProps";
+import { createElementTree } from "../../../src/model/modelUtils";
 
 describe("addContentElement()", () => {
     describe("adding content element after start", () => {
@@ -40,8 +40,8 @@ describe("addContentElement()", () => {
             });
         });
     });
-    describe("adding content element after other content", () => {
-        it("that is followed by some other element", () => {
+    describe("adding content element after other content that", () => {
+        it("is followed by some other element", () => {
             const originalFlow: FlowModelerProps["flow"] = {
                 firstElementId: "a",
                 elements: {
@@ -62,7 +62,7 @@ describe("addContentElement()", () => {
             });
             expect(updatedFlow.elements.b).toEqual(originalFlow.elements.b);
         });
-        it("that is the last before end", () => {
+        it("is the last before end", () => {
             const originalFlow: FlowModelerProps["flow"] = {
                 firstElementId: "a",
                 elements: {
@@ -82,8 +82,8 @@ describe("addContentElement()", () => {
             });
         });
     });
-    describe("adding content element after converging gateway", () => {
-        it("that is followed by some other element", () => {
+    describe("adding content element after converging gateway that", () => {
+        it("is followed by some other element", () => {
             const originalFlow: FlowModelerProps["flow"] = {
                 firstElementId: "a",
                 elements: {
@@ -111,7 +111,7 @@ describe("addContentElement()", () => {
             });
             expect(updatedFlow.elements.b).toEqual(originalFlow.elements.b);
         });
-        it.skip("that is before end", () => {
+        it("is before end", () => {
             const originalFlow: FlowModelerProps["flow"] = {
                 firstElementId: "a",
                 elements: {
@@ -130,6 +130,60 @@ describe("addContentElement()", () => {
             expect(newElementId).toBeDefined();
             expect(updatedFlow.elements.a).toEqual({
                 nextElements: [{ id: newElementId }, { id: newElementId }]
+            });
+            expect(updatedFlow.elements[newElementId]).toEqual({
+                nextElementId: null,
+                data: { x: "y" }
+            });
+        });
+    });
+    describe("adding content element after diverging gateway connector that", () => {
+        it("is followed by some other element", () => {
+            const originalFlow: FlowModelerProps["flow"] = {
+                firstElementId: "a",
+                elements: {
+                    a: { nextElements: [{}, { id: "b" }, { id: "b" }] },
+                    b: {}
+                }
+            };
+            const aReference = createElementTree(originalFlow, "top");
+            const updatedFlow = addContentElement(originalFlow, ElementType.ConnectGatewayToElement, { x: "y" }, aReference, 1);
+
+            expect(updatedFlow.firstElementId).toEqual("a");
+            expect(Object.keys(updatedFlow.elements)).toHaveLength(3);
+            const gatewayBranches = (updatedFlow.elements.a as FlowGatewayDiverging).nextElements;
+            expect(gatewayBranches).toHaveLength(3);
+            const newElementId = gatewayBranches[1].id;
+            expect(newElementId).toBeDefined();
+            expect(newElementId).not.toEqual("b");
+            expect(updatedFlow.elements.a).toEqual({
+                nextElements: [{}, { id: newElementId }, { id: "b" }]
+            });
+            expect(updatedFlow.elements[newElementId]).toEqual({
+                nextElementId: "b",
+                data: { x: "y" }
+            });
+        });
+        it("is before converging end gateway", () => {
+            const originalFlow: FlowModelerProps["flow"] = {
+                firstElementId: "a",
+                elements: {
+                    a: { nextElements: [{}, {}, { id: "b" }] },
+                    b: {}
+                }
+            };
+            const aReference = createElementTree(originalFlow, "top");
+            const updatedFlow = addContentElement(originalFlow, ElementType.ConnectGatewayToElement, { x: "y" }, aReference, 1);
+
+            expect(updatedFlow.firstElementId).toEqual("a");
+            expect(Object.keys(updatedFlow.elements)).toHaveLength(3);
+            const gatewayBranches = (updatedFlow.elements.a as FlowGatewayDiverging).nextElements;
+            expect(gatewayBranches).toHaveLength(3);
+            const newElementId = gatewayBranches[1].id;
+            expect(newElementId).toBeDefined();
+            expect(newElementId).not.toEqual("b");
+            expect(updatedFlow.elements.a).toEqual({
+                nextElements: [{}, { id: newElementId }, { id: "b" }]
             });
             expect(updatedFlow.elements[newElementId]).toEqual({
                 nextElementId: undefined,

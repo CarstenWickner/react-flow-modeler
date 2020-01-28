@@ -3,7 +3,7 @@ import * as React from "react";
 import { FlowElementReference } from "../model/FlowElement";
 import { ElementType } from "../types/GridCellData";
 import { FlowModelerProps, MenuOptions } from "../types/FlowModelerProps";
-import { addContentElement } from "../model/addContentElement";
+import { addContentElement } from "../model/action/addContentElement";
 
 const onClickStopPropagation = (event: React.MouseEvent): void => event.stopPropagation();
 
