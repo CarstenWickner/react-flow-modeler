@@ -13,9 +13,7 @@ Enable editing by providing an `onChange` callback function that will receive th
 This should then be stored in some external (e.g. Redux) store/state and provided as `flow` prop.
 
 export const externalState = {
-    flow: 
-    /*
-    {
+    flow:  {
         firstElementId: "1",
         elements: {
             "1": { data: { label: "First" }, nextElementId: "2" },
@@ -28,69 +26,6 @@ export const externalState = {
             "5": { data: { label: "Follow-Up"}}
         }
     }
-    */
-   {
-	"firstElementId": "1",
-	"elements": {
-		"1": {
-			"data": {
-				"label": "First"
-			},
-			"nextElementId": "8a7bc5f5-bec3-4c03-a6e6-cc6b0739d7f1"
-		},
-		"8a7bc5f5-bec3-4c03-a6e6-cc6b0739d7f1": {
-			"nextElements": [{
-				"id": "1cace953-4f50-4803-937a-f2ff447633d4"
-			}, {
-				"id": "1cace953-4f50-4803-937a-f2ff447633d4"
-			}],
-			"data": {}
-		},
-		"1cace953-4f50-4803-937a-f2ff447633d4": {
-			"nextElementId": "2",
-			"data": {}
-		},
-		"2": {
-			"data": {
-				"label": "Second"
-			},
-			"nextElementId": "3"
-		},
-		"3": {
-			"data": {
-				"label": "Condition"
-			},
-			"nextElements": [{
-				"id": "4.1",
-				"conditionData": {
-					"label": "Fulfilled"
-				}
-			}, {
-				"id": "4.2",
-				"conditionData": {
-					"label": "Not fulfilled"
-				}
-			}]
-		},
-		"4.1": {
-			"data": {
-				"label": "Option 1"
-			},
-			"nextElementId": "5"
-		},
-		"4.2": {
-			"data": {
-				"label": "Option 2"
-			},
-			"nextElementId": "5"
-		},
-		"5": {
-			"data": {
-				"label": "Follow-Up"
-			}
-		}
-	}
-}
 }
 
 <Preview>
