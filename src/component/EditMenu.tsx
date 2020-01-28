@@ -3,7 +3,7 @@ import * as React from "react";
 import { FlowElementReference } from "../model/FlowElement";
 import { ElementType } from "../types/GridCellData";
 import { FlowModelerProps, MenuOptions } from "../types/FlowModelerProps";
-import { addContentElement } from "../model/action/addContentElement";
+import { addContentElement, addDivergingGateway } from "../model/action/addElement";
 
 const onClickStopPropagation = (event: React.MouseEvent): void => event.stopPropagation();
 
@@ -44,6 +44,25 @@ export class EditMenu extends React.Component<{
         return this.renderMenuItem(menuOptions ? menuOptions.addFollowingContentElement : undefined, "add-content", this.onAddContentElementClick);
     }
 
+    onAddDivergingGatewayClick = (): void => {
+        const { targetType, onChange, referenceElement, branchIndex } = this.props;
+        if (targetType !== ElementType.GatewayDiverging) {
+            onChange((originalFlow) => addDivergingGateway(originalFlow, targetType, {}, referenceElement, branchIndex));
+        }
+    };
+
+    renderAddDivergingGatewayItem(): React.ReactNode {
+        const { targetType, menuOptions } = this.props;
+        if (targetType === ElementType.GatewayDiverging) {
+            return null;
+        }
+        return this.renderMenuItem(
+            menuOptions ? menuOptions.addFollowingDivergingGateway : undefined,
+            "add-gateway",
+            this.onAddDivergingGatewayClick
+        );
+    }
+
     onAddDivergingBranchClick = (): void => {
         const { targetType, onChange, referenceElement } = this.props;
         if (targetType === ElementType.GatewayDiverging) {
@@ -58,26 +77,6 @@ export class EditMenu extends React.Component<{
             return null;
         }
         return this.renderMenuItem(menuOptions ? menuOptions.addDivergingBranch : undefined, "add-branch", this.onAddDivergingBranchClick);
-    }
-
-    onAddDivergingGatewayClick = (): void => {
-        const { targetType, onChange, referenceElement } = this.props;
-        if (targetType !== ElementType.GatewayDiverging) {
-            // TODO call model change method
-            onChange(() => (referenceElement ? null : null));
-        }
-    };
-
-    renderAddDivergingGatewayItem(): React.ReactNode {
-        const { targetType, menuOptions } = this.props;
-        if (targetType === ElementType.GatewayDiverging) {
-            return null;
-        }
-        return this.renderMenuItem(
-            menuOptions ? menuOptions.addFollowingDivergingGateway : undefined,
-            "add-gateway",
-            this.onAddDivergingGatewayClick
-        );
     }
 
     onChangeNextElementClick = (): void => {
