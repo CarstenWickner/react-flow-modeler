@@ -5,6 +5,7 @@ import { FlowElementReference } from "../FlowElement";
 import { isDivergingGateway } from "../modelUtils";
 import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 import { ElementType } from "../../types/GridCellData";
+import { EditActionResult } from "../../types/EditAction";
 
 const addElement = (
     originalFlow: FlowModelerProps["flow"],
@@ -13,31 +14,31 @@ const addElement = (
     data: { [key: string]: unknown } | undefined,
     referenceElement?: FlowElementReference,
     branchIndex?: number
-): FlowModelerProps["flow"] => {
-    const flowCopy = cloneDeep(originalFlow);
+): EditActionResult => {
+    const changedFlow = cloneDeep(originalFlow);
     const newElementId = v4();
     let nextElementId: string;
     switch (precedingType) {
         case ElementType.Start:
-            nextElementId = flowCopy.firstElementId;
-            flowCopy.firstElementId = newElementId;
+            nextElementId = changedFlow.firstElementId;
+            changedFlow.firstElementId = newElementId;
             break;
         case ElementType.Content:
-            const precedingContentElement = (flowCopy.elements[referenceElement.getId()] as unknown) as FlowContent;
+            const precedingContentElement = (changedFlow.elements[referenceElement.getId()] as unknown) as FlowContent;
             nextElementId = precedingContentElement.nextElementId;
             precedingContentElement.nextElementId = newElementId;
             break;
         case ElementType.GatewayConverging:
             nextElementId = referenceElement.getId();
-            const nextElementExists = nextElementId in flowCopy.elements;
+            const nextElementExists = nextElementId in changedFlow.elements;
             referenceElement
                 .getPrecedingElements()
-                .map((precedingElement) => flowCopy.elements[precedingElement.getId()])
+                .map((precedingElement) => changedFlow.elements[precedingElement.getId()])
                 .forEach((precedingElement) => {
                     if (isDivergingGateway(precedingElement)) {
                         precedingElement.nextElements
                             .filter((possibleLink) =>
-                                nextElementExists ? possibleLink.id === nextElementId : !(possibleLink.id in flowCopy.elements)
+                                nextElementExists ? possibleLink.id === nextElementId : !(possibleLink.id in changedFlow.elements)
                             )
                             .forEach((link) => (link.id = newElementId));
                     } else {
@@ -46,13 +47,13 @@ const addElement = (
                 });
             break;
         case ElementType.ConnectGatewayToElement:
-            const precedingGatewayElement = (flowCopy.elements[referenceElement.getId()] as unknown) as FlowGatewayDiverging;
+            const precedingGatewayElement = (changedFlow.elements[referenceElement.getId()] as unknown) as FlowGatewayDiverging;
             nextElementId = precedingGatewayElement.nextElements[branchIndex].id;
             precedingGatewayElement.nextElements[branchIndex].id = newElementId;
             break;
     }
-    flowCopy.elements[newElementId] = createElement(nextElementId, data);
-    return flowCopy;
+    changedFlow.elements[newElementId] = createElement(nextElementId, data);
+    return { changedFlow };
 };
 
 const createContentElement = (nextElementId: string | undefined, data: { [key: string]: unknown } | undefined): FlowContent => ({
@@ -71,7 +72,7 @@ export const addContentElement = (
     data: { [key: string]: unknown } | undefined,
     referenceElement?: FlowElementReference,
     branchIndex?: number
-): FlowModelerProps["flow"] => addElement(originalFlow, precedingType, createContentElement, data, referenceElement, branchIndex);
+): EditActionResult => addElement(originalFlow, precedingType, createContentElement, data, referenceElement, branchIndex);
 
 export const addDivergingGateway = (
     originalFlow: FlowModelerProps["flow"],
@@ -79,4 +80,4 @@ export const addDivergingGateway = (
     data: { [key: string]: unknown } | undefined,
     referenceElement?: FlowElementReference,
     branchIndex?: number
-): FlowModelerProps["flow"] => addElement(originalFlow, precedingType, createDivergingGateway, data, referenceElement, branchIndex);
+): EditActionResult => addElement(originalFlow, precedingType, createDivergingGateway, data, referenceElement, branchIndex);

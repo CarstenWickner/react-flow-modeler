@@ -1,3 +1,4 @@
+import { forceReRender } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { Meta, Preview, Story, Props } from '@storybook/addon-docs/blocks';
 import "./style-overrides.css";
@@ -35,7 +36,10 @@ export const externalState = {
             renderContent={({ elementData }) => <span>{elementData && elementData.label}</span>}
             renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData && gatewayData.label}</label>}
             renderGatewayConditionValue={({ conditionData }) => <label>{conditionData && conditionData.label}</label>}
-            onChange={({ changedFlow }) => externalState.flow = changedFlow}
+            onChange={({ changedFlow }) => {
+                externalState.flow = changedFlow;
+                forceReRender();
+            }}
         />
     </Story>
 </Preview>

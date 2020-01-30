@@ -8,8 +8,10 @@ import { EditMenu } from "./EditMenu";
 import { GridCell } from "./GridCell";
 import { buildRenderData } from "./renderDataUtils";
 import { FlowElementReference } from "../model/FlowElement";
-import { GridCellData, ElementType } from "../types/GridCellData";
+
+import { EditActionResult, SelectableElementType } from "../types/EditAction";
 import { FlowModelerProps } from "../types/FlowModelerProps";
+import { GridCellData, ElementType } from "../types/GridCellData";
 
 import "./FlowModeler.scss";
 
@@ -18,13 +20,6 @@ const menuOptionsPropType = PropTypes.shape({
     title: PropTypes.string,
     isActionAllowed: PropTypes.func
 });
-
-type SelectableElementType =
-    | ElementType.Start
-    | ElementType.Content
-    | ElementType.GatewayDiverging
-    | ElementType.GatewayConverging
-    | ElementType.ConnectGatewayToElement;
 
 interface FlowModelerState {
     selection: null | { type: SelectableElementType; id?: string; branchIndex?: number };
@@ -70,9 +65,11 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
         event.stopPropagation();
     };
 
-    handleOnChange = (change: (originalFlow: FlowModelerProps["flow"]) => FlowModelerProps["flow"]): void => {
+    handleOnChange = (change: (originalFlow: FlowModelerProps["flow"]) => EditActionResult): void => {
         const { flow, onChange } = this.props;
-        onChange({ changedFlow: change(flow) });
+        const { changedFlow } = change(flow);
+        this.onSelect(null);
+        onChange({ changedFlow });
     };
 
     renderEditMenu = (

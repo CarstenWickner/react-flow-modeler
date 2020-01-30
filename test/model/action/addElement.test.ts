@@ -2,6 +2,7 @@ import { addContentElement, addDivergingGateway } from "../../../src/model/actio
 import { ElementType } from "../../../src/types/GridCellData";
 import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../../src/types/FlowModelerProps";
 import { createElementTree } from "../../../src/model/modelUtils";
+import { EditActionResult } from "../../../src/types/EditAction";
 
 describe("addContentElement()", () => {
     describe("adding element after start", () => {
@@ -16,14 +17,14 @@ describe("addContentElement()", () => {
                     a: { nextElementId: null }
                 }
             };
-            const updatedFlow = addElement(originalFlow, ElementType.Start, { y: "value" });
+            const { changedFlow }: EditActionResult = addElement(originalFlow, ElementType.Start, { y: "value" });
 
-            const newElementId = updatedFlow.firstElementId;
+            const newElementId = changedFlow.firstElementId;
             expect(newElementId).not.toBeNull();
             expect(newElementId).not.toEqual("a");
-            expect(Object.keys(updatedFlow.elements)).toHaveLength(2);
-            expect(updatedFlow.elements[newElementId]).toEqual(expectedNewElement);
-            expect(updatedFlow.elements.a).toEqual(originalFlow.elements.a);
+            expect(Object.keys(changedFlow.elements)).toHaveLength(2);
+            expect(changedFlow.elements[newElementId]).toEqual(expectedNewElement);
+            expect(changedFlow.elements.a).toEqual(originalFlow.elements.a);
         });
         it.each`
             type                   | addElement             | expectedNewElement
@@ -34,12 +35,12 @@ describe("addContentElement()", () => {
                 firstElementId: null,
                 elements: {}
             };
-            const updatedFlow = addElement(originalFlow, ElementType.Start, { defaultData: "x" });
+            const { changedFlow }: EditActionResult = addElement(originalFlow, ElementType.Start, { defaultData: "x" });
 
-            const firstElementId = updatedFlow.firstElementId;
+            const firstElementId = changedFlow.firstElementId;
             expect(firstElementId).not.toBeNull();
-            expect(Object.keys(updatedFlow.elements)).toHaveLength(1);
-            expect(updatedFlow.elements[firstElementId]).toEqual(expectedNewElement);
+            expect(Object.keys(changedFlow.elements)).toHaveLength(1);
+            expect(changedFlow.elements[firstElementId]).toEqual(expectedNewElement);
         });
     });
     describe("adding element after content that", () => {
@@ -56,14 +57,14 @@ describe("addContentElement()", () => {
                 }
             };
             const aReference = createElementTree(originalFlow, "top");
-            const updatedFlow = addElement(originalFlow, ElementType.Content, { x: "y" }, aReference);
+            const { changedFlow }: EditActionResult = addElement(originalFlow, ElementType.Content, { x: "y" }, aReference);
 
-            expect(updatedFlow.firstElementId).toEqual("a");
-            expect(Object.keys(updatedFlow.elements)).toHaveLength(3);
-            const newElementId = (updatedFlow.elements.a as FlowContent).nextElementId;
+            expect(changedFlow.firstElementId).toEqual("a");
+            expect(Object.keys(changedFlow.elements)).toHaveLength(3);
+            const newElementId = (changedFlow.elements.a as FlowContent).nextElementId;
             expect(newElementId).not.toBeNull();
-            expect(updatedFlow.elements[newElementId]).toEqual(expectedNewElement);
-            expect(updatedFlow.elements.b).toEqual(originalFlow.elements.b);
+            expect(changedFlow.elements[newElementId]).toEqual(expectedNewElement);
+            expect(changedFlow.elements.b).toEqual(originalFlow.elements.b);
         });
         it.each`
             type                   | addElement             | expectedNewElement
@@ -77,13 +78,13 @@ describe("addContentElement()", () => {
                 }
             };
             const aReference = createElementTree(originalFlow, "top");
-            const updatedFlow = addElement(originalFlow, ElementType.Content, { x: "y" }, aReference);
+            const { changedFlow }: EditActionResult = addElement(originalFlow, ElementType.Content, { x: "y" }, aReference);
 
-            expect(updatedFlow.firstElementId).toEqual("a");
-            expect(Object.keys(updatedFlow.elements)).toHaveLength(2);
-            const newElementId = (updatedFlow.elements.a as FlowContent).nextElementId;
+            expect(changedFlow.firstElementId).toEqual("a");
+            expect(Object.keys(changedFlow.elements)).toHaveLength(2);
+            const newElementId = (changedFlow.elements.a as FlowContent).nextElementId;
             expect(newElementId).toBeDefined();
-            expect(updatedFlow.elements[newElementId]).toEqual(expectedNewElement);
+            expect(changedFlow.elements[newElementId]).toEqual(expectedNewElement);
         });
     });
     describe("adding element after converging gateway that", () => {
@@ -101,20 +102,20 @@ describe("addContentElement()", () => {
             };
             const aReference = createElementTree(originalFlow, "top");
             const bReference = aReference.getFollowingElements()[0];
-            const updatedFlow = addElement(originalFlow, ElementType.GatewayConverging, { x: "y" }, bReference);
+            const { changedFlow }: EditActionResult = addElement(originalFlow, ElementType.GatewayConverging, { x: "y" }, bReference);
 
-            expect(updatedFlow.firstElementId).toEqual("a");
-            expect(Object.keys(updatedFlow.elements)).toHaveLength(3);
-            const gatewayBranches = (updatedFlow.elements.a as FlowGatewayDiverging).nextElements;
+            expect(changedFlow.firstElementId).toEqual("a");
+            expect(Object.keys(changedFlow.elements)).toHaveLength(3);
+            const gatewayBranches = (changedFlow.elements.a as FlowGatewayDiverging).nextElements;
             expect(gatewayBranches).toHaveLength(2);
             const newElementId = gatewayBranches[0].id;
             expect(newElementId).toBeDefined();
             expect(newElementId).not.toEqual("b");
-            expect(updatedFlow.elements.a).toEqual({
+            expect(changedFlow.elements.a).toEqual({
                 nextElements: [{ id: newElementId }, { id: newElementId }]
             });
-            expect(updatedFlow.elements[newElementId]).toEqual(expectedNewElement);
-            expect(updatedFlow.elements.b).toEqual(originalFlow.elements.b);
+            expect(changedFlow.elements[newElementId]).toEqual(expectedNewElement);
+            expect(changedFlow.elements.b).toEqual(originalFlow.elements.b);
         });
         it.each`
             type                   | addElement             | expectedNewElement
@@ -129,18 +130,18 @@ describe("addContentElement()", () => {
             };
             const aReference = createElementTree(originalFlow, "top");
             const endReference = aReference.getFollowingElements()[0];
-            const updatedFlow = addElement(originalFlow, ElementType.GatewayConverging, { x: "y" }, endReference);
+            const { changedFlow }: EditActionResult = addElement(originalFlow, ElementType.GatewayConverging, { x: "y" }, endReference);
 
-            expect(updatedFlow.firstElementId).toEqual("a");
-            expect(Object.keys(updatedFlow.elements)).toHaveLength(2);
-            const gatewayBranches = (updatedFlow.elements.a as FlowGatewayDiverging).nextElements;
+            expect(changedFlow.firstElementId).toEqual("a");
+            expect(Object.keys(changedFlow.elements)).toHaveLength(2);
+            const gatewayBranches = (changedFlow.elements.a as FlowGatewayDiverging).nextElements;
             expect(gatewayBranches).toHaveLength(2);
             const newElementId = gatewayBranches[0].id;
             expect(newElementId).toBeDefined();
-            expect(updatedFlow.elements.a).toEqual({
+            expect(changedFlow.elements.a).toEqual({
                 nextElements: [{ id: newElementId }, { id: newElementId }]
             });
-            expect(updatedFlow.elements[newElementId]).toEqual(expectedNewElement);
+            expect(changedFlow.elements[newElementId]).toEqual(expectedNewElement);
         });
     });
     describe("adding element after diverging gateway connector that", () => {
@@ -157,19 +158,19 @@ describe("addContentElement()", () => {
                 }
             };
             const aReference = createElementTree(originalFlow, "top");
-            const updatedFlow = addElement(originalFlow, ElementType.ConnectGatewayToElement, { x: "y" }, aReference, 1);
+            const { changedFlow }: EditActionResult = addElement(originalFlow, ElementType.ConnectGatewayToElement, { x: "y" }, aReference, 1);
 
-            expect(updatedFlow.firstElementId).toEqual("a");
-            expect(Object.keys(updatedFlow.elements)).toHaveLength(3);
-            const gatewayBranches = (updatedFlow.elements.a as FlowGatewayDiverging).nextElements;
+            expect(changedFlow.firstElementId).toEqual("a");
+            expect(Object.keys(changedFlow.elements)).toHaveLength(3);
+            const gatewayBranches = (changedFlow.elements.a as FlowGatewayDiverging).nextElements;
             expect(gatewayBranches).toHaveLength(3);
             const newElementId = gatewayBranches[1].id;
             expect(newElementId).toBeDefined();
             expect(newElementId).not.toEqual("b");
-            expect(updatedFlow.elements.a).toEqual({
+            expect(changedFlow.elements.a).toEqual({
                 nextElements: [{}, { id: newElementId }, { id: "b" }]
             });
-            expect(updatedFlow.elements[newElementId]).toEqual(expectedNewElement);
+            expect(changedFlow.elements[newElementId]).toEqual(expectedNewElement);
         });
         it.each`
             type                   | addElement             | expectedNewElement
@@ -184,19 +185,19 @@ describe("addContentElement()", () => {
                 }
             };
             const aReference = createElementTree(originalFlow, "top");
-            const updatedFlow = addElement(originalFlow, ElementType.ConnectGatewayToElement, { x: "y" }, aReference, 1);
+            const { changedFlow }: EditActionResult = addElement(originalFlow, ElementType.ConnectGatewayToElement, { x: "y" }, aReference, 1);
 
-            expect(updatedFlow.firstElementId).toEqual("a");
-            expect(Object.keys(updatedFlow.elements)).toHaveLength(3);
-            const gatewayBranches = (updatedFlow.elements.a as FlowGatewayDiverging).nextElements;
+            expect(changedFlow.firstElementId).toEqual("a");
+            expect(Object.keys(changedFlow.elements)).toHaveLength(3);
+            const gatewayBranches = (changedFlow.elements.a as FlowGatewayDiverging).nextElements;
             expect(gatewayBranches).toHaveLength(3);
             const newElementId = gatewayBranches[1].id;
             expect(newElementId).toBeDefined();
             expect(newElementId).not.toEqual("b");
-            expect(updatedFlow.elements.a).toEqual({
+            expect(changedFlow.elements.a).toEqual({
                 nextElements: [{}, { id: newElementId }, { id: "b" }]
             });
-            expect(updatedFlow.elements[newElementId]).toEqual(expectedNewElement);
+            expect(changedFlow.elements[newElementId]).toEqual(expectedNewElement);
         });
     });
 });

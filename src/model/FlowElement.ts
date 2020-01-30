@@ -4,11 +4,17 @@ export interface FlowElementReference {
     getFollowingElements: () => Array<FlowElementReference>;
 }
 
+export type PrecedingFlowElement = {
+    element: FlowElement;
+    // branch index in case of the preceding "element" being a diverging gateway, which of the element's following elements is this referring to
+    branchIndex?: number;
+};
+
 export class FlowElement implements FlowElementReference {
     private id: string;
     private columnIndex: number;
     private rowCount: number;
-    private precedingElements: Array<FlowElement>;
+    private precedingElements: Array<PrecedingFlowElement>;
     private followingElements: Array<FlowElement>;
 
     constructor(id: string) {
@@ -38,11 +44,15 @@ export class FlowElement implements FlowElementReference {
     }
 
     getPrecedingElements(): Array<FlowElement> {
+        return this.precedingElements.map(({ element }) => element);
+    }
+
+    getPrecedingElementsWithBranchIndex(): Array<PrecedingFlowElement> {
         return this.precedingElements;
     }
 
-    addPrecedingElement(element: FlowElement): void {
-        this.precedingElements.push(element);
+    addPrecedingElement(element: FlowElement, branchIndex?: number): void {
+        this.precedingElements.push({ element, branchIndex });
     }
 
     getFollowingElements(): Array<FlowElement> {

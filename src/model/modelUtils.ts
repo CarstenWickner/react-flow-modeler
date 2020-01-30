@@ -8,6 +8,7 @@ export const isDivergingGateway = (inputElement: FlowContent | FlowGatewayDiverg
 const handleNextElement = (
     currentElement: FlowElement,
     nextElementId: string,
+    branchIndex: number | undefined,
     inputElements: FlowModelerProps["flow"]["elements"],
     resultingModelElements: Map<string, FlowElement>
 ): void => {
@@ -21,7 +22,7 @@ const handleNextElement = (
         populateElement(nextElement, inputElements, resultingModelElements);
     }
     currentElement.addFollowingElement(nextElement);
-    nextElement.addPrecedingElement(currentElement);
+    nextElement.addPrecedingElement(currentElement, branchIndex);
 };
 
 const populateElement = (
@@ -40,9 +41,9 @@ const populateElement = (
         } else {
             subElements = [{}, {}];
         }
-        subElements.forEach(({ id }) => handleNextElement(target, id, inputElements, resultingModelElements));
+        subElements.forEach(({ id }, branchIndex) => handleNextElement(target, id, branchIndex, inputElements, resultingModelElements));
     } else if (inputElement) {
-        handleNextElement(target, inputElement.nextElementId, inputElements, resultingModelElements);
+        handleNextElement(target, inputElement.nextElementId, undefined, inputElements, resultingModelElements);
     }
 };
 

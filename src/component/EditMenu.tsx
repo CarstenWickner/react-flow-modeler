@@ -4,20 +4,17 @@ import { FlowElementReference } from "../model/FlowElement";
 import { ElementType } from "../types/GridCellData";
 import { FlowModelerProps, MenuOptions } from "../types/FlowModelerProps";
 import { addContentElement, addDivergingGateway } from "../model/action/addElement";
+import { SelectableElementType, EditActionResult } from "../types/EditAction";
+import { addBranch } from "../model/action/addBranch";
 
 const onClickStopPropagation = (event: React.MouseEvent): void => event.stopPropagation();
 
 export class EditMenu extends React.Component<{
-    targetType:
-        | ElementType.Start
-        | ElementType.Content
-        | ElementType.GatewayDiverging
-        | ElementType.GatewayConverging
-        | ElementType.ConnectGatewayToElement;
+    targetType: SelectableElementType;
     referenceElement?: FlowElementReference;
     branchIndex?: number;
     menuOptions?: FlowModelerProps["options"]["editActions"];
-    onChange?: (change: (originalFlow: FlowModelerProps["flow"]) => FlowModelerProps["flow"]) => void;
+    onChange?: (change: (originalFlow: FlowModelerProps["flow"]) => EditActionResult) => void;
 }> {
     renderMenuItem(options: MenuOptions, defaultClassName: string, onClick: (event: React.MouseEvent) => void): React.ReactNode {
         const { targetType, referenceElement, branchIndex } = this.props;
@@ -67,7 +64,7 @@ export class EditMenu extends React.Component<{
         const { targetType, onChange, referenceElement } = this.props;
         if (targetType === ElementType.GatewayDiverging) {
             // TODO call model change method
-            onChange(() => (referenceElement ? null : null));
+            onChange((originalFlow) => addBranch(originalFlow, {}, referenceElement));
         }
     };
 
@@ -97,7 +94,11 @@ export class EditMenu extends React.Component<{
 
     onRemoveClick = (): void => {
         const { targetType, onChange, referenceElement } = this.props;
-        if (targetType !== ElementType.Start && targetType !== ElementType.GatewayConverging) {
+        if (
+            targetType !== ElementType.Start &&
+            targetType !== ElementType.GatewayConverging &&
+            (targetType !== ElementType.ConnectGatewayToElement || referenceElement.getPrecedingElements().length > 2)
+        ) {
             // TODO call model change method
             onChange(() => (referenceElement ? null : null));
         }

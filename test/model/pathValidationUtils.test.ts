@@ -34,10 +34,11 @@ describe("checkForCircularReference()", () => {
 
 describe("validatePaths()", () => {
     describe.each`
-        testDescription                | firstElementId | additionalElements
-        ${"root"}                      | ${"a"}         | ${{}}
-        ${"behind content element"}    | ${"root"}      | ${{ root: ref("a") }}
-        ${"behind converging gateway"} | ${"root"}      | ${{ root: { nextElements: [{ id: "x" }, { id: "y" }] }, x: ref("a"), y: ref("a") }}
+        testDescription                     | firstElementId | additionalElements
+        ${"root"}                           | ${"a"}         | ${{}}
+        ${"behind content element"}         | ${"root"}      | ${{ root: ref("a") }}
+        ${"behind empty diverging gateway"} | ${"root"}      | ${{ root: { nextElements: [{ id: "a" }, { id: "a" }] } }}
+        ${"behind converging gateway"}      | ${"root"}      | ${{ root: { nextElements: [{ id: "x" }, { id: "y" }] }, x: ref("a"), y: ref("a") }}
     `(
         "properly performs validation when gateway is $testDescription",
         ({ firstElementId, additionalElements }: { firstElementId: string; additionalElements: FlowModelerProps["flow"]["elements"] }) => {
@@ -96,4 +97,44 @@ describe("validatePaths()", () => {
             });
         }
     );
+    describe("properly handles the same element being referenced multiple times from one diverging gateway", () => {
+        it("accepts uninterrupted equal references", () => {
+            const elements = {
+                a: { nextElements: [{ id: "b" }, { id: "b" }, { id: "b" }] },
+                b: {}
+            };
+            const treeRootElement = createElementTree({ firstElementId: "a", elements }, "top");
+            const execution = (): never => validatePaths(treeRootElement);
+            expect(execution).not.toThrowError();
+        });
+        it("accepts uninterrupted references with intermediate converging gateway", () => {
+            const elements = {
+                a: { nextElements: [{ id: "b" }, { id: "c" }, { id: "b" }] },
+                b: {},
+                c: ref("b")
+            };
+            const treeRootElement = createElementTree({ firstElementId: "a", elements }, "top");
+            const execution = (): never => validatePaths(treeRootElement);
+            expect(execution).not.toThrowError();
+        });
+        it("throws error for interrupted references – pointing to invalid converging gateway", () => {
+            const elements = {
+                a: { nextElements: [{ id: "b" }, { id: "c" }, { id: "b" }] },
+                b: ref("c"),
+                c: {}
+            };
+            const treeRootElement = createElementTree({ firstElementId: "a", elements }, "top");
+            const execution = (): never => validatePaths(treeRootElement);
+            expect(execution).toThrowError("Multiple references only valid from neighbouring paths. Invalid references to: 'b'");
+        });
+        it("throws error for interrupted references – pointing to end", () => {
+            const elements = {
+                a: { nextElements: [{ id: "b" }, {}, { id: "b" }] },
+                b: {}
+            };
+            const treeRootElement = createElementTree({ firstElementId: "a", elements }, "top");
+            const execution = (): never => validatePaths(treeRootElement);
+            expect(execution).toThrowError("Multiple references only valid from neighbouring paths. Invalid references to: 'b'");
+        });
+    });
 });
