@@ -212,7 +212,7 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
 
     static propTypes = {
         flow: PropTypes.shape({
-            firstElementId: PropTypes.string.isRequired,
+            firstElementId: PropTypes.string,
             elements: PropTypes.objectOf(
                 PropTypes.oneOfType([
                     PropTypes.shape({

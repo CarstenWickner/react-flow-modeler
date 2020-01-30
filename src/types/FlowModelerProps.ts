@@ -22,7 +22,7 @@ export interface MenuOptions {
 
 export interface FlowModelerProps {
     flow: {
-        firstElementId: string;
+        firstElementId: string | null;
         elements: { [key: string]: FlowContent | FlowGatewayDiverging };
     };
     options?: {
