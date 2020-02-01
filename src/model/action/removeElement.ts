@@ -1,10 +1,12 @@
 import cloneDeep from "lodash.clonedeep";
 
+import { replaceAllLinks } from "./editUtils";
 import { FlowElementReference } from "../FlowElement";
 import { isDivergingGateway } from "../modelUtils";
+
+import { EditActionResult } from "../../types/EditAction";
 import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 import { ElementType } from "../../types/GridCellData";
-import { EditActionResult } from "../../types/EditAction";
 
 const isElementReferencing = (elementId: string) => (element: FlowContent | FlowGatewayDiverging): boolean => {
     if (isDivergingGateway(element)) {
@@ -17,7 +19,7 @@ const isElementReferenced = (flow: FlowModelerProps["flow"], elementId: string):
     Object.values(flow.elements).some(isElementReferencing(elementId));
 
 const removeOrphanElement = (flow: FlowModelerProps["flow"], elementId: string): void => {
-    if (flow.elements[elementId] && !isElementReferenced(flow, elementId)) {
+    if (elementId in flow.elements && !isElementReferenced(flow, elementId)) {
         const orphan = flow.elements[elementId];
         delete flow.elements[elementId];
         if (isDivergingGateway(orphan)) {
@@ -28,19 +30,6 @@ const removeOrphanElement = (flow: FlowModelerProps["flow"], elementId: string):
     }
 };
 
-const replaceLink = (flow: FlowModelerProps["flow"], currentId: string, replacementId: string): void => {
-    Object.values(flow.elements).forEach((element: FlowContent | FlowGatewayDiverging) => {
-        if (isDivergingGateway(element)) {
-            element.nextElements.forEach((branch) => (branch.id = branch.id === currentId ? replacementId : branch.id));
-        } else if (element.nextElementId === currentId) {
-            element.nextElementId = replacementId;
-        }
-    });
-    if (flow.firstElementId === currentId) {
-        flow.firstElementId = replacementId || null;
-    }
-};
-
 export const removeElement = (
     originalFlow: FlowModelerProps["flow"],
     targetType: ElementType.Content | ElementType.GatewayDiverging | ElementType.ConnectGatewayToElement,
@@ -48,22 +37,22 @@ export const removeElement = (
     branchIndex?: number
 ): EditActionResult => {
     const changedFlow = cloneDeep(originalFlow);
+    const targetId = referenceElement.getId();
     switch (targetType) {
         case ElementType.Content:
-            const targetId = referenceElement.getId();
             const targetContentElement = (changedFlow.elements[targetId] as unknown) as FlowContent;
-            replaceLink(changedFlow, targetId, targetContentElement.nextElementId);
-            delete changedFlow.elements[referenceElement.getId()];
+            replaceAllLinks(changedFlow, targetId, targetContentElement.nextElementId);
+            delete changedFlow.elements[targetId];
             break;
         case ElementType.ConnectGatewayToElement:
-            const precedingGatewayElement = (changedFlow.elements[referenceElement.getId()] as unknown) as FlowGatewayDiverging;
+            const precedingGatewayElement = (changedFlow.elements[targetId] as unknown) as FlowGatewayDiverging;
             const nextElementId = precedingGatewayElement.nextElements[branchIndex].id;
             precedingGatewayElement.nextElements.splice(branchIndex, 1);
             removeOrphanElement(changedFlow, nextElementId);
             if (precedingGatewayElement.nextElements.length === 1) {
                 // remove gateway as well, now that there is only one path left
-                delete changedFlow.elements[referenceElement.getId()];
-                replaceLink(changedFlow, referenceElement.getId(), precedingGatewayElement.nextElements[0].id);
+                replaceAllLinks(changedFlow, targetId, precedingGatewayElement.nextElements[0].id);
+                delete changedFlow.elements[targetId];
             }
             break;
     }

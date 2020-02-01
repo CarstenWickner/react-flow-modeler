@@ -7,6 +7,7 @@
     justify-content: stretch;
 
     $strokeColor: #01579b;
+    $dropStrokeColor: #00b0ff;
     $strokeStrength: 0.25em;
     $arrowSize: 1.5 * $strokeStrength;
     $strokeLength: 1.75em;
@@ -157,6 +158,9 @@
                 border-left: $arrowSize solid $strokeColor;
                 border-bottom: $arrowSize solid transparent;
             }
+            &.can-drop::after {
+                border-left-color: $dropStrokeColor;
+            }
         }
         &::before {
             position: absolute;
@@ -165,6 +169,9 @@
             width: 100%;
             top: calc(50% - #{$strokeStrength / 2});
             z-index: -1;
+        }
+        &.can-drop::before {
+            background-color: $dropStrokeColor;
         }
         & > .top-label {
             display: flex;
@@ -220,6 +227,22 @@
         & .gateway-element.selected::before,
         & .gateway-element:hover::before {
             box-shadow: 0 0 0.1em 0.1em rgba(0, 0, 0, 0.25);
+        }
+        & .flow-element-wrapper.can-drop > .content-element,
+        & .flow-element-wrapper.can-drop > .gateway-element::before {
+            box-shadow: 0 0 0.125em 0.125em rgba(0, 176, 255, 0.5);
+        }
+        & .flow-element-wrapper.can-drop > .end-element {
+            box-shadow:
+                0 0 0 ($strokeStrength * 0.9) $standardElementColor,
+                0 0 0.125em ($strokeStrength * 0.9 + 0.125em) rgba(0, 176, 255, 0.5);
+        }
+        & .dragging {
+            color: $dropStrokeColor;
+        }
+        & .flow-element-wrapper.cannot-drop,
+        & .flow-element-wrapper.cannot-drop > .flow-element {
+            cursor: no-drop;
         }
     }
 }

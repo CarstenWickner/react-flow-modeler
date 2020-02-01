@@ -1,29 +1,36 @@
 import * as React from "react";
 
+import { FlowElementWrapper } from "./FlowElementWrapper";
 import { HorizontalStroke } from "./HorizontalStroke";
+import { FlowElementReference } from "../model/FlowElement";
+
+import { onLinkDropCallback } from "../types/EditAction";
 
 export class ContentElement extends React.Component<{
-    elementId: string;
+    referenceElement: FlowElementReference;
     editMenu: (() => React.ReactNode) | undefined;
+    onLinkDrop: onLinkDropCallback | undefined;
     onSelect: (elementId: string) => void;
 }> {
     onClick = (event: React.MouseEvent): void => {
-        const { onSelect, elementId } = this.props;
-        onSelect(elementId);
+        const { referenceElement, onSelect } = this.props;
+        onSelect(referenceElement.getId());
         event.stopPropagation();
     };
 
     render(): React.ReactNode {
-        const { editMenu, children } = this.props;
+        const { referenceElement, editMenu, onLinkDrop: onDrop, children } = this.props;
         return (
             <>
-                <div className="stroke-horizontal arrow" />
-                <div className="flow-element-wrapper">
-                    <div className={`flow-element content-element${editMenu ? " selected" : ""}`} onClick={this.onClick}>
-                        {children}
-                    </div>
-                    {editMenu && editMenu()}
-                </div>
+                <FlowElementWrapper
+                    elementTypeClassName="content-element"
+                    referenceElement={referenceElement}
+                    editMenu={editMenu}
+                    onLinkDrop={onDrop}
+                    onClick={this.onClick}
+                >
+                    {children}
+                </FlowElementWrapper>
                 <HorizontalStroke optional />
             </>
         );

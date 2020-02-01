@@ -1,11 +1,12 @@
 import { v4 } from "uuid";
 import cloneDeep from "lodash.clonedeep";
 
+import { replaceLinksInList } from "./editUtils";
 import { FlowElementReference } from "../FlowElement";
-import { isDivergingGateway } from "../modelUtils";
+
+import { EditActionResult } from "../../types/EditAction";
 import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 import { ElementType } from "../../types/GridCellData";
-import { EditActionResult } from "../../types/EditAction";
 
 const addElement = (
     originalFlow: FlowModelerProps["flow"],
@@ -30,21 +31,7 @@ const addElement = (
             break;
         case ElementType.GatewayConverging:
             nextElementId = referenceElement.getId();
-            const nextElementExists = nextElementId in changedFlow.elements;
-            referenceElement
-                .getPrecedingElements()
-                .map((precedingElement) => changedFlow.elements[precedingElement.getId()])
-                .forEach((precedingElement) => {
-                    if (isDivergingGateway(precedingElement)) {
-                        precedingElement.nextElements
-                            .filter((possibleLink) =>
-                                nextElementExists ? possibleLink.id === nextElementId : !(possibleLink.id in changedFlow.elements)
-                            )
-                            .forEach((link) => (link.id = newElementId));
-                    } else {
-                        precedingElement.nextElementId = newElementId;
-                    }
-                });
+            replaceLinksInList(referenceElement.getPrecedingElements(), changedFlow, nextElementId, newElementId);
             break;
         case ElementType.ConnectGatewayToElement:
             const precedingGatewayElement = (changedFlow.elements[referenceElement.getId()] as unknown) as FlowGatewayDiverging;

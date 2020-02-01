@@ -1,5 +1,5 @@
 import { FlowElement, PrecedingFlowElement } from "./FlowElement";
-import { isDivergingGateway } from "./modelUtils";
+import { isDivergingGateway, createElementTree, createMinimalElementTreeStructure } from "./modelUtils";
 
 import { FlowModelerProps } from "../types/FlowModelerProps";
 
@@ -11,7 +11,7 @@ import { FlowModelerProps } from "../types/FlowModelerProps";
  * @param {Array.<string>} currentPath - ids of elements in front of target element
  * @throws Error in case of a circular reference being present
  */
-export const checkForCircularReference = (
+const checkForCircularReference = (
     targetElementId: string,
     elements: FlowModelerProps["flow"]["elements"],
     currentPath: Array<string> = []
@@ -90,7 +90,7 @@ const isInvalidConvergingGateway = (convergingGateway: FlowElement): boolean => 
  * @param {FlowElement} treeRootElement - root of the parsed data model to validate
  * @throws Error in case of any (implicit) converging gateways connecting non-neighbouring paths
  */
-export const validatePaths = (treeRootElement: FlowElement): void => {
+const validatePaths = (treeRootElement: FlowElement): void => {
     // use Set to automatically filter out duplicates and thereby avoid checking the same gateway repeatedly
     const convergingGateways = new Set<FlowElement>();
     const collectConvergingGateways = (element: FlowElement): void => {
@@ -109,5 +109,22 @@ export const validatePaths = (treeRootElement: FlowElement): void => {
                 .map((gateway) => gateway.getId())
                 .join("', '")}'`
         );
+    }
+};
+
+export const createValidatedElementTree = (flow: FlowModelerProps["flow"], verticalAlign: "top" | "bottom"): FlowElement => {
+    checkForCircularReference(flow.firstElementId, flow.elements);
+    const treeRootElement = createElementTree(flow, verticalAlign);
+    validatePaths(treeRootElement);
+    return treeRootElement;
+};
+
+export const isFlowValid = (flow: FlowModelerProps["flow"]): boolean => {
+    try {
+        checkForCircularReference(flow.firstElementId, flow.elements);
+        validatePaths(createMinimalElementTreeStructure(flow).firstElement);
+        return true;
+    } catch (error) {
+        return false;
     }
 };

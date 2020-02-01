@@ -1,5 +1,7 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { DndProvider } from "react-dnd";
+import Backend from "react-dnd-html5-backend";
 
 import { ContentElement } from "./ContentElement";
 import { Gateway } from "./Gateway";
@@ -9,11 +11,13 @@ import { GridCell } from "./GridCell";
 import { buildRenderData } from "./renderDataUtils";
 import { FlowElementReference } from "../model/FlowElement";
 
-import { EditActionResult, SelectableElementType } from "../types/EditAction";
+import { EditActionResult, SelectableElementType, DraggedLinkContext } from "../types/EditAction";
 import { FlowModelerProps } from "../types/FlowModelerProps";
 import { GridCellData, ElementType } from "../types/GridCellData";
 
 import "./FlowModeler.scss";
+import { FlowElementWrapper } from "./FlowElementWrapper";
+import { changeNextElement } from "../model/action/changeNextElement";
 
 const menuOptionsPropType = PropTypes.shape({
     className: PropTypes.string,
@@ -93,10 +97,24 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
         );
     };
 
-    renderFlowElement(cellData: GridCellData): React.ReactNode {
+    handleOnLinkDrop = (dropTarget: FlowElementReference, dragContext: DraggedLinkContext, dryRun?: boolean): EditActionResult | undefined => {
+        const { flow } = this.props;
+        const { originType, originElement, originBranchIndex } = dragContext;
+        const change = (): EditActionResult => changeNextElement(flow, dropTarget, originType, originElement, originBranchIndex);
+        if (dryRun) {
+            // perform change without calling onChange, i.e. without triggering re-render
+            return change();
+        }
+        this.handleOnChange(change);
+        // onChange is expected to provide the changed flow as prop update, i.e. no need to return anything here
+        return undefined;
+    };
+
+    renderFlowElement(cellData: GridCellData, editable: boolean): React.ReactNode {
+        const onLinkDrop = editable ? this.handleOnLinkDrop : undefined;
         switch (cellData.type) {
             case ElementType.Start:
-                const startEditMenu = this.renderEditMenu(cellData.type);
+                const startEditMenu = editable && this.renderEditMenu(cellData.type);
                 return (
                     <>
                         <div className={`flow-element start-element${startEditMenu ? " selected" : ""}`} onClick={this.onClickStart} />
@@ -105,24 +123,29 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
                 );
             case ElementType.Content:
                 const { renderContent } = this.props;
-                const contentEditMenu = this.renderEditMenu(cellData.type, cellData.element);
-                const contentElementId = cellData.element.getId();
+                const contentEditMenu = editable && this.renderEditMenu(cellData.type, cellData.element);
                 return (
-                    <ContentElement elementId={contentElementId} editMenu={contentEditMenu} onSelect={this.onSelectContent}>
+                    <ContentElement
+                        referenceElement={cellData.element}
+                        editMenu={contentEditMenu}
+                        onLinkDrop={onLinkDrop}
+                        onSelect={this.onSelectContent}
+                    >
                         {renderContent({
                             elementData: cellData.data,
-                            contentElementId
+                            contentElementId: cellData.element.getId()
                         })}
                     </ContentElement>
                 );
             case ElementType.GatewayDiverging:
                 const { renderGatewayConditionType } = this.props;
-                const divergingGatewayEditMenu = this.renderEditMenu(cellData.type, cellData.gateway);
+                const divergingGatewayEditMenu = editable && this.renderEditMenu(cellData.type, cellData.gateway);
                 return (
                     <Gateway
                         type={cellData.type}
-                        gatewayId={cellData.gateway.getId()}
+                        gateway={cellData.gateway}
                         editMenu={divergingGatewayEditMenu}
+                        onLinkDrop={onLinkDrop}
                         onSelect={this.onSelectGatewayDiverging}
                     >
                         {renderGatewayConditionType &&
@@ -133,12 +156,13 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
                     </Gateway>
                 );
             case ElementType.GatewayConverging:
-                const convergingGatewayEditMenu = this.renderEditMenu(cellData.type, cellData.followingElement);
+                const convergingGatewayEditMenu = editable && this.renderEditMenu(cellData.type, cellData.followingElement);
                 return (
                     <Gateway
                         type={cellData.type}
-                        followingElementId={cellData.followingElement.getId()}
+                        followingElement={cellData.followingElement}
                         editMenu={convergingGatewayEditMenu}
+                        onLinkDrop={onLinkDrop}
                         onSelect={this.onSelectGatewayConverging}
                     />
                 );
@@ -146,7 +170,7 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
                 const { renderGatewayConditionValue } = this.props;
                 const leadingGateway = cellData.gateway;
                 const branchIndex = cellData.branchIndex;
-                const connectorEditMenu = this.renderEditMenu(cellData.type, leadingGateway, branchIndex);
+                const connectorEditMenu = editable && this.renderEditMenu(cellData.type, leadingGateway, branchIndex);
                 return (
                     <HorizontalStroke
                         incomingConnection={cellData.connectionType}
@@ -168,16 +192,11 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
             case ElementType.StrokeExtension:
                 return <HorizontalStroke optional />;
             case ElementType.End:
-                return (
-                    <>
-                        <div className="stroke-horizontal arrow" />
-                        <div className="flow-element end-element" />
-                    </>
-                );
+                return <FlowElementWrapper elementTypeClassName="end-element" onLinkDrop={onLinkDrop} />;
         }
     }
 
-    renderGridCell = (): ((cellData: GridCellData) => React.ReactNode) => {
+    renderGridCell = (editable: boolean): ((cellData: GridCellData) => React.ReactNode) => {
         const { options } = this.props;
         const { verticalAlign } = options || {};
         return (cellData: GridCellData): React.ReactNode => {
@@ -190,7 +209,7 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
                     rowEndIndex={verticalAlign === "top" || verticalAlign === "bottom" ? undefined : rowEndIndex}
                     key={`${colStartIndex}-${rowStartIndex}`}
                 >
-                    {this.renderFlowElement(cellData)}
+                    {this.renderFlowElement(cellData, editable)}
                 </GridCell>
             );
         };
@@ -200,13 +219,15 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
         const { flow, options, onChange } = this.props;
         const { gridCellData, columnCount } = buildRenderData(flow, options && options.verticalAlign === "bottom" ? "bottom" : "top");
         return (
-            <div
-                className={`flow-modeler${onChange ? " editable" : ""}`}
-                onClick={onChange ? this.clearSelection : undefined}
-                style={{ gridTemplateColumns: `repeat(${columnCount}, max-content)` }}
-            >
-                {gridCellData.map(this.renderGridCell())}
-            </div>
+            <DndProvider backend={Backend}>
+                <div
+                    className={`flow-modeler${onChange ? " editable" : ""}`}
+                    onClick={onChange ? this.clearSelection : undefined}
+                    style={{ gridTemplateColumns: `repeat(${columnCount}, max-content)` }}
+                >
+                    {gridCellData.map(this.renderGridCell(!!onChange))}
+                </div>
+            </DndProvider>
         );
     }
 

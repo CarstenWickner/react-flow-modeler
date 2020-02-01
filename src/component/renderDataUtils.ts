@@ -1,8 +1,8 @@
+import { FlowElement } from "../model/FlowElement";
+import { createValidatedElementTree } from "../model/pathValidationUtils";
+
 import { FlowContent, FlowGatewayDiverging, FlowModelerProps } from "../types/FlowModelerProps";
 import { GridCellData, ElementType, ConnectionType } from "../types/GridCellData";
-import { createElementTree } from "../model/modelUtils";
-import { FlowElement } from "../model/FlowElement";
-import { checkForCircularReference, validatePaths } from "../model/pathValidationUtils";
 
 const getColumnIndexAfter = (element: FlowElement): number => element.getColumnIndex() + (element.getFollowingElements().length > 1 ? 2 : 1);
 
@@ -123,10 +123,7 @@ export const buildRenderData = (
     flow: FlowModelerProps["flow"],
     verticalAlign: "top" | "bottom"
 ): { gridCellData: Array<GridCellData>; columnCount: number } => {
-    const { firstElementId, elements } = flow;
-    checkForCircularReference(firstElementId, elements);
-    const treeRootElement = createElementTree(flow, verticalAlign);
-    validatePaths(treeRootElement);
+    const treeRootElement = createValidatedElementTree(flow, verticalAlign);
     const result: Array<GridCellData> = [];
     // add single start element
     result.push({
@@ -135,7 +132,7 @@ export const buildRenderData = (
         rowEndIndex: 1 + treeRootElement.getRowCount(),
         type: ElementType.Start
     });
-    collectGridCellData(treeRootElement, undefined, undefined, elements, 1, result);
+    collectGridCellData(treeRootElement, undefined, undefined, flow.elements, 1, result);
     // for a more readable resulting html structure, sort the grid elements first from top to bottom and within each row from left to right
     result.sort(sortGridCellDataByPosition);
     return { gridCellData: result, columnCount: getMaxColumnIndex(treeRootElement) };
