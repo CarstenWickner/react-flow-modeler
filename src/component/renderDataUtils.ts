@@ -1,8 +1,8 @@
+import { FlowElement } from "../model/FlowElement";
+import { createValidatedElementTree } from "../model/pathValidationUtils";
+
 import { FlowContent, FlowGatewayDiverging, FlowModelerProps } from "../types/FlowModelerProps";
 import { GridCellData, ElementType, ConnectionType } from "../types/GridCellData";
-import { createElementTree } from "../model/modelUtils";
-import { FlowElement } from "../model/FlowElement";
-import { checkForCircularReference, validatePaths } from "../model/pathValidationUtils";
 
 const getColumnIndexAfter = (element: FlowElement): number => element.getColumnIndex() + (element.getFollowingElements().length > 1 ? 2 : 1);
 
@@ -36,7 +36,7 @@ const collectGridCellData = (
                 rowStartIndex: thisChildStartRowIndex,
                 rowEndIndex: nextChildRowStartIndex,
                 type: ElementType.ConnectElementToGateway,
-                elementId: precedingElement.getId(),
+                element: precedingElement,
                 connectionType:
                     parentIndex === 0 ? ConnectionType.First : parentIndex + 1 < parents.length ? ConnectionType.Middle : ConnectionType.Last
             });
@@ -46,7 +46,8 @@ const collectGridCellData = (
             colStartIndex: renderElement.getColumnIndex() - 1,
             rowStartIndex,
             rowEndIndex,
-            type: ElementType.GatewayConverging
+            type: ElementType.GatewayConverging,
+            followingElement: renderElement
         });
     } else if (triggeringRenderElement && getColumnIndexAfter(triggeringRenderElement) < renderElement.getColumnIndex()) {
         // fill gaps between elements
@@ -75,7 +76,7 @@ const collectGridCellData = (
             rowEndIndex,
             data: targetElement.data,
             type: ElementType.GatewayDiverging,
-            gatewayId: renderElement.getId()
+            gateway: renderElement
         });
         let nextChildRowStartIndex = rowStartIndex;
         renderElement.getFollowingElements().forEach((childRenderElement, childIndex, children) => {
@@ -87,12 +88,12 @@ const collectGridCellData = (
                 colStartIndex: renderElement.getColumnIndex() + 1,
                 rowStartIndex: thisChildStartRowIndex,
                 rowEndIndex: nextChildRowStartIndex,
-                gatewayId: renderElement.getId(),
-                elementId: childRenderElement.getId(),
+                gateway: renderElement,
                 type: ElementType.ConnectGatewayToElement,
                 data: ((targetElement as FlowGatewayDiverging).nextElements[childIndex] || {}).conditionData,
                 connectionType:
-                    childIndex === 0 ? ConnectionType.First : childIndex + 1 < children.length ? ConnectionType.Middle : ConnectionType.Last
+                    childIndex === 0 ? ConnectionType.First : childIndex + 1 < children.length ? ConnectionType.Middle : ConnectionType.Last,
+                branchIndex: childIndex
             });
             // render next element
             collectGridCellData(childRenderElement, childIndex, renderElement, elements, thisChildStartRowIndex, renderData);
@@ -105,7 +106,7 @@ const collectGridCellData = (
             rowEndIndex,
             data: targetElement.data,
             type: ElementType.Content,
-            elementId: renderElement.getId()
+            element: renderElement
         });
         // render next element
         collectGridCellData(renderElement.getFollowingElements()[0], undefined, renderElement, elements, rowStartIndex, renderData);
@@ -122,10 +123,7 @@ export const buildRenderData = (
     flow: FlowModelerProps["flow"],
     verticalAlign: "top" | "bottom"
 ): { gridCellData: Array<GridCellData>; columnCount: number } => {
-    const { firstElementId, elements } = flow;
-    checkForCircularReference(firstElementId, elements);
-    const treeRootElement = createElementTree(flow, verticalAlign);
-    validatePaths(treeRootElement);
+    const treeRootElement = createValidatedElementTree(flow, verticalAlign);
     const result: Array<GridCellData> = [];
     // add single start element
     result.push({
@@ -134,7 +132,7 @@ export const buildRenderData = (
         rowEndIndex: 1 + treeRootElement.getRowCount(),
         type: ElementType.Start
     });
-    collectGridCellData(treeRootElement, undefined, undefined, elements, 1, result);
+    collectGridCellData(treeRootElement, undefined, undefined, flow.elements, 1, result);
     // for a more readable resulting html structure, sort the grid elements first from top to bottom and within each row from left to right
     result.sort(sortGridCellDataByPosition);
     return { gridCellData: result, columnCount: getMaxColumnIndex(treeRootElement) };

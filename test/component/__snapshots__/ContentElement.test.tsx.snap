@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly without props 1`] = `
+exports[`renders correctly with minimal props 1`] = `
 <Fragment>
-  <div
-    className="arrow"
-  />
-  <div
-    className="flow-element content-element"
+  <Component
+    editMenu={[Function]}
+    elementTypeClassName="content-element"
+    onClick={[Function]}
+    referenceElement={FlowElementReference { "id": "element-id" }}
   >
     text
-  </div>
+  </Component>
   <HorizontalStroke
-    className="optional"
+    optional={true}
   />
 </Fragment>
 `;

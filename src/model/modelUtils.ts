@@ -8,6 +8,7 @@ export const isDivergingGateway = (inputElement: FlowContent | FlowGatewayDiverg
 const handleNextElement = (
     currentElement: FlowElement,
     nextElementId: string,
+    branchIndex: number | undefined,
     inputElements: FlowModelerProps["flow"]["elements"],
     resultingModelElements: Map<string, FlowElement>
 ): void => {
@@ -21,7 +22,7 @@ const handleNextElement = (
         populateElement(nextElement, inputElements, resultingModelElements);
     }
     currentElement.addFollowingElement(nextElement);
-    nextElement.addPrecedingElement(currentElement);
+    nextElement.addPrecedingElement(currentElement, branchIndex);
 };
 
 const populateElement = (
@@ -40,9 +41,9 @@ const populateElement = (
         } else {
             subElements = [{}, {}];
         }
-        subElements.forEach(({ id }) => handleNextElement(target, id, inputElements, resultingModelElements));
+        subElements.forEach(({ id }, branchIndex) => handleNextElement(target, id, branchIndex, inputElements, resultingModelElements));
     } else if (inputElement) {
-        handleNextElement(target, inputElement.nextElementId, inputElements, resultingModelElements);
+        handleNextElement(target, inputElement.nextElementId, undefined, inputElements, resultingModelElements);
     }
 };
 
@@ -60,15 +61,22 @@ const determineColumnIndex = (target: FlowElement): number => {
     return target.getColumnIndex();
 };
 
-export const createElementTree = ({ firstElementId, elements }: FlowModelerProps["flow"], verticalAlign: "top" | "bottom"): FlowElement => {
+export const createMinimalElementTreeStructure = ({
+    firstElementId,
+    elements
+}: FlowModelerProps["flow"]): { firstElement: FlowElement; elementsInTree: Map<string, FlowElement> } => {
     const firstElement = new FlowElement(firstElementId);
     // creating elements with links in both directions
-    const createdElementsInTree = new Map<string, FlowElement>().set(firstElementId, firstElement);
-    populateElement(firstElement, elements, createdElementsInTree);
+    const elementsInTree = new Map<string, FlowElement>().set(firstElementId, firstElement);
+    populateElement(firstElement, elements, elementsInTree);
+    return { firstElement, elementsInTree };
+};
 
-    createdElementsInTree.forEach(determineColumnIndex);
-
-    determineRowCounts(firstElement, verticalAlign, createdElementsInTree.forEach.bind(createdElementsInTree));
-
+export const createElementTree = (flow: FlowModelerProps["flow"], verticalAlign: "top" | "bottom"): FlowElement => {
+    const { firstElement, elementsInTree } = createMinimalElementTreeStructure(flow);
+    // calculate column indexes within the grid to be rendered
+    elementsInTree.forEach(determineColumnIndex);
+    // calculate number of rows within the grid to be rendered
+    determineRowCounts(firstElement, verticalAlign, elementsInTree.forEach.bind(elementsInTree));
     return firstElement;
 };

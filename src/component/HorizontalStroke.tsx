@@ -14,11 +14,24 @@ const getConnectionClassName = (connectionType: ConnectionType): string => {
 };
 
 export class HorizontalStroke extends React.Component<
-    { className?: string; children?: React.ReactNode } & (
-        | { incomingConnection: ConnectionType; outgoingConnection?: never }
-        | { incomingConnection?: never; outgoingConnection?: never }
-        | { incomingConnection?: never; outgoingConnection: ConnectionType }
-    ),
+    | {
+          incomingConnection?: ConnectionType;
+          gatewayId: string;
+          branchIndex?: number;
+          editMenu: (() => React.ReactNode) | undefined;
+          onSelect: (gatewayId: string, branchIndex?: number) => void;
+          outgoingConnection?: never;
+          optional?: never;
+      }
+    | {
+          incomingConnection?: never;
+          gatewayId?: never;
+          branchIndex?: never;
+          editMenu?: never;
+          onSelect?: never;
+          outgoingConnection?: ConnectionType;
+          optional?: boolean;
+      },
     { wrapperTopHeight: number }
 > {
     readonly topLabelRef = React.createRef<HTMLDivElement>();
@@ -36,25 +49,32 @@ export class HorizontalStroke extends React.Component<
         }
     }
 
+    onTopLabelClick = (event: React.MouseEvent): void => {
+        const { onSelect, gatewayId, branchIndex } = this.props;
+        onSelect(gatewayId, branchIndex);
+        event.stopPropagation();
+    };
+
     render(): React.ReactNode {
-        const { className, incomingConnection, outgoingConnection, children } = this.props;
-        const classNameSuffix = className ? ` ${className}` : "";
+        const { incomingConnection, outgoingConnection, optional, editMenu, children } = this.props;
         return (
             <>
-                {incomingConnection && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}${classNameSuffix}`} />}
-                {!children && <div className={`stroke-horizontal${classNameSuffix}`} />}
-                {children && (
-                    <div className={`centered-line-wrapper${classNameSuffix}`}>
-                        <div className="wrapper-top-label">
-                            <div ref={this.topLabelRef}>{children}</div>
-                        </div>
-                        <div
-                            className="wrapper-bottom-spacing"
-                            style={(this.topLabelRef.current && { minHeight: `${this.state.wrapperTopHeight}px` }) || undefined}
-                        />
-                    </div>
-                )}
-                {outgoingConnection && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}${classNameSuffix}`} />}
+                {incomingConnection && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}`} />}
+                <div className={`stroke-horizontal${editMenu ? " selected" : ""}${optional ? " optional" : ""}`}>
+                    {!optional && !outgoingConnection && (
+                        <>
+                            <div className="top-label" onClick={this.onTopLabelClick}>
+                                {children && <div ref={this.topLabelRef}>{children}</div>}
+                            </div>
+                            <div
+                                className="bottom-spacing"
+                                style={(children && this.topLabelRef.current && { minHeight: `${this.state.wrapperTopHeight}px` }) || undefined}
+                            />
+                        </>
+                    )}
+                </div>
+                {editMenu && editMenu()}
+                {outgoingConnection && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}`} />}
             </>
         );
     }

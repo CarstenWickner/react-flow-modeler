@@ -1,3 +1,5 @@
+import { FlowElementReference } from "../model/FlowElement";
+
 export interface GridCellCoordinates {
     colStartIndex: number;
     colEndIndex?: number;
@@ -22,12 +24,12 @@ export interface SimpleElement extends GridCellCoordinates {
 
 export interface ContentCellData extends GridCellCoordinates {
     type: ElementType.Content;
-    elementId: string;
+    element: FlowElementReference;
     data?: { [key: string]: unknown };
 }
 export interface GatewayDivergingCellData extends GridCellCoordinates {
     type: ElementType.GatewayDiverging;
-    gatewayId: string;
+    gateway: FlowElementReference;
     data?: { [key: string]: unknown };
 }
 export const enum ConnectionType {
@@ -37,18 +39,19 @@ export const enum ConnectionType {
 }
 export interface GatewayToElementConnectorCellData extends GridCellCoordinates {
     type: ElementType.ConnectGatewayToElement;
-    gatewayId: string;
-    elementId?: string;
+    gateway: FlowElementReference;
     data?: { [key: string]: unknown };
     connectionType: ConnectionType;
+    branchIndex: number;
 }
 export interface ElementToGatewayConnectorCellData extends GridCellCoordinates {
     type: ElementType.ConnectElementToGateway;
-    elementId: string;
+    element: FlowElementReference;
     connectionType: ConnectionType;
 }
 export interface GatewayConvergingCellData extends GridCellCoordinates {
     type: ElementType.GatewayConverging;
+    followingElement: FlowElementReference;
 }
 
 export type GridCellData =
