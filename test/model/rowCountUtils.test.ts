@@ -206,7 +206,7 @@ describe("determineRowCounts()", () => {
             expect(convergingA2BC.getRowCount()).toBe(4);
             expect(endNode.getRowCount()).toBe(6);
         });
-        describe("and interleaved converging gateways", () => {
+        describe("and interleaved converging gateways (branches: 3-2-4)", () => {
             const firstDiverging = new FlowElement("d1");
             const branchA1 = new FlowElement("a1");
             const branchA2 = new FlowElement("a2");
@@ -282,6 +282,85 @@ describe("determineRowCounts()", () => {
                 expect(branchC2.getRowCount()).toBe(1);
                 expect(branchC3.getRowCount()).toBe(1);
                 expect(branchC4.getRowCount()).toBe(1);
+                expect(endNode.getRowCount()).toBe(4);
+            });
+        });
+        describe.skip("and interleaved converging gateways (branches: 3-4-2)", () => {
+            const firstDiverging = new FlowElement("d1");
+            const branchA1 = new FlowElement("a1");
+            const branchA2 = new FlowElement("a2");
+            const branchA3 = new FlowElement("a3");
+            const secondDiverging = new FlowElement("d2");
+            const branchB1 = new FlowElement("c1");
+            const branchB2 = new FlowElement("c2");
+            const branchB3 = new FlowElement("c3");
+            const branchB4 = new FlowElement("c4");
+            const thirdDiverging = new FlowElement("d3");
+            const branchC1 = new FlowElement("b1");
+            const branchC2 = new FlowElement("b2");
+            const endNode = new FlowElement(null);
+            addLinks(firstDiverging, branchA1, branchA2, branchA3);
+            addLinks(branchA1, secondDiverging);
+            addLinks(branchA2, secondDiverging);
+            addLinks(branchA3, secondDiverging);
+            addLinks(secondDiverging, branchB1, branchB2, branchB3, branchB4);
+            addLinks(branchB1, endNode);
+            addLinks(branchB2, endNode);
+            addLinks(branchB3, endNode);
+            addLinks(branchB4, endNode);
+            addLinks(thirdDiverging, branchC1, branchC2);
+            addLinks(branchC1, thirdDiverging);
+            addLinks(branchC2, thirdDiverging);
+
+            const allElements = [
+                firstDiverging,
+                branchA1,
+                branchA2,
+                branchA3,
+                secondDiverging,
+                branchB1,
+                branchB2,
+                branchB3,
+                branchB4,
+                thirdDiverging,
+                branchC1,
+                branchC2,
+                endNode
+            ];
+
+            it("when aligning to the top", () => {
+                determineRowCounts(firstDiverging, "top", allElements.forEach.bind(allElements));
+
+                expect(firstDiverging.getRowCount()).toBe(4);
+                expect(branchA1.getRowCount()).toBe(1);
+                expect(branchA2.getRowCount()).toBe(1);
+                expect(branchA3.getRowCount()).toBe(2);
+                expect(secondDiverging.getRowCount()).toBe(4);
+                expect(branchB1.getRowCount()).toBe(1);
+                expect(branchB2.getRowCount()).toBe(1);
+                expect(branchB3.getRowCount()).toBe(1);
+                expect(branchB4.getRowCount()).toBe(1);
+                expect(thirdDiverging.getRowCount()).toBe(4);
+                expect(branchC1.getRowCount()).toBe(1);
+                expect(branchC2.getRowCount()).toBe(3);
+                expect(endNode.getRowCount()).toBe(4);
+            });
+
+            it("when aligning to the bottom", () => {
+                determineRowCounts(firstDiverging, "bottom", allElements.forEach.bind(allElements));
+
+                expect(firstDiverging.getRowCount()).toBe(4);
+                expect(branchA1.getRowCount()).toBe(2);
+                expect(branchA2.getRowCount()).toBe(1);
+                expect(branchA3.getRowCount()).toBe(1);
+                expect(secondDiverging.getRowCount()).toBe(4);
+                expect(branchB1.getRowCount()).toBe(1);
+                expect(branchB2.getRowCount()).toBe(1);
+                expect(branchB3.getRowCount()).toBe(1);
+                expect(branchB4.getRowCount()).toBe(1);
+                expect(thirdDiverging.getRowCount()).toBe(4);
+                expect(branchC1.getRowCount()).toBe(3);
+                expect(branchC2.getRowCount()).toBe(1);
                 expect(endNode.getRowCount()).toBe(4);
             });
         });

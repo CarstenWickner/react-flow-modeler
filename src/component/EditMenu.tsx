@@ -1,14 +1,15 @@
 import * as React from "react";
 
+import { EditMenuItem } from "./EditMenuItem";
 import { FlowElementReference } from "../model/FlowElement";
 import { addContentElement, addDivergingGateway } from "../model/action/addElement";
 import { addBranch } from "../model/action/addBranch";
-import { removeElement } from "../model/action/removeElement";
+import { isChangeNextElementAllowed } from "../model/action/changeNextElement";
+import { removeElement, isRemoveElementAllowed } from "../model/action/removeElement";
 
 import { SelectableElementType, EditActionResult, DraggableType } from "../types/EditAction";
 import { FlowModelerProps, MenuOptions } from "../types/FlowModelerProps";
 import { ElementType } from "../types/GridCellData";
-import { EditMenuItem } from "./EditMenuItem";
 
 const onClickStopPropagation = (event: React.MouseEvent): void => event.stopPropagation();
 
@@ -17,7 +18,7 @@ export class EditMenu extends React.Component<{
     referenceElement?: FlowElementReference;
     branchIndex?: number;
     menuOptions?: FlowModelerProps["options"]["editActions"];
-    onChange?: (change: (originalFlow: FlowModelerProps["flow"]) => EditActionResult) => void;
+    onChange: (change: (originalFlow: FlowModelerProps["flow"]) => EditActionResult) => void;
 }> {
     isNextElementReferencedByOthers = (): boolean => {
         const { referenceElement, branchIndex } = this.props;
@@ -43,7 +44,7 @@ export class EditMenu extends React.Component<{
             this.isNextElementReferencedByOthers()
                 ? { type: dragType, originType: targetType, originElement: referenceElement, originBranchIndex: branchIndex }
                 : undefined;
-        return <EditMenuItem options={options} defaultClassName={defaultClassName} onClick={onClick} dragItem={dragItem} />;
+        return <EditMenuItem key={defaultClassName} options={options} defaultClassName={defaultClassName} onClick={onClick} dragItem={dragItem} />;
     }
 
     onAddContentElementClick = (): void => {
@@ -96,11 +97,11 @@ export class EditMenu extends React.Component<{
     }
 
     renderChangeNextElementItem(): React.ReactNode {
-        const { targetType, menuOptions } = this.props;
-        if (targetType !== ElementType.Content && targetType !== ElementType.ConnectGatewayToElement) {
-            return null;
+        const { targetType, referenceElement, branchIndex, menuOptions } = this.props;
+        if (isChangeNextElementAllowed(targetType, referenceElement, branchIndex)) {
+            return this.renderMenuItem(menuOptions ? menuOptions.changeNextElement : undefined, "change-next", undefined, DraggableType.LINK);
         }
-        return this.renderMenuItem(menuOptions ? menuOptions.changeNextElement : undefined, "change-next", undefined, DraggableType.LINK);
+        return null;
     }
 
     onRemoveClick = (): void => {
@@ -111,18 +112,14 @@ export class EditMenu extends React.Component<{
     };
 
     renderRemoveItem(): React.ReactNode {
-        const { targetType, menuOptions } = this.props;
-        if (targetType !== ElementType.Content && targetType !== ElementType.ConnectGatewayToElement) {
-            return null;
+        const { targetType, referenceElement, branchIndex, menuOptions } = this.props;
+        if (isRemoveElementAllowed(targetType, referenceElement, branchIndex)) {
+            return this.renderMenuItem(menuOptions ? menuOptions.removeElement : undefined, "remove", this.onRemoveClick);
         }
-        return this.renderMenuItem(menuOptions ? menuOptions.removeElement : undefined, "remove", this.onRemoveClick);
+        return null;
     }
 
     render(): React.ReactNode {
-        const { onChange } = this.props;
-        if (!onChange) {
-            return null;
-        }
         const menuItems = [
             this.renderAddContentElementItem(),
             this.renderAddDivergingGatewayItem(),

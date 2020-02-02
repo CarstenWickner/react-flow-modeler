@@ -119,10 +119,15 @@ export const createValidatedElementTree = (flow: FlowModelerProps["flow"], verti
     return treeRootElement;
 };
 
+export const validateFlow = (flow: FlowModelerProps["flow"]): void => {
+    checkForCircularReference(flow.firstElementId, flow.elements);
+    const treeRootElement = createMinimalElementTreeStructure(flow).firstElement;
+    validatePaths(treeRootElement);
+};
+
 export const isFlowValid = (flow: FlowModelerProps["flow"]): boolean => {
     try {
-        checkForCircularReference(flow.firstElementId, flow.elements);
-        validatePaths(createMinimalElementTreeStructure(flow).firstElement);
+        validateFlow(flow);
         return true;
     } catch (error) {
         return false;

@@ -6,6 +6,10 @@ import { EditActionResult } from "../../types/EditAction";
 import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 import { ElementType } from "../../types/GridCellData";
 
+export const isChangeNextElementAllowed = (targetType: ElementType, referenceElement: FlowElementReference, branchIndex?: number): boolean =>
+    (targetType === ElementType.Content || targetType === ElementType.ConnectGatewayToElement) &&
+    referenceElement.getFollowingElements()[branchIndex || 0].getPrecedingElements().length > 1;
+
 export const changeNextElement = (
     originalFlow: FlowModelerProps["flow"],
     newNextElement: FlowElementReference,

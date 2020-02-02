@@ -2,22 +2,14 @@
 
 exports[`renders correctly with minimal props 1`] = `
 <Fragment>
-  <div
-    className="stroke-horizontal arrow"
-  />
-  <div
-    className="flow-element-wrapper"
+  <Component
+    editMenu={[Function]}
+    elementTypeClassName="content-element"
+    onClick={[Function]}
+    referenceElement={FlowElementReference { "id": "element-id" }}
   >
-    <div
-      className="flow-element content-element selected"
-      onClick={[Function]}
-    >
-      text
-    </div>
-    <div
-      className="edit-menu-placeholder"
-    />
-  </div>
+    text
+  </Component>
   <HorizontalStroke
     optional={true}
   />

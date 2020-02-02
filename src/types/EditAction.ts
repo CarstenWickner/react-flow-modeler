@@ -9,9 +9,9 @@ export type SelectableElementType =
     | ElementType.GatewayConverging
     | ElementType.ConnectGatewayToElement;
 
-export type EditActionResult = {
+export interface EditActionResult {
     changedFlow: FlowModelerProps["flow"];
-};
+}
 
 export enum DraggableType {
     LINK = "link"
@@ -20,7 +20,7 @@ export enum DraggableType {
 export interface DraggedLinkContext {
     type: DraggableType.LINK;
     originType: ElementType.Content | ElementType.ConnectGatewayToElement;
-    originElement?: FlowElementReference;
+    originElement: FlowElementReference;
     originBranchIndex?: number;
 }
 

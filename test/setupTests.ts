@@ -24,3 +24,11 @@ expect.addSnapshotSerializer({
         return `FlowElement { "id": "${value.getId()}" }`;
     }
 });
+expect.addSnapshotSerializer({
+    test(value: unknown): boolean {
+        return value && value.hasOwnProperty("getId") && value.hasOwnProperty("getPrecedingElements") && value.hasOwnProperty("getFollowingElements");
+    },
+    print(value: { getId: () => string }): string {
+        return `FlowElementReference { "id": "${value.getId()}" }`;
+    }
+});

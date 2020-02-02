@@ -1,321 +1,337 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly with all render props 1`] = `
-<div
-  className="flow-modeler"
-  style={
-    Object {
-      "gridTemplateColumns": "repeat(8, max-content)",
-    }
-  }
+<DndProvider
+  backend={[Function]}
 >
-  <Component
-    colStartIndex={1}
-    key="1-1"
-    rowStartIndex={3}
+  <div
+    className="flow-modeler"
+    style={
+      Object {
+        "gridTemplateColumns": "repeat(8, max-content)",
+      }
+    }
   >
-    <div
-      className="flow-element start-element"
-      onClick={[Function]}
-    />
-  </Component>
-  <Component
-    colStartIndex={2}
-    key="2-1"
-    rowStartIndex={3}
-  >
-    <ContentElement
-      elementId="1"
-      onSelect={[Function]}
+    <Component
+      colStartIndex={1}
+      key="1-1"
+      rowStartIndex={3}
     >
-      First Node
-    </ContentElement>
-  </Component>
-  <Component
-    colStartIndex={3}
-    key="3-1"
-    rowStartIndex={3}
-  >
-    <Gateway
-      gatewayId="2"
-      onSelect={[Function]}
-      type={3}
+      <div
+        className="flow-element start-element"
+        onClick={[Function]}
+      />
+    </Component>
+    <Component
+      colStartIndex={2}
+      key="2-1"
+      rowStartIndex={3}
     >
-      <label>
-        Alternatives
-      </label>
-    </Gateway>
-  </Component>
-  <Component
-    colStartIndex={4}
-    key="4-1"
-    rowStartIndex={1}
-  >
-    <HorizontalStroke
-      branchIndex={0}
-      gatewayId="2"
-      incomingConnection={1}
-      onSelect={[Function]}
+      <ContentElement
+        editMenu={false}
+        onSelect={[Function]}
+        referenceElement={FlowElement { "id": "1" }}
+      >
+        First Node
+      </ContentElement>
+    </Component>
+    <Component
+      colStartIndex={3}
+      key="3-1"
+      rowStartIndex={3}
     >
-      <span>
-        Stop Here
-      </span>
-    </HorizontalStroke>
-  </Component>
-  <Component
-    colEndIndex={7}
-    colStartIndex={5}
-    key="5-1"
-    rowStartIndex={1}
-  >
-    <HorizontalStroke
-      outgoingConnection={1}
-    />
-  </Component>
-  <Component
-    colStartIndex={7}
-    key="7-1"
-    rowStartIndex={3}
-  >
-    <Gateway
-      followingElementId={null}
-      onSelect={[Function]}
-      type={4}
-    />
-  </Component>
-  <Component
-    colStartIndex={8}
-    key="8-1"
-    rowStartIndex={3}
-  >
-    <div
-      className="stroke-horizontal arrow"
-    />
-    <div
-      className="flow-element end-element"
-    />
-  </Component>
-  <Component
-    colStartIndex={4}
-    key="4-2"
-    rowStartIndex={2}
-  >
-    <HorizontalStroke
-      branchIndex={1}
-      gatewayId="2"
-      incomingConnection={2}
-      onSelect={[Function]}
+      <Gateway
+        editMenu={false}
+        gateway={FlowElement { "id": "2" }}
+        onSelect={[Function]}
+        type={3}
+      >
+        <label>
+          Alternatives
+        </label>
+      </Gateway>
+    </Component>
+    <Component
+      colStartIndex={4}
+      key="4-1"
+      rowStartIndex={1}
     >
-      <span>
-        Continue
-      </span>
-    </HorizontalStroke>
-  </Component>
-  <Component
-    colStartIndex={5}
-    key="5-2"
-    rowStartIndex={2}
-  >
-    <ContentElement
-      elementId="3.2"
-      onSelect={[Function]}
+      <HorizontalStroke
+        branchIndex={0}
+        editMenu={false}
+        gatewayId="2"
+        incomingConnection={1}
+        onSelect={[Function]}
+      >
+        <span>
+          Stop Here
+        </span>
+      </HorizontalStroke>
+    </Component>
+    <Component
+      colEndIndex={7}
+      colStartIndex={5}
+      key="5-1"
+      rowStartIndex={1}
     >
-      Second Node
-    </ContentElement>
-  </Component>
-  <Component
-    colEndIndex={7}
-    colStartIndex={6}
-    key="6-2"
-    rowStartIndex={2}
-  >
-    <HorizontalStroke
-      outgoingConnection={2}
-    />
-  </Component>
-  <Component
-    colStartIndex={4}
-    key="4-3"
-    rowStartIndex={3}
-  >
-    <HorizontalStroke
-      branchIndex={2}
-      gatewayId="2"
-      incomingConnection={3}
-      onSelect={[Function]}
+      <HorizontalStroke
+        outgoingConnection={1}
+      />
+    </Component>
+    <Component
+      colStartIndex={7}
+      key="7-1"
+      rowStartIndex={3}
     >
-      <span>
-        Unless it is already done
-      </span>
-    </HorizontalStroke>
-  </Component>
-  <Component
-    colEndIndex={7}
-    colStartIndex={5}
-    key="5-3"
-    rowStartIndex={3}
-  >
-    <HorizontalStroke
-      outgoingConnection={3}
-    />
-  </Component>
-</div>
+      <Gateway
+        editMenu={false}
+        followingElement={FlowElement { "id": "null" }}
+        onSelect={[Function]}
+        type={4}
+      />
+    </Component>
+    <Component
+      colStartIndex={8}
+      key="8-1"
+      rowStartIndex={3}
+    >
+      <Component
+        elementTypeClassName="end-element"
+      />
+    </Component>
+    <Component
+      colStartIndex={4}
+      key="4-2"
+      rowStartIndex={2}
+    >
+      <HorizontalStroke
+        branchIndex={1}
+        editMenu={false}
+        gatewayId="2"
+        incomingConnection={2}
+        onSelect={[Function]}
+      >
+        <span>
+          Continue
+        </span>
+      </HorizontalStroke>
+    </Component>
+    <Component
+      colStartIndex={5}
+      key="5-2"
+      rowStartIndex={2}
+    >
+      <ContentElement
+        editMenu={false}
+        onSelect={[Function]}
+        referenceElement={FlowElement { "id": "3.2" }}
+      >
+        Second Node
+      </ContentElement>
+    </Component>
+    <Component
+      colEndIndex={7}
+      colStartIndex={6}
+      key="6-2"
+      rowStartIndex={2}
+    >
+      <HorizontalStroke
+        outgoingConnection={2}
+      />
+    </Component>
+    <Component
+      colStartIndex={4}
+      key="4-3"
+      rowStartIndex={3}
+    >
+      <HorizontalStroke
+        branchIndex={2}
+        editMenu={false}
+        gatewayId="2"
+        incomingConnection={3}
+        onSelect={[Function]}
+      >
+        <span>
+          Unless it is already done
+        </span>
+      </HorizontalStroke>
+    </Component>
+    <Component
+      colEndIndex={7}
+      colStartIndex={5}
+      key="5-3"
+      rowStartIndex={3}
+    >
+      <HorizontalStroke
+        outgoingConnection={3}
+      />
+    </Component>
+  </div>
+</DndProvider>
 `;
 
 exports[`renders correctly with minimal/default props 1`] = `
-<div
-  className="flow-modeler"
-  style={
-    Object {
-      "gridTemplateColumns": "repeat(8, max-content)",
-    }
-  }
+<DndProvider
+  backend={[Function]}
 >
-  <Component
-    colStartIndex={1}
-    key="1-1"
-    rowEndIndex={4}
-    rowStartIndex={1}
+  <div
+    className="flow-modeler"
+    style={
+      Object {
+        "gridTemplateColumns": "repeat(8, max-content)",
+      }
+    }
   >
-    <div
-      className="flow-element start-element"
-      onClick={[Function]}
-    />
-  </Component>
-  <Component
-    colStartIndex={2}
-    key="2-1"
-    rowEndIndex={4}
-    rowStartIndex={1}
-  >
-    <ContentElement
-      elementId="1"
-      onSelect={[Function]}
+    <Component
+      colStartIndex={1}
+      key="1-1"
+      rowEndIndex={4}
+      rowStartIndex={1}
     >
-      First Node
-    </ContentElement>
-  </Component>
-  <Component
-    colStartIndex={3}
-    key="3-1"
-    rowEndIndex={4}
-    rowStartIndex={1}
-  >
-    <Gateway
-      gatewayId="2"
-      onSelect={[Function]}
-      type={3}
-    />
-  </Component>
-  <Component
-    colStartIndex={4}
-    key="4-1"
-    rowEndIndex={2}
-    rowStartIndex={1}
-  >
-    <HorizontalStroke
-      branchIndex={0}
-      gatewayId="2"
-      incomingConnection={1}
-      onSelect={[Function]}
-    />
-  </Component>
-  <Component
-    colEndIndex={7}
-    colStartIndex={5}
-    key="5-1"
-    rowEndIndex={2}
-    rowStartIndex={1}
-  >
-    <HorizontalStroke
-      outgoingConnection={1}
-    />
-  </Component>
-  <Component
-    colStartIndex={7}
-    key="7-1"
-    rowEndIndex={4}
-    rowStartIndex={1}
-  >
-    <Gateway
-      followingElementId={null}
-      onSelect={[Function]}
-      type={4}
-    />
-  </Component>
-  <Component
-    colStartIndex={8}
-    key="8-1"
-    rowEndIndex={4}
-    rowStartIndex={1}
-  >
-    <div
-      className="stroke-horizontal arrow"
-    />
-    <div
-      className="flow-element end-element"
-    />
-  </Component>
-  <Component
-    colStartIndex={4}
-    key="4-2"
-    rowEndIndex={3}
-    rowStartIndex={2}
-  >
-    <HorizontalStroke
-      branchIndex={1}
-      gatewayId="2"
-      incomingConnection={2}
-      onSelect={[Function]}
-    />
-  </Component>
-  <Component
-    colStartIndex={5}
-    key="5-2"
-    rowEndIndex={3}
-    rowStartIndex={2}
-  >
-    <ContentElement
-      elementId="3.2"
-      onSelect={[Function]}
+      <div
+        className="flow-element start-element"
+        onClick={[Function]}
+      />
+    </Component>
+    <Component
+      colStartIndex={2}
+      key="2-1"
+      rowEndIndex={4}
+      rowStartIndex={1}
     >
-      Second Node
-    </ContentElement>
-  </Component>
-  <Component
-    colEndIndex={7}
-    colStartIndex={6}
-    key="6-2"
-    rowEndIndex={3}
-    rowStartIndex={2}
-  >
-    <HorizontalStroke
-      outgoingConnection={2}
-    />
-  </Component>
-  <Component
-    colStartIndex={4}
-    key="4-3"
-    rowEndIndex={4}
-    rowStartIndex={3}
-  >
-    <HorizontalStroke
-      branchIndex={2}
-      gatewayId="2"
-      incomingConnection={3}
-      onSelect={[Function]}
-    />
-  </Component>
-  <Component
-    colEndIndex={7}
-    colStartIndex={5}
-    key="5-3"
-    rowEndIndex={4}
-    rowStartIndex={3}
-  >
-    <HorizontalStroke
-      outgoingConnection={3}
-    />
-  </Component>
-</div>
+      <ContentElement
+        editMenu={false}
+        onSelect={[Function]}
+        referenceElement={FlowElement { "id": "1" }}
+      >
+        First Node
+      </ContentElement>
+    </Component>
+    <Component
+      colStartIndex={3}
+      key="3-1"
+      rowEndIndex={4}
+      rowStartIndex={1}
+    >
+      <Gateway
+        editMenu={false}
+        gateway={FlowElement { "id": "2" }}
+        onSelect={[Function]}
+        type={3}
+      />
+    </Component>
+    <Component
+      colStartIndex={4}
+      key="4-1"
+      rowEndIndex={2}
+      rowStartIndex={1}
+    >
+      <HorizontalStroke
+        branchIndex={0}
+        editMenu={false}
+        gatewayId="2"
+        incomingConnection={1}
+        onSelect={[Function]}
+      />
+    </Component>
+    <Component
+      colEndIndex={7}
+      colStartIndex={5}
+      key="5-1"
+      rowEndIndex={2}
+      rowStartIndex={1}
+    >
+      <HorizontalStroke
+        outgoingConnection={1}
+      />
+    </Component>
+    <Component
+      colStartIndex={7}
+      key="7-1"
+      rowEndIndex={4}
+      rowStartIndex={1}
+    >
+      <Gateway
+        editMenu={false}
+        followingElement={FlowElement { "id": "null" }}
+        onSelect={[Function]}
+        type={4}
+      />
+    </Component>
+    <Component
+      colStartIndex={8}
+      key="8-1"
+      rowEndIndex={4}
+      rowStartIndex={1}
+    >
+      <Component
+        elementTypeClassName="end-element"
+      />
+    </Component>
+    <Component
+      colStartIndex={4}
+      key="4-2"
+      rowEndIndex={3}
+      rowStartIndex={2}
+    >
+      <HorizontalStroke
+        branchIndex={1}
+        editMenu={false}
+        gatewayId="2"
+        incomingConnection={2}
+        onSelect={[Function]}
+      />
+    </Component>
+    <Component
+      colStartIndex={5}
+      key="5-2"
+      rowEndIndex={3}
+      rowStartIndex={2}
+    >
+      <ContentElement
+        editMenu={false}
+        onSelect={[Function]}
+        referenceElement={FlowElement { "id": "3.2" }}
+      >
+        Second Node
+      </ContentElement>
+    </Component>
+    <Component
+      colEndIndex={7}
+      colStartIndex={6}
+      key="6-2"
+      rowEndIndex={3}
+      rowStartIndex={2}
+    >
+      <HorizontalStroke
+        outgoingConnection={2}
+      />
+    </Component>
+    <Component
+      colStartIndex={4}
+      key="4-3"
+      rowEndIndex={4}
+      rowStartIndex={3}
+    >
+      <HorizontalStroke
+        branchIndex={2}
+        editMenu={false}
+        gatewayId="2"
+        incomingConnection={3}
+        onSelect={[Function]}
+      />
+    </Component>
+    <Component
+      colEndIndex={7}
+      colStartIndex={5}
+      key="5-3"
+      rowEndIndex={4}
+      rowStartIndex={3}
+    >
+      <HorizontalStroke
+        outgoingConnection={3}
+      />
+    </Component>
+  </div>
+</DndProvider>
 `;

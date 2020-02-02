@@ -1,8 +1,9 @@
 import { addContentElement, addDivergingGateway } from "../../../src/model/action/addElement";
-import { ElementType } from "../../../src/types/GridCellData";
-import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../../src/types/FlowModelerProps";
+
 import { createElementTree } from "../../../src/model/modelUtils";
 import { EditActionResult } from "../../../src/types/EditAction";
+import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../../src/types/FlowModelerProps";
+import { ElementType } from "../../../src/types/GridCellData";
 
 describe("addContentElement()", () => {
     describe("adding element after start", () => {

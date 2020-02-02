@@ -16,6 +16,6 @@ export const addBranch = (
         const followings = nextConvergingGateway.getFollowingElements();
         nextConvergingGateway = followings[followings.length - 1];
     } while (nextConvergingGateway.getPrecedingElements().length < 2);
-    gatewayInFlow.nextElements.push({ id: nextConvergingGateway.getId() });
+    gatewayInFlow.nextElements.push({ id: nextConvergingGateway.getId(), conditionData: data });
     return { changedFlow };
 };

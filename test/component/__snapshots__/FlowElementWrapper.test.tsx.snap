@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly with minimal props 1`] = `
+<Fragment>
+  <div
+    className="stroke-horizontal arrow"
+  />
+  <div
+    className="flow-element-wrapper"
+  >
+    <div
+      className="flow-element some-element selected"
+    >
+      text
+    </div>
+    <div
+      className="edit-menu-placeholder"
+    />
+  </div>
+</Fragment>
+`;
