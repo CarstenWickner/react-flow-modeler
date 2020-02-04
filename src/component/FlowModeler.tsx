@@ -98,12 +98,13 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
     };
 
     handleOnLinkDrop = (dropTarget: FlowElementReference, dragContext: DraggedLinkContext, dryRun?: boolean): EditActionResult | undefined => {
-        const { flow } = this.props;
         const { originType, originElement, originBranchIndex } = dragContext;
-        const change = (): EditActionResult => changeNextElement(flow, dropTarget, originType, originElement, originBranchIndex);
+        const change = (originalFlow: FlowModelerProps["flow"]): EditActionResult =>
+            changeNextElement(originalFlow, dropTarget, originType, originElement, originBranchIndex);
         if (dryRun) {
+            const { flow } = this.props;
             // perform change without calling onChange, i.e. without triggering re-render
-            return change();
+            return change(flow);
         }
         this.handleOnChange(change);
         // onChange is expected to provide the changed flow as prop update, i.e. no need to return anything here

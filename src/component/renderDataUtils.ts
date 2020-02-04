@@ -8,22 +8,18 @@ const getColumnIndexAfter = (element: FlowElement): number => element.getColumnI
 
 const collectGridCellData = (
     renderElement: FlowElement,
-    indexInDivergingParentGateway: number | undefined,
     triggeringRenderElement: FlowElement,
     elements: { [key: string]: FlowContent | FlowGatewayDiverging },
     rowStartIndex: number,
     renderData: Array<GridCellData>
 ): void => {
-    if (
-        renderElement.getPrecedingElements().length > 1 &&
-        (renderElement.getPrecedingElements()[0] !== triggeringRenderElement || indexInDivergingParentGateway > 0)
-    ) {
-        // avoid rendering the same converging gateway and its children multiple times
-        return;
-    }
     const rowEndIndex = rowStartIndex + renderElement.getRowCount();
     const targetElement = elements[renderElement.getId()];
     if (renderElement.getPrecedingElements().length > 1) {
+        if (renderData.some((cellData) => cellData.type === ElementType.GatewayConverging && cellData.followingElement === renderElement)) {
+            // avoid rendering the same converging gateway and its children multiple times
+            return;
+        }
         let nextChildRowStartIndex = rowStartIndex;
         renderElement.getPrecedingElements().forEach((precedingElement, parentIndex, parents) => {
             const thisChildStartRowIndex = nextChildRowStartIndex;
@@ -96,7 +92,7 @@ const collectGridCellData = (
                 branchIndex: childIndex
             });
             // render next element
-            collectGridCellData(childRenderElement, childIndex, renderElement, elements, thisChildStartRowIndex, renderData);
+            collectGridCellData(childRenderElement, renderElement, elements, thisChildStartRowIndex, renderData);
         });
     } else {
         // render content element
@@ -109,7 +105,7 @@ const collectGridCellData = (
             element: renderElement
         });
         // render next element
-        collectGridCellData(renderElement.getFollowingElements()[0], undefined, renderElement, elements, rowStartIndex, renderData);
+        collectGridCellData(renderElement.getFollowingElements()[0], renderElement, elements, rowStartIndex, renderData);
     }
 };
 
@@ -132,7 +128,7 @@ export const buildRenderData = (
         rowEndIndex: 1 + treeRootElement.getRowCount(),
         type: ElementType.Start
     });
-    collectGridCellData(treeRootElement, undefined, undefined, flow.elements, 1, result);
+    collectGridCellData(treeRootElement, undefined, flow.elements, 1, result);
     // for a more readable resulting html structure, sort the grid elements first from top to bottom and within each row from left to right
     result.sort(sortGridCellDataByPosition);
     return { gridCellData: result, columnCount: getMaxColumnIndex(treeRootElement) };

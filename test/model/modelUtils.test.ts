@@ -120,46 +120,17 @@ describe("createElementTree()", () => {
         expect(convGw2.getRowCount()).toBe(4);
         expect(end.getRowCount()).toBe(4);
     });
-    it("can handle overlapping gateways", () => {
+    it("can handle overlapping gateways (1)", () => {
         const element1 = createElementTree(
             {
                 firstElementId: "1",
                 elements: {
-                    "1": {
-                        nextElements: [
-                            { id: "2.1" },
-                            {
-                                /*id: "2.2-end"*/
-                            },
-                            { id: "2.3" }
-                        ]
-                    },
+                    "1": { nextElements: [{ id: "2.1" }, {}, { id: "2.3" }] },
                     "2.1": { nextElementId: "3.1" },
-                    "2.3": {
-                        nextElements: [
-                            {
-                                /*id: "3.3.1-end"*/
-                            },
-                            { id: "3.3.2" }
-                        ]
-                    },
-                    "3.1": {
-                        /*nextElementId: "4.1-end"*/
-                    },
-                    "3.3.2": {
-                        nextElements: [
-                            {
-                                /*id: "4.3.2.1-end"*/
-                            },
-                            { id: "4.3.2.2" },
-                            {
-                                /*id: "4.3.2.3-end"*/
-                            }
-                        ]
-                    },
-                    "4.3.2.2": {
-                        /*nextElementId: "5.3.2.2-end"*/
-                    }
+                    "2.3": { nextElements: [{}, { id: "3.3.2" }] },
+                    "3.1": {},
+                    "3.3.2": { nextElements: [{}, { id: "4.3.2.2" }, {}] },
+                    "4.3.2.2": {}
                 }
             },
             "top"
@@ -192,5 +163,28 @@ describe("createElementTree()", () => {
         // trailing converging gateway: one row for end connection
         // converging gateway before single end node: taking all six rows
         expect(convGwEnd.getRowCount()).toBe(6);
+    });
+    it("can handle overlapping gateways (2)", () => {
+        const a = createElementTree(
+            {
+                firstElementId: "a",
+                elements: {
+                    a: { nextElements: [{ id: "b" }, { id: "c" }] },
+                    b: { nextElements: [{}, { id: "c" }] },
+                    c: {}
+                }
+            },
+            "top"
+        );
+        const b = a.getFollowingElements()[0];
+        const c = a.getFollowingElements()[1];
+        const end = b.getFollowingElements()[0];
+        expect(b.getFollowingElements()[1]).toBe(c);
+        expect(c.getFollowingElements()[0]).toBe(end);
+
+        expect(a.getRowCount()).toBe(3);
+        expect(b.getRowCount()).toBe(2);
+        expect(c.getRowCount()).toBe(2);
+        expect(end.getRowCount()).toBe(3);
     });
 });

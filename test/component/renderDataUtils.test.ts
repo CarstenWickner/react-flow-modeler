@@ -718,6 +718,152 @@ describe("buildRenderData()", () => {
             }
         `);
     });
+    it("can handle overlapping gateways (2)", () => {
+        const result = buildRenderData(
+            {
+                firstElementId: "a",
+                elements: {
+                    a: { nextElements: [{ id: "b" }, { id: "c" }] },
+                    b: { nextElements: [{}, { id: "c" }] },
+                    c: {}
+                }
+            },
+            "top"
+        );
+        expect(result).toMatchInlineSnapshot(`
+            Object {
+              "columnCount": 11,
+              "gridCellData": Array [
+                Object {
+                  "colStartIndex": 1,
+                  "rowEndIndex": 4,
+                  "rowStartIndex": 1,
+                  "type": 1,
+                },
+                Object {
+                  "colStartIndex": 2,
+                  "data": undefined,
+                  "gateway": FlowElement { "id": "a" },
+                  "rowEndIndex": 4,
+                  "rowStartIndex": 1,
+                  "type": 3,
+                },
+                Object {
+                  "branchIndex": 0,
+                  "colStartIndex": 3,
+                  "connectionType": 1,
+                  "data": undefined,
+                  "gateway": FlowElement { "id": "a" },
+                  "rowEndIndex": 3,
+                  "rowStartIndex": 1,
+                  "type": 5,
+                },
+                Object {
+                  "colStartIndex": 4,
+                  "data": undefined,
+                  "gateway": FlowElement { "id": "b" },
+                  "rowEndIndex": 3,
+                  "rowStartIndex": 1,
+                  "type": 3,
+                },
+                Object {
+                  "branchIndex": 0,
+                  "colStartIndex": 5,
+                  "connectionType": 1,
+                  "data": undefined,
+                  "gateway": FlowElement { "id": "b" },
+                  "rowEndIndex": 2,
+                  "rowStartIndex": 1,
+                  "type": 5,
+                },
+                Object {
+                  "colEndIndex": 10,
+                  "colStartIndex": 6,
+                  "connectionType": 1,
+                  "element": FlowElement { "id": "b" },
+                  "rowEndIndex": 2,
+                  "rowStartIndex": 1,
+                  "type": 6,
+                },
+                Object {
+                  "colStartIndex": 10,
+                  "followingElement": FlowElement { "id": "null" },
+                  "rowEndIndex": 4,
+                  "rowStartIndex": 1,
+                  "type": 4,
+                },
+                Object {
+                  "colStartIndex": 11,
+                  "rowEndIndex": 4,
+                  "rowStartIndex": 1,
+                  "type": 8,
+                },
+                Object {
+                  "branchIndex": 1,
+                  "colStartIndex": 5,
+                  "connectionType": 3,
+                  "data": undefined,
+                  "gateway": FlowElement { "id": "b" },
+                  "rowEndIndex": 3,
+                  "rowStartIndex": 2,
+                  "type": 5,
+                },
+                Object {
+                  "colEndIndex": 7,
+                  "colStartIndex": 6,
+                  "connectionType": 1,
+                  "element": FlowElement { "id": "b" },
+                  "rowEndIndex": 3,
+                  "rowStartIndex": 2,
+                  "type": 6,
+                },
+                Object {
+                  "colStartIndex": 7,
+                  "followingElement": FlowElement { "id": "c" },
+                  "rowEndIndex": 4,
+                  "rowStartIndex": 2,
+                  "type": 4,
+                },
+                Object {
+                  "colStartIndex": 8,
+                  "data": undefined,
+                  "element": FlowElement { "id": "c" },
+                  "rowEndIndex": 4,
+                  "rowStartIndex": 2,
+                  "type": 2,
+                },
+                Object {
+                  "colEndIndex": 10,
+                  "colStartIndex": 9,
+                  "connectionType": 3,
+                  "element": FlowElement { "id": "c" },
+                  "rowEndIndex": 4,
+                  "rowStartIndex": 2,
+                  "type": 6,
+                },
+                Object {
+                  "branchIndex": 1,
+                  "colStartIndex": 3,
+                  "connectionType": 3,
+                  "data": undefined,
+                  "gateway": FlowElement { "id": "a" },
+                  "rowEndIndex": 4,
+                  "rowStartIndex": 3,
+                  "type": 5,
+                },
+                Object {
+                  "colEndIndex": 7,
+                  "colStartIndex": 4,
+                  "connectionType": 3,
+                  "element": FlowElement { "id": "a" },
+                  "rowEndIndex": 4,
+                  "rowStartIndex": 3,
+                  "type": 6,
+                },
+              ],
+            }
+        `);
+    });
 
     const ref = (nextId: string): { nextElementId: string } => ({ nextElementId: nextId });
     it("throws error for circular reference", () => {
