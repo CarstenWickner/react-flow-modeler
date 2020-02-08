@@ -38,37 +38,38 @@ const checkForCircularReference = (
 /**
  * Check whether the given two parents of the specified child element are neighbours.
  *
- * @param {FlowElement} child - element being referenced from multiple parents (thereby being preceded by an implicit converging gateway)
  * @param {FlowElement} firstParent - leading specific preceding element from which the designated child is being referenced
  * @param {FlowElement} secondParent - trailing specific preceding element from which the designated child is being referenced
  * @returns {boolean} whether the implicit converging gateway is valid.
  */
-const areParentsNeighbours = (child: FlowElement, firstParent: PrecedingFlowElement, secondParent: PrecedingFlowElement): boolean => {
+const areParentsNeighbours = (firstParent: PrecedingFlowElement, secondParent: PrecedingFlowElement): boolean => {
     // collect path to second element
     const topPathToSecond: Array<PrecedingFlowElement> = [secondParent];
     let leadingParentOfSecond = secondParent;
-    while (leadingParentOfSecond.element.getPrecedingElements().length) {
-        // in case of converging gateway, always take the top element
+    while (!leadingParentOfSecond.branchIndex && leadingParentOfSecond.element.getPrecedingElements().length) {
+        // in case of a converging gateway, always take the top element
         leadingParentOfSecond = leadingParentOfSecond.element.getPrecedingElementsWithBranchIndex()[0];
         topPathToSecond.push(leadingParentOfSecond);
     }
     // iterate backwards over path to first element until finding a common parent (worst case: the root element)
-    const bottomPathToFirst: Array<PrecedingFlowElement> = [];
     let firstBranch = firstParent;
     do {
-        bottomPathToFirst.push(firstBranch);
-        if (topPathToSecond.findIndex((entry) => entry.element === firstBranch.element) > -1) {
-            break;
+        const secondBranch = topPathToSecond.find((entry) => entry.element === firstBranch.element);
+        if (secondBranch) {
+            // check whether the two paths are neighbouring when branching off from their right-most common parent
+            return firstBranch.branchIndex + 1 === secondBranch.branchIndex;
+        }
+        if (firstBranch.branchIndex !== undefined && firstBranch.branchIndex + 1 !== firstBranch.element.getFollowingElements().length) {
+            // leading element is not the bottom most branch of the targeted gateway, i.e. all further parents would be invalid connections
+            return false;
         }
         const parents = firstBranch.element.getPrecedingElementsWithBranchIndex();
+        if (parents.length === 0) {
+            // reached root without finding common parent, the second branch must have ended early at a diverging gateway
+            return false;
+        }
         firstBranch = parents[parents.length - 1];
-        // keep going, worst case till the single root element
     } while (true);
-    const commonIndexInPathToSecond = topPathToSecond.findIndex((entry) => entry.element === firstBranch.element);
-    // check whether the two paths are neighbouring when branching off from their right-most common parent
-    const firstBranchIndex = bottomPathToFirst[bottomPathToFirst.length - 1].branchIndex;
-    const secondBranchIndex = topPathToSecond[commonIndexInPathToSecond].branchIndex;
-    return firstBranchIndex + 1 === secondBranchIndex;
 };
 
 /**
@@ -79,9 +80,7 @@ const areParentsNeighbours = (child: FlowElement, firstParent: PrecedingFlowElem
  */
 const isInvalidConvergingGateway = (convergingGateway: FlowElement): boolean => {
     const connectedElements = convergingGateway.getPrecedingElementsWithBranchIndex();
-    return connectedElements
-        .slice(1)
-        .some((nextElement, previousIndex) => !areParentsNeighbours(convergingGateway, connectedElements[previousIndex], nextElement));
+    return connectedElements.slice(1).some((nextElement, previousIndex) => !areParentsNeighbours(connectedElements[previousIndex], nextElement));
 };
 
 /**

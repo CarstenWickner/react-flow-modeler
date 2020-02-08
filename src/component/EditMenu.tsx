@@ -20,14 +20,6 @@ export class EditMenu extends React.Component<{
     menuOptions?: FlowModelerProps["options"]["editActions"];
     onChange: (change: (originalFlow: FlowModelerProps["flow"]) => EditActionResult) => void;
 }> {
-    isNextElementReferencedByOthers = (): boolean => {
-        const { referenceElement, branchIndex } = this.props;
-        if (!referenceElement) {
-            return false;
-        }
-        return referenceElement.getFollowingElements()[branchIndex || 0].getPrecedingElements().length > 1;
-    };
-
     renderMenuItem(
         options: MenuOptions,
         defaultClassName: string,
@@ -40,8 +32,8 @@ export class EditMenu extends React.Component<{
         }
         const dragItem =
             dragType === DraggableType.LINK &&
-            (targetType === ElementType.Content || targetType == ElementType.ConnectGatewayToElement) &&
-            this.isNextElementReferencedByOthers()
+            (targetType === ElementType.Content || targetType === ElementType.ConnectGatewayToElement) &&
+            isChangeNextElementAllowed(targetType, referenceElement, branchIndex)
                 ? { type: dragType, originType: targetType, originElement: referenceElement, originBranchIndex: branchIndex }
                 : undefined;
         return <EditMenuItem key={defaultClassName} options={options} defaultClassName={defaultClassName} onClick={onClick} dragItem={dragItem} />;
