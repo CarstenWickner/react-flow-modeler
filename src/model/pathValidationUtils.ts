@@ -1,4 +1,13 @@
-import { FlowElement, PrecedingFlowElement } from "./FlowElement";
+import {
+    ContentNode,
+    ConvergingGatewayBranch,
+    ConvergingGatewayNode,
+    DivergingGatewayBranch,
+    DivergingGatewayNode,
+    ElementType,
+    ModelElement,
+    StartNode
+} from "./ModelElement";
 import { isDivergingGateway, createElementTree, createMinimalElementTreeStructure } from "./modelUtils";
 
 import { FlowModelerProps } from "../types/FlowModelerProps";
@@ -35,93 +44,112 @@ const checkForCircularReference = (
     }
 };
 
-/**
- * Check whether the given two parents of the specified child element are neighbours.
- *
- * @param {FlowElement} firstParent - leading specific preceding element from which the designated child is being referenced
- * @param {FlowElement} secondParent - trailing specific preceding element from which the designated child is being referenced
- * @returns {boolean} whether the implicit converging gateway is valid.
- */
-const areParentsNeighbours = (firstParent: PrecedingFlowElement, secondParent: PrecedingFlowElement): boolean => {
-    // collect path to second element
-    const topPathToSecond: Array<PrecedingFlowElement> = [secondParent];
-    let leadingParentOfSecond = secondParent;
-    while (!leadingParentOfSecond.branchIndex && leadingParentOfSecond.element.getPrecedingElements().length) {
-        // in case of a converging gateway, always take the top element
-        leadingParentOfSecond = leadingParentOfSecond.element.getPrecedingElementsWithBranchIndex()[0];
-        topPathToSecond.push(leadingParentOfSecond);
+const collectTopPath = (
+    element: ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode,
+    path: Array<ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode>
+): void => {
+    path.push(element);
+    if (element.type !== ElementType.ConnectGatewayToElement || element.branchIndex === 0) {
+        const nextElement = element.type === ElementType.GatewayConverging ? element.precedingBranches[0].precedingElement : element.precedingElement;
+        if (nextElement.type !== ElementType.Start) {
+            collectTopPath(nextElement, path);
+        }
     }
+};
+
+const bottomAncestorIsAbovePath = (
+    element: StartNode | ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode,
+    pathToIntersectWith: Array<ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode>
+): boolean => {
+    switch (element.type) {
+        case ElementType.Start:
+            return false;
+        case ElementType.ConnectGatewayToElement:
+            const branchAfterCommonGateway = (pathToIntersectWith.find(
+                (entry) => entry.type === ElementType.ConnectGatewayToElement && entry.precedingElement === element.precedingElement
+            ) as unknown) as DivergingGatewayBranch;
+            if (branchAfterCommonGateway) {
+                return element.branchIndex + 1 === branchAfterCommonGateway.branchIndex;
+            }
+            return (
+                element.branchIndex + 1 === element.precedingElement.followingBranches.length &&
+                bottomAncestorIsAbovePath(element.precedingElement.precedingElement, pathToIntersectWith)
+            );
+        case ElementType.GatewayConverging:
+            const convergingBranches = element.precedingBranches;
+            return bottomAncestorIsAbovePath(convergingBranches[convergingBranches.length - 1].precedingElement, pathToIntersectWith);
+        default:
+            return bottomAncestorIsAbovePath(element.precedingElement, pathToIntersectWith);
+    }
+};
+
+/**
+ * Check whether the given two branches are neighbours.
+ *
+ * @param {ConvergingGatewayBranch} branchOne - leading converging branch
+ * @param {ConvergingGatewayBranch} branchTwo - trailing converging branch
+ * @returns {boolean} whether the converging gateway is valid.
+ */
+const areParentsNeighbours = (branchOne: ConvergingGatewayBranch, branchTwo: ConvergingGatewayBranch): boolean => {
+    // collect path to second branch
+    const topPathToSecond: Array<ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode> = [];
+    collectTopPath(branchTwo.precedingElement, topPathToSecond);
     // iterate backwards over path to first element until finding a common parent (worst case: the root element)
-    let firstBranch = firstParent;
-    do {
-        const secondBranch = topPathToSecond.find((entry) => entry.element === firstBranch.element);
-        if (secondBranch) {
-            // check whether the two paths are neighbouring when branching off from their right-most common parent
-            return firstBranch.branchIndex + 1 === secondBranch.branchIndex;
-        }
-        if (firstBranch.branchIndex !== undefined && firstBranch.branchIndex + 1 !== firstBranch.element.getFollowingElements().length) {
-            // leading element is not the bottom most branch of the targeted gateway, i.e. all further parents would be invalid connections
-            return false;
-        }
-        const parents = firstBranch.element.getPrecedingElementsWithBranchIndex();
-        if (parents.length === 0) {
-            // reached root without finding common parent, the second branch must have ended early at a diverging gateway
-            return false;
-        }
-        firstBranch = parents[parents.length - 1];
-    } while (true);
+    return bottomAncestorIsAbovePath(branchOne.precedingElement, topPathToSecond);
 };
 
 /**
  * Check whether the implicit converging gateway in front of the given element is valid, i.e. whether all connection pairs are direct neighbours.
  *
- * @param {FlowElement} convergingGateway - element being referenced from multiple parents (thereby being preceded by an implicit converging gateway)
+ * @param {ConvergingGatewayNode} gateway - element being referenced from multiple parents (thereby being preceded by an implicit converging gateway)
  * @returns {boolean} whether the implicit converging gateway is invalid (beware the negation!)
  */
-const isInvalidConvergingGateway = (convergingGateway: FlowElement): boolean => {
-    const connectedElements = convergingGateway.getPrecedingElementsWithBranchIndex();
+const isInvalidConvergingGateway = (gateway: ConvergingGatewayNode): boolean => {
+    const connectedElements = gateway.precedingBranches;
     return connectedElements.slice(1).some((nextElement, previousIndex) => !areParentsNeighbours(connectedElements[previousIndex], nextElement));
 };
 
 /**
  * Validate that the parsed data model can be properly displayed. Ensuring that only directly neighbouring paths can link to the same element.
  *
- * @param {FlowElement} treeRootElement - root of the parsed data model to validate
+ * @param {StartNode} start - root of the parsed data model to validate
  * @throws Error in case of any (implicit) converging gateways connecting non-neighbouring paths
  */
-const validatePaths = (treeRootElement: FlowElement): void => {
+const validatePaths = (start: StartNode): void => {
     // use Set to automatically filter out duplicates and thereby avoid checking the same gateway repeatedly
-    const convergingGateways = new Set<FlowElement>();
-    const collectConvergingGateways = (element: FlowElement): void => {
-        if (element.getId()) {
-            if (element.getPrecedingElements().length > 1) {
-                convergingGateways.add(element);
-            }
-            element.getFollowingElements().forEach(collectConvergingGateways);
+    const convergingGateways = new Set<ConvergingGatewayNode>();
+    const collectConvergingGateways = (element: ModelElement): void => {
+        if (element.type === ElementType.GatewayConverging) {
+            convergingGateways.add(element);
+        }
+        if (element.type === ElementType.GatewayDiverging) {
+            element.followingBranches.forEach(collectConvergingGateways);
+        } else if (element.type !== ElementType.End) {
+            collectConvergingGateways(element.followingElement);
         }
     };
-    collectConvergingGateways(treeRootElement);
+    collectConvergingGateways(start.followingElement);
     const invalidElements = Array.from(convergingGateways).filter(isInvalidConvergingGateway);
     if (invalidElements.length) {
         throw new Error(
-            `Multiple references only valid from neighbouring paths. Invalid references to: '${invalidElements
-                .map((gateway) => gateway.getId())
-                .join("', '")}'`
+            `Multiple references only valid from neighbouring paths. Invalid references to: ${invalidElements
+                .map((gateway) => (gateway.followingElement.type === ElementType.End ? "end" : `${gateway.followingElement.id}`))
+                .join(", ")}`
         );
     }
 };
 
-export const createValidatedElementTree = (flow: FlowModelerProps["flow"], verticalAlign: "top" | "bottom"): FlowElement => {
+export const createValidatedElementTree = (flow: FlowModelerProps["flow"], verticalAlign: "top" | "bottom"): StartNode => {
     checkForCircularReference(flow.firstElementId, flow.elements);
-    const treeRootElement = createElementTree(flow, verticalAlign);
-    validatePaths(treeRootElement);
-    return treeRootElement;
+    const start = createElementTree(flow, verticalAlign);
+    validatePaths(start);
+    return start;
 };
 
 export const validateFlow = (flow: FlowModelerProps["flow"]): void => {
     checkForCircularReference(flow.firstElementId, flow.elements);
-    const treeRootElement = createMinimalElementTreeStructure(flow).firstElement;
-    validatePaths(treeRootElement);
+    const { start } = createMinimalElementTreeStructure(flow);
+    validatePaths(start);
 };
 
 export const isFlowValid = (flow: FlowModelerProps["flow"]): boolean => {

@@ -1,111 +1,138 @@
 import * as React from "react";
 
 import { EditMenuItem } from "./EditMenuItem";
-import { FlowElementReference } from "../model/FlowElement";
+import { ContentNode, ConvergingGatewayNode, DivergingGatewayNode, DivergingGatewayBranch, ElementType, StartNode } from "../model/ModelElement";
 import { addContentElement, addDivergingGateway } from "../model/action/addElement";
 import { addBranch } from "../model/action/addBranch";
 import { isChangeNextElementAllowed } from "../model/action/changeNextElement";
 import { removeElement, isRemoveElementAllowed } from "../model/action/removeElement";
 
-import { SelectableElementType, EditActionResult, DraggableType } from "../types/EditAction";
-import { FlowModelerProps, MenuOptions } from "../types/FlowModelerProps";
-import { ElementType } from "../types/GridCellData";
+import { EditActionResult, DraggableType, DraggedLinkContext } from "../types/EditAction";
+import { FlowModelerProps } from "../types/FlowModelerProps";
 
 const onClickStopPropagation = (event: React.MouseEvent): void => event.stopPropagation();
 
 export class EditMenu extends React.Component<{
-    targetType: SelectableElementType;
-    referenceElement?: FlowElementReference;
-    branchIndex?: number;
-    menuOptions?: FlowModelerProps["options"]["editActions"];
+    referenceElement: StartNode | ContentNode | ConvergingGatewayNode | DivergingGatewayNode | DivergingGatewayBranch;
+    menuOptions: FlowModelerProps["options"]["editActions"] | undefined;
     onChange: (change: (originalFlow: FlowModelerProps["flow"]) => EditActionResult) => void;
 }> {
     renderMenuItem(
-        options: MenuOptions,
+        options:
+            | {
+                  className?: string;
+                  title?: string;
+              }
+            | undefined,
         defaultClassName: string,
         onClick?: (event: React.MouseEvent) => void,
         dragType?: DraggableType
     ): React.ReactNode {
-        const { targetType, referenceElement, branchIndex } = this.props;
-        if (options && options.isActionAllowed && !options.isActionAllowed(targetType, referenceElement, branchIndex)) {
-            return null;
-        }
-        const dragItem =
+        const { referenceElement } = this.props;
+        const dragItem: DraggedLinkContext =
             dragType === DraggableType.LINK &&
-            (targetType === ElementType.Content || targetType === ElementType.ConnectGatewayToElement) &&
-            isChangeNextElementAllowed(targetType, referenceElement, branchIndex)
-                ? { type: dragType, originType: targetType, originElement: referenceElement, originBranchIndex: branchIndex }
+            (referenceElement.type === ElementType.Content || referenceElement.type === ElementType.ConnectGatewayToElement) &&
+            isChangeNextElementAllowed(referenceElement)
+                ? { type: dragType, originElement: referenceElement }
                 : undefined;
         return <EditMenuItem key={defaultClassName} options={options} defaultClassName={defaultClassName} onClick={onClick} dragItem={dragItem} />;
     }
 
     onAddContentElementClick = (): void => {
-        const { targetType, onChange, referenceElement, branchIndex } = this.props;
-        if (targetType !== ElementType.GatewayDiverging) {
-            onChange((originalFlow) => addContentElement(originalFlow, targetType, {}, referenceElement, branchIndex));
+        const { onChange, referenceElement } = this.props;
+        if (referenceElement.type !== ElementType.GatewayDiverging) {
+            onChange((originalFlow) => addContentElement(originalFlow, referenceElement, {}));
         }
     };
 
     renderAddContentElementItem(): React.ReactNode {
-        const { targetType, menuOptions } = this.props;
-        if (targetType === ElementType.GatewayDiverging) {
+        const { referenceElement, menuOptions } = this.props;
+        if (referenceElement.type === ElementType.GatewayDiverging) {
             return null;
         }
-        return this.renderMenuItem(menuOptions ? menuOptions.addFollowingContentElement : undefined, "add-content", this.onAddContentElementClick);
+        const options = menuOptions ? menuOptions.addFollowingContentElement : undefined;
+        if (options && options.isActionAllowed && !options.isActionAllowed(referenceElement)) {
+            return null;
+        }
+        return this.renderMenuItem(options, "add-content", this.onAddContentElementClick);
     }
 
     onAddDivergingGatewayClick = (): void => {
-        const { targetType, onChange, referenceElement, branchIndex } = this.props;
-        if (targetType !== ElementType.GatewayDiverging) {
-            onChange((originalFlow) => addDivergingGateway(originalFlow, targetType, {}, referenceElement, branchIndex));
+        const { referenceElement, onChange } = this.props;
+        if (!referenceElement || referenceElement.type !== ElementType.GatewayDiverging) {
+            onChange((originalFlow) =>
+                addDivergingGateway(
+                    originalFlow,
+                    (referenceElement as unknown) as ContentNode | ConvergingGatewayNode | DivergingGatewayBranch | undefined,
+                    {}
+                )
+            );
         }
     };
 
     renderAddDivergingGatewayItem(): React.ReactNode {
-        const { targetType, menuOptions } = this.props;
-        if (targetType === ElementType.GatewayDiverging) {
+        const { referenceElement, menuOptions } = this.props;
+        if (referenceElement && referenceElement.type === ElementType.GatewayDiverging) {
             return null;
         }
-        return this.renderMenuItem(
-            menuOptions ? menuOptions.addFollowingDivergingGateway : undefined,
-            "add-gateway",
-            this.onAddDivergingGatewayClick
-        );
+        const options = menuOptions ? menuOptions.addFollowingDivergingGateway : undefined;
+        if (
+            options &&
+            options.isActionAllowed &&
+            !options.isActionAllowed((referenceElement as unknown) as undefined | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode)
+        ) {
+            return null;
+        }
+        return this.renderMenuItem(options, "add-gateway", this.onAddDivergingGatewayClick);
     }
 
     onAddDivergingBranchClick = (): void => {
-        const { targetType, onChange, referenceElement } = this.props;
-        if (targetType === ElementType.GatewayDiverging) {
-            onChange((originalFlow) => addBranch(originalFlow, {}, referenceElement));
+        const { referenceElement, onChange } = this.props;
+        if (referenceElement && referenceElement.type === ElementType.GatewayDiverging) {
+            onChange((originalFlow) => addBranch(originalFlow, referenceElement, {}));
         }
     };
 
     renderAddDivergingBranchItem(): React.ReactNode {
-        const { targetType, menuOptions } = this.props;
-        if (targetType !== ElementType.GatewayDiverging) {
+        const { referenceElement, menuOptions } = this.props;
+        if (referenceElement.type !== ElementType.GatewayDiverging) {
             return null;
         }
-        return this.renderMenuItem(menuOptions ? menuOptions.addDivergingBranch : undefined, "add-branch", this.onAddDivergingBranchClick);
+        const options = menuOptions ? menuOptions.addDivergingBranch : undefined;
+        if (options && options.isActionAllowed && !options.isActionAllowed(referenceElement)) {
+            return null;
+        }
+        return this.renderMenuItem(options, "add-branch", this.onAddDivergingBranchClick);
     }
 
     renderChangeNextElementItem(): React.ReactNode {
-        const { targetType, referenceElement, branchIndex, menuOptions } = this.props;
-        if (isChangeNextElementAllowed(targetType, referenceElement, branchIndex)) {
-            return this.renderMenuItem(menuOptions ? menuOptions.changeNextElement : undefined, "change-next", undefined, DraggableType.LINK);
+        const { referenceElement, menuOptions } = this.props;
+        if (
+            (referenceElement.type !== ElementType.Content && referenceElement.type !== ElementType.ConnectGatewayToElement) ||
+            !isChangeNextElementAllowed(referenceElement)
+        ) {
+            return null;
         }
-        return null;
+        const options = menuOptions ? menuOptions.changeNextElement : undefined;
+        if (options && options.isActionAllowed && !options.isActionAllowed(referenceElement)) {
+            return null;
+        }
+        return this.renderMenuItem(options, "change-next", undefined, DraggableType.LINK);
     }
 
     onRemoveClick = (): void => {
-        const { targetType, onChange, referenceElement, branchIndex } = this.props;
-        if (targetType === ElementType.Content || targetType === ElementType.ConnectGatewayToElement) {
-            onChange((originalFlow) => removeElement(originalFlow, targetType, referenceElement, branchIndex));
+        const { referenceElement, onChange } = this.props;
+        if (referenceElement.type === ElementType.Content || referenceElement.type === ElementType.ConnectGatewayToElement) {
+            onChange((originalFlow) => removeElement(originalFlow, referenceElement));
         }
     };
 
     renderRemoveItem(): React.ReactNode {
-        const { targetType, referenceElement, branchIndex, menuOptions } = this.props;
-        if (isRemoveElementAllowed(targetType, referenceElement, branchIndex)) {
+        const { referenceElement, menuOptions } = this.props;
+        if (
+            (referenceElement.type === ElementType.Content || referenceElement.type === ElementType.ConnectGatewayToElement) &&
+            isRemoveElementAllowed(referenceElement)
+        ) {
             return this.renderMenuItem(menuOptions ? menuOptions.removeElement : undefined, "remove", this.onRemoveClick);
         }
         return null;

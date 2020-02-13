@@ -1,6 +1,5 @@
-import { FlowElementReference } from "../model/FlowElement";
+import { ContentNode, DivergingGatewayBranch, DivergingGatewayNode, ConvergingGatewayNode, ElementType, EndNode } from "../model/ModelElement";
 import { FlowModelerProps } from "./FlowModelerProps";
-import { ElementType } from "./GridCellData";
 
 export type SelectableElementType =
     | ElementType.Start
@@ -19,12 +18,14 @@ export enum DraggableType {
 
 export interface DraggedLinkContext {
     type: DraggableType.LINK;
-    originType: ElementType.Content | ElementType.ConnectGatewayToElement;
-    originElement: FlowElementReference;
-    originBranchIndex?: number;
+    originElement: ContentNode | DivergingGatewayBranch;
 }
 
 export type onLinkDropCallback = {
-    (dropTarget: FlowElementReference, dragContext: DraggedLinkContext, dryRun?: never): void;
-    (dropTarget: FlowElementReference, dragContext: DraggedLinkContext, dryRun?: true): EditActionResult;
+    (dropTarget: ContentNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode, dragContext: DraggedLinkContext, dryRun?: never): void;
+    (
+        dropTarget: ContentNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode,
+        dragContext: DraggedLinkContext,
+        dryRun?: true
+    ): EditActionResult;
 };

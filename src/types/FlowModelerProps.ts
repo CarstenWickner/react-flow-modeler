@@ -1,5 +1,4 @@
-import { ElementType } from "./GridCellData";
-import { FlowElementReference } from "../model/FlowElement";
+import { ContentNode, ConvergingGatewayNode, DivergingGatewayBranch, DivergingGatewayNode, StartNode } from "../model/ModelElement";
 
 export interface FlowContent {
     nextElementId?: string;
@@ -14,12 +13,6 @@ export interface FlowGatewayDiverging {
     data?: { [key: string]: unknown };
 }
 
-export interface MenuOptions {
-    className?: string;
-    title?: string;
-    isActionAllowed?: (contextType: ElementType, referenceElement?: FlowElementReference, branchIndex?: number) => boolean;
-}
-
 export interface FlowModelerProps {
     flow: {
         firstElementId: string | null;
@@ -28,20 +21,36 @@ export interface FlowModelerProps {
     options?: {
         verticalAlign?: "top" | "middle" | "bottom";
         editActions?: {
-            addDivergingBranch?: MenuOptions;
-            addFollowingContentElement?: MenuOptions;
-            addFollowingDivergingGateway?: MenuOptions;
-            changeNextElement?: MenuOptions;
-            removeElement?: MenuOptions;
+            addDivergingBranch?: {
+                className?: string;
+                title?: string;
+                isActionAllowed?: (gateway: DivergingGatewayNode) => boolean;
+            };
+            addFollowingContentElement?: {
+                className?: string;
+                title?: string;
+                isActionAllowed?: (element: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode) => boolean;
+            };
+            addFollowingDivergingGateway?: {
+                className?: string;
+                title?: string;
+                isActionAllowed?: (element: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode) => boolean;
+            };
+            changeNextElement?: {
+                className?: string;
+                title?: string;
+                isActionAllowed?: (element: ContentNode | DivergingGatewayBranch) => boolean;
+            };
+            removeElement?: {
+                className?: string;
+                title?: string;
+                isActionAllowed?: (element: ContentNode | DivergingGatewayBranch) => boolean;
+            };
         };
     };
-    renderContent: (params: { elementData: { [key: string]: unknown }; contentElementId: string }) => React.ReactNode;
-    renderGatewayConditionType?: (params: { gatewayData: { [key: string]: unknown }; gatewayElementId: string }) => React.ReactNode;
-    renderGatewayConditionValue?: (params: {
-        conditionData: { [key: string]: unknown };
-        branchElementId: string;
-        gatewayElementId: string;
-    }) => React.ReactNode;
+    renderContent: (target: ContentNode) => React.ReactNode;
+    renderGatewayConditionType?: (target: DivergingGatewayNode) => React.ReactNode;
+    renderGatewayConditionValue?: (target: DivergingGatewayBranch) => React.ReactNode;
     onChange?: ({
         changedFlow
     }: {
