@@ -74,24 +74,23 @@ describe("addContentElement()", () => {
     describe("adding element after converging gateway that", () => {
         it.each`
             type                   | addElement             | expectedNewElement
-            ${"content"}           | ${addContentElement}   | ${{ nextElementId: "b", data: { x: "y" } }}
-            ${"diverging gateway"} | ${addDivergingGateway} | ${{ nextElements: [{ id: "b" }, { id: "b" }], data: { x: "y" } }}
+            ${"content"}           | ${addContentElement}   | ${{ nextElementId: "c", data: { x: "y" } }}
+            ${"diverging gateway"} | ${addDivergingGateway} | ${{ nextElements: [{ id: "c" }, { id: "c" }], data: { x: "y" } }}
         `("is followed by some other element (adding: $type)", ({ addElement, expectedNewElement }) => {
-            const originalFlow: FlowModelerProps["flow"] = { firstElementId: "a", elements: { a: divGw("b", "b"), b: {} } };
+            const originalFlow: FlowModelerProps["flow"] = { firstElementId: "a", elements: { a: divGw("b", "c"), b: cont("c"), c: {} } };
             const aReference = createElementTree(originalFlow, "top").followingElement as DivergingGatewayNode;
-            const convGw = (aReference.followingBranches[0].followingElement as ConvergingGatewayBranch).followingElement;
+            const convGw = (aReference.followingBranches[1].followingElement as ConvergingGatewayBranch).followingElement;
             const { changedFlow }: EditActionResult = addElement(originalFlow, convGw, { x: "y" });
 
             expect(changedFlow.firstElementId).toEqual("a");
-            expect(Object.keys(changedFlow.elements)).toHaveLength(3);
-            const gatewayBranches = (changedFlow.elements.a as FlowGatewayDiverging).nextElements;
-            expect(gatewayBranches).toHaveLength(2);
-            const newElementId = gatewayBranches[0].id;
+            expect(Object.keys(changedFlow.elements)).toHaveLength(4);
+            const newElementId = (changedFlow.elements.b as FlowContent).nextElementId;
             expect(newElementId).toBeDefined();
-            expect(newElementId).not.toEqual("b");
-            expect(changedFlow.elements.a).toEqual(divGw(newElementId, newElementId));
+            expect(newElementId).not.toEqual("c");
+            expect(changedFlow.elements.a).toEqual(divGw("b", newElementId));
+            expect(changedFlow.elements.b).toEqual(cont(newElementId));
             expect(changedFlow.elements[newElementId]).toEqual(expectedNewElement);
-            expect(changedFlow.elements.b).toEqual(originalFlow.elements.b);
+            expect(changedFlow.elements.c).toEqual(originalFlow.elements.c);
         });
         it.each`
             type                   | addElement             | expectedNewElement

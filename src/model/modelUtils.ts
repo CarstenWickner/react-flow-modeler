@@ -73,17 +73,15 @@ const handleNextElement = (
     id: string,
     inputElements: FlowModelerProps["flow"]["elements"],
     resultingModelElements: Array<ModelElement>,
-    precedingElement: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode
+    precedingElement: ContentNode | DivergingGatewayBranch | ConvergingGatewayNode
 ): ContentNode | DivergingGatewayNode | ConvergingGatewayBranch | EndNode => {
-    if (precedingElement.type !== ElementType.Start) {
-        const existingElement = resultingModelElements.find(isMatchingModelElement(id in inputElements ? id : null));
-        if (existingElement) {
-            return addAdditionalBranchToConvergingGateway(
-                existingElement,
-                resultingModelElements,
-                (precedingElement as unknown) as ContentNode | DivergingGatewayBranch
-            );
-        }
+    const existingElement = resultingModelElements.find(isMatchingModelElement(id in inputElements ? id : null));
+    if (existingElement) {
+        return addAdditionalBranchToConvergingGateway(
+            existingElement,
+            resultingModelElements,
+            (precedingElement as unknown) as ContentNode | DivergingGatewayBranch
+        );
     }
     const inputElement = inputElements[id];
     if (!inputElement) {
@@ -185,7 +183,7 @@ export const createMinimalElementTreeStructure = ({
     const start: StartNode = {
         type: ElementType.Start,
         followingElement: undefined,
-        columnIndex: 1,
+        columnIndex: undefined,
         rowCount: undefined
     };
     const elementsInTree: Array<ModelElement> = [start];
