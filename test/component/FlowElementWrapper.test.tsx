@@ -2,12 +2,15 @@ import * as React from "react";
 import { shallow } from "enzyme";
 
 import { FlowElementWrapper } from "../../src/component/FlowElementWrapper";
-import { FlowElementReference } from "../../src/model/FlowElement";
+import { ContentNode, ElementType } from "../../src/model/ModelElement";
 
-const mockFlowElementReference = (id: string): FlowElementReference => ({
-    getId: (): string => id,
-    getPrecedingElements: (): Array<FlowElementReference> => [],
-    getFollowingElements: (): Array<FlowElementReference> => []
+const mockFlowElementReference = (id: string): ContentNode => ({
+    type: ElementType.Content,
+    id,
+    precedingElement: undefined,
+    followingElement: undefined,
+    columnIndex: 2,
+    rowCount: 1
 });
 
 describe("renders correctly", () => {

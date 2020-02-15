@@ -1,7 +1,7 @@
 import { changeNextElement } from "../../../src/model/action/changeNextElement";
 
 import { createMinimalElementTreeStructure } from "../../../src/model/modelUtils";
-import { ElementType } from "../../../src/types/GridCellData";
+import { ElementType, ContentNode, EndNode, DivergingGatewayBranch } from "../../../src/model/ModelElement";
 
 describe("changeNextElement()", () => {
     const originalFlow = {
@@ -15,7 +15,11 @@ describe("changeNextElement()", () => {
     };
     const { elementsInTree } = createMinimalElementTreeStructure(originalFlow);
     it("can handle content element pointing to other content element", () => {
-        const { changedFlow } = changeNextElement(originalFlow, elementsInTree.get("d"), ElementType.Content, elementsInTree.get("b"));
+        const { changedFlow } = changeNextElement(
+            originalFlow,
+            elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "d") as ContentNode,
+            elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "b") as ContentNode
+        );
         expect(changedFlow).not.toBe(originalFlow);
         expect(changedFlow).toEqual({
             firstElementId: "a",
@@ -28,7 +32,11 @@ describe("changeNextElement()", () => {
         });
     });
     it("can handle content element pointing to end", () => {
-        const { changedFlow } = changeNextElement(originalFlow, null, ElementType.Content, elementsInTree.get("b"));
+        const { changedFlow } = changeNextElement(
+            originalFlow,
+            elementsInTree.find((entry) => entry.type === ElementType.End) as EndNode,
+            elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "b") as ContentNode
+        );
         expect(changedFlow).not.toBe(originalFlow);
         expect(changedFlow).toEqual({
             firstElementId: "a",
@@ -43,10 +51,10 @@ describe("changeNextElement()", () => {
     it("can handle diverging gateway branch pointing to content element", () => {
         const { changedFlow } = changeNextElement(
             originalFlow,
-            elementsInTree.get("b"),
-            ElementType.ConnectGatewayToElement,
-            elementsInTree.get("a"),
-            1
+            elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "b") as ContentNode,
+            elementsInTree.find(
+                (entry) => entry.type === ElementType.ConnectGatewayToElement && entry.precedingElement.id === "a" && entry.branchIndex === 1
+            ) as DivergingGatewayBranch
         );
         expect(changedFlow).not.toBe(originalFlow);
         expect(changedFlow).toEqual({
@@ -60,7 +68,13 @@ describe("changeNextElement()", () => {
         });
     });
     it("can handle diverging gateway branch pointing to end", () => {
-        const { changedFlow } = changeNextElement(originalFlow, null, ElementType.ConnectGatewayToElement, elementsInTree.get("a"), 1);
+        const { changedFlow } = changeNextElement(
+            originalFlow,
+            elementsInTree.find((entry) => entry.type === ElementType.End) as EndNode,
+            elementsInTree.find(
+                (entry) => entry.type === ElementType.ConnectGatewayToElement && entry.precedingElement.id === "a" && entry.branchIndex === 1
+            ) as DivergingGatewayBranch
+        );
         expect(changedFlow).not.toBe(originalFlow);
         expect(changedFlow).toEqual({
             firstElementId: "a",

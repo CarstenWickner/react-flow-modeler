@@ -6,10 +6,10 @@ exports[`renders correctly as converging gateway with minimal props 1`] = `
     editMenu={[Function]}
     elementTypeClassName="gateway-element converging"
     onClick={[Function]}
-    referenceElement={FlowElementReference { "id": "following-element-id" }}
+    referenceElement={ConvergingGatewayNode { "followingElement": undefined }}
   />
-  <HorizontalStroke
-    optional={true}
+  <div
+    className="stroke-horizontal optional"
   />
 </Fragment>
 `;
@@ -20,12 +20,12 @@ exports[`renders correctly as diverging gateway with minimal props 1`] = `
     editMenu={[Function]}
     elementTypeClassName="gateway-element diverging"
     onClick={[Function]}
-    referenceElement={FlowElementReference { "id": "gateway-id" }}
+    referenceElement={DivergingGatewayNode { "id": "gateway-id" }}
   />
   <HorizontalStroke
     editMenu={[Function]}
-    gatewayId="gateway-id"
     onSelect={[Function]}
+    referenceElement={DivergingGatewayNode { "id": "gateway-id" }}
   >
     text
   </HorizontalStroke>

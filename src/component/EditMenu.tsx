@@ -14,7 +14,7 @@ const onClickStopPropagation = (event: React.MouseEvent): void => event.stopProp
 
 export class EditMenu extends React.Component<{
     referenceElement: StartNode | ContentNode | ConvergingGatewayNode | DivergingGatewayNode | DivergingGatewayBranch;
-    menuOptions: FlowModelerProps["options"]["editActions"] | undefined;
+    menuOptions?: FlowModelerProps["options"]["editActions"];
     onChange: (change: (originalFlow: FlowModelerProps["flow"]) => EditActionResult) => void;
 }> {
     renderMenuItem(

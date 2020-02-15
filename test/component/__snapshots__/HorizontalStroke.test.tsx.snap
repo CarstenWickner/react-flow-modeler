@@ -1,34 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly for incomingConnection = single 1`] = `
-<React.Fragment>
-  <div
-    className="stroke-horizontal"
-  >
-    <React.Fragment>
-      <div
-        className="top-label"
-        onClick={[Function]}
-      >
-        <div>
-          text
-        </div>
-      </div>
-      <div
-        className="bottom-spacing"
-        style={
-          Object {
-            "minHeight": "30px",
-          }
-        }
-      />
-    </React.Fragment>
-  </div>
-</React.Fragment>
-`;
-
 exports[`renders correctly with minimal/default props 1`] = `
 <Fragment>
+  <div
+    className="stroke-vertical bottom-half"
+  />
   <div
     className="stroke-horizontal"
   >

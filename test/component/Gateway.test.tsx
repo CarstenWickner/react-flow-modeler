@@ -2,13 +2,22 @@ import * as React from "react";
 import { mount, shallow } from "enzyme";
 
 import { Gateway } from "../../src/component/Gateway";
-import { ElementType } from "../../src/types/GridCellData";
-import { FlowElementReference } from "../../src/model/FlowElement";
+import { ConvergingGatewayNode, DivergingGatewayNode, ElementType } from "../../src/model/ModelElement";
 
-const mockFlowElementReference = (id: string): FlowElementReference => ({
-    getId: (): string => id,
-    getPrecedingElements: (): Array<FlowElementReference> => [],
-    getFollowingElements: (): Array<FlowElementReference> => []
+const mockDivergingGateway = (id: string): DivergingGatewayNode => ({
+    type: ElementType.GatewayDiverging,
+    id,
+    precedingElement: undefined,
+    followingBranches: [],
+    columnIndex: 2,
+    rowCount: 2
+});
+const mockConvergingGateway = (): ConvergingGatewayNode => ({
+    type: ElementType.GatewayConverging,
+    precedingBranches: [],
+    followingElement: undefined,
+    columnIndex: 5,
+    rowCount: 2
 });
 
 describe("renders correctly", () => {
@@ -17,8 +26,7 @@ describe("renders correctly", () => {
         it("with minimal props", () => {
             const component = shallow(
                 <Gateway
-                    type={ElementType.GatewayConverging}
-                    followingElement={mockFlowElementReference("following-element-id")}
+                    gateway={mockConvergingGateway()}
                     editMenu={(): React.ReactNode => <div className="edit-menu-placeholder" />}
                     onLinkDrop={undefined}
                     onSelect={onSelect}
@@ -27,15 +35,7 @@ describe("renders correctly", () => {
             expect(component).toMatchSnapshot();
         });
         it("when not selected", () => {
-            const component = mount(
-                <Gateway
-                    type={ElementType.GatewayConverging}
-                    followingElement={mockFlowElementReference("following-element-id")}
-                    editMenu={undefined}
-                    onLinkDrop={undefined}
-                    onSelect={onSelect}
-                />
-            );
+            const component = mount(<Gateway gateway={mockConvergingGateway()} editMenu={undefined} onLinkDrop={undefined} onSelect={onSelect} />);
             expect(component.find(".gateway-element").hasClass("selected")).toBe(false);
             expect(component.find(".edit-menu-placeholder").exists()).toBe(false);
         });
@@ -44,8 +44,7 @@ describe("renders correctly", () => {
         it("with minimal props", () => {
             const component = shallow(
                 <Gateway
-                    type={ElementType.GatewayDiverging}
-                    gateway={mockFlowElementReference("gateway-id")}
+                    gateway={mockDivergingGateway("gateway-id")}
                     editMenu={(): React.ReactNode => <div className="edit-menu-placeholder" />}
                     onLinkDrop={undefined}
                     onSelect={onSelect}
@@ -58,8 +57,7 @@ describe("renders correctly", () => {
         it("when selected without children", () => {
             const component = mount(
                 <Gateway
-                    type={ElementType.GatewayDiverging}
-                    gateway={mockFlowElementReference("gateway-id")}
+                    gateway={mockDivergingGateway("gateway-id")}
                     editMenu={(): React.ReactNode => <div className="edit-menu-placeholder" />}
                     onLinkDrop={undefined}
                     onSelect={onSelect}
@@ -71,13 +69,7 @@ describe("renders correctly", () => {
         });
         it("when not selected", () => {
             const component = mount(
-                <Gateway
-                    type={ElementType.GatewayDiverging}
-                    gateway={mockFlowElementReference("gateway-id")}
-                    editMenu={undefined}
-                    onLinkDrop={undefined}
-                    onSelect={onSelect}
-                >
+                <Gateway gateway={mockDivergingGateway("gateway-id")} editMenu={undefined} onLinkDrop={undefined} onSelect={onSelect}>
                     {"text"}
                 </Gateway>
             );
@@ -91,35 +83,23 @@ describe("calls onSelect", () => {
     const onSelect = jest.fn(() => {});
     const event = ({ stopPropagation: jest.fn(() => {}) } as unknown) as React.MouseEvent;
     it("on click event for diverging gateway", () => {
+        const gatewayElement = mockDivergingGateway("gateway-id");
         const component = mount(
-            <Gateway
-                type={ElementType.GatewayDiverging}
-                editMenu={undefined}
-                gateway={mockFlowElementReference("gateway-id")}
-                onLinkDrop={undefined}
-                onSelect={onSelect}
-            >
+            <Gateway editMenu={undefined} gateway={gatewayElement} onLinkDrop={undefined} onSelect={onSelect}>
                 {"text"}
             </Gateway>
         );
         component.find(".gateway-element").prop("onClick")(event);
         expect(onSelect.mock.calls).toHaveLength(1);
         expect(onSelect.mock.calls[0]).toHaveLength(1);
-        expect(onSelect.mock.calls[0][0]).toEqual("gateway-id");
+        expect(onSelect.mock.calls[0][0]).toBe(gatewayElement);
     });
     it("on click event for converging gateway", () => {
-        const component = mount(
-            <Gateway
-                type={ElementType.GatewayConverging}
-                editMenu={undefined}
-                followingElement={mockFlowElementReference("following-element-id")}
-                onLinkDrop={undefined}
-                onSelect={onSelect}
-            />
-        );
+        const gatewayElement = mockConvergingGateway();
+        const component = mount(<Gateway editMenu={undefined} gateway={gatewayElement} onLinkDrop={undefined} onSelect={onSelect} />);
         component.find(".gateway-element").prop("onClick")(event);
         expect(onSelect.mock.calls).toHaveLength(1);
         expect(onSelect.mock.calls[0]).toHaveLength(1);
-        expect(onSelect.mock.calls[0][0]).toEqual("following-element-id");
+        expect(onSelect.mock.calls[0][0]).toBe(gatewayElement);
     });
 });

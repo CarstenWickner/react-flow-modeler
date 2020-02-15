@@ -18,9 +18,8 @@ export const isDivergingGateway = (inputElement: FlowContent | FlowGatewayDiverg
 export const isMatchingModelElement = (elementId: string): ((element: ModelElement) => element is ContentNode | DivergingGatewayNode | EndNode) => (
     element: ModelElement
 ): element is ContentNode | DivergingGatewayNode | EndNode =>
-    element &&
-    (((element.type === ElementType.Content || element.type === ElementType.GatewayDiverging) && element.id === elementId) ||
-        (elementId === null && element.type === ElementType.End));
+    ((element.type === ElementType.Content || element.type === ElementType.GatewayDiverging) && element.id === elementId) ||
+    (elementId === null && element.type === ElementType.End);
 
 const createEndNode = (precedingElement: StartNode | ContentNode | ConvergingGatewayNode, resultingModelElements: Array<ModelElement>): EndNode => {
     const end: EndNode = { type: ElementType.End, precedingElement, columnIndex: undefined, rowCount: undefined };
@@ -77,7 +76,7 @@ const handleNextElement = (
     precedingElement: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode
 ): ContentNode | DivergingGatewayNode | ConvergingGatewayBranch | EndNode => {
     if (precedingElement.type !== ElementType.Start) {
-        const existingElement = resultingModelElements.find(isMatchingModelElement(id));
+        const existingElement = resultingModelElements.find(isMatchingModelElement(id in inputElements ? id : null));
         if (existingElement) {
             return addAdditionalBranchToConvergingGateway(
                 existingElement,

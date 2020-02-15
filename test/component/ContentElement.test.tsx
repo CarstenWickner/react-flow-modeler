@@ -2,12 +2,15 @@ import * as React from "react";
 import { mount, shallow } from "enzyme";
 
 import { ContentElement } from "../../src/component/ContentElement";
-import { FlowElementReference } from "../../src/model/FlowElement";
+import { ContentNode, ElementType } from "../../src/model/ModelElement";
 
-const mockFlowElementReference = (id: string): FlowElementReference => ({
-    getId: (): string => id,
-    getPrecedingElements: (): Array<FlowElementReference> => [],
-    getFollowingElements: (): Array<FlowElementReference> => []
+const mockFlowElementReference = (id: string): ContentNode => ({
+    type: ElementType.Content,
+    id,
+    precedingElement: undefined,
+    followingElement: undefined,
+    columnIndex: 2,
+    rowCount: 1
 });
 
 describe("renders correctly", () => {
@@ -40,14 +43,15 @@ describe("calls onSelect", () => {
     const onSelect = jest.fn(() => {});
     const event = ({ stopPropagation: jest.fn(() => {}) } as unknown) as React.MouseEvent;
     it("on click event", () => {
+        const contentNode = mockFlowElementReference("element-id");
         const component = mount(
-            <ContentElement referenceElement={mockFlowElementReference("element-id")} editMenu={undefined} onLinkDrop={undefined} onSelect={onSelect}>
+            <ContentElement referenceElement={contentNode} editMenu={undefined} onLinkDrop={undefined} onSelect={onSelect}>
                 {"text"}
             </ContentElement>
         );
         component.find(".content-element").prop("onClick")(event);
         expect(onSelect.mock.calls).toHaveLength(1);
         expect(onSelect.mock.calls[0]).toHaveLength(1);
-        expect(onSelect.mock.calls[0][0]).toEqual("element-id");
+        expect(onSelect.mock.calls[0][0]).toBe(contentNode);
     });
 });

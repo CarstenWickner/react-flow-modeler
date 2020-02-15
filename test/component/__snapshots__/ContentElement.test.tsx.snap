@@ -6,12 +6,12 @@ exports[`renders correctly with minimal props 1`] = `
     editMenu={[Function]}
     elementTypeClassName="content-element"
     onClick={[Function]}
-    referenceElement={FlowElementReference { "id": "element-id" }}
+    referenceElement={ContentNode { "id": "element-id" }}
   >
     text
   </Component>
-  <HorizontalStroke
-    optional={true}
+  <div
+    className="stroke-horizontal optional"
   />
 </Fragment>
 `;

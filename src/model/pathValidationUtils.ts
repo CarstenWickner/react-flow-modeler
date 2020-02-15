@@ -133,7 +133,7 @@ const validatePaths = (start: StartNode): void => {
     if (invalidElements.length) {
         throw new Error(
             `Multiple references only valid from neighbouring paths. Invalid references to: ${invalidElements
-                .map((gateway) => (gateway.followingElement.type === ElementType.End ? "end" : `${gateway.followingElement.id}`))
+                .map((gateway) => (gateway.followingElement.type === ElementType.End ? "end" : `'${gateway.followingElement.id}'`))
                 .join(", ")}`
         );
     }

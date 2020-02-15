@@ -28,9 +28,23 @@ exports[`renders correctly with all render props 1`] = `
       rowStartIndex={3}
     >
       <ContentElement
-        editMenu={false}
         onSelect={[Function]}
-        referenceElement={FlowElement { "id": "1" }}
+        referenceElement={
+          Object {
+            "colStartIndex": 2,
+            "columnIndex": 2,
+            "data": Object {
+              "label": "First Node",
+            },
+            "followingElement": DivergingGatewayNode { "id": "2" },
+            "id": "1",
+            "precedingElement": StartNode,
+            "rowCount": 3,
+            "rowEndIndex": 4,
+            "rowStartIndex": 1,
+            "type": 2,
+          }
+        }
       >
         First Node
       </ContentElement>
@@ -41,10 +55,27 @@ exports[`renders correctly with all render props 1`] = `
       rowStartIndex={3}
     >
       <Gateway
-        editMenu={false}
-        gateway={FlowElement { "id": "2" }}
+        gateway={
+          Object {
+            "colStartIndex": 3,
+            "columnIndex": 3,
+            "data": Object {
+              "label": "Alternatives",
+            },
+            "followingBranches": Array [
+              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } } },
+              DivergingGatewayBranch { "followingElement": ContentNode { "id": "3.2" } },
+              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } } },
+            ],
+            "id": "2",
+            "precedingElement": ContentNode { "id": "1" },
+            "rowCount": 3,
+            "rowEndIndex": 4,
+            "rowStartIndex": 1,
+            "type": 3,
+          }
+        }
         onSelect={[Function]}
-        type={3}
       >
         <label>
           Alternatives
@@ -57,11 +88,25 @@ exports[`renders correctly with all render props 1`] = `
       rowStartIndex={1}
     >
       <HorizontalStroke
-        branchIndex={0}
-        editMenu={false}
-        gatewayId="2"
-        incomingConnection={1}
         onSelect={[Function]}
+        referenceElement={
+          Object {
+            "branchIndex": 0,
+            "colEndIndex": undefined,
+            "colStartIndex": 4,
+            "columnIndex": 4,
+            "connectionType": 1,
+            "data": Object {
+              "label": "Stop Here",
+            },
+            "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            "precedingElement": DivergingGatewayNode { "id": "2" },
+            "rowCount": 1,
+            "rowEndIndex": 2,
+            "rowStartIndex": 1,
+            "type": 5,
+          }
+        }
       >
         <span>
           Stop Here
@@ -74,8 +119,11 @@ exports[`renders correctly with all render props 1`] = `
       key="5-1"
       rowStartIndex={1}
     >
-      <HorizontalStroke
-        outgoingConnection={1}
+      <div
+        className="stroke-horizontal"
+      />
+      <div
+        className="stroke-vertical bottom-half"
       />
     </Component>
     <Component
@@ -84,10 +132,23 @@ exports[`renders correctly with all render props 1`] = `
       rowStartIndex={3}
     >
       <Gateway
-        editMenu={false}
-        followingElement={FlowElement { "id": "null" }}
+        gateway={
+          Object {
+            "colStartIndex": 7,
+            "columnIndex": 7,
+            "followingElement": EndNode,
+            "precedingBranches": Array [
+              ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+              ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+              ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            ],
+            "rowCount": 3,
+            "rowEndIndex": 4,
+            "rowStartIndex": 1,
+            "type": 4,
+          }
+        }
         onSelect={[Function]}
-        type={4}
       />
     </Component>
     <Component
@@ -97,6 +158,17 @@ exports[`renders correctly with all render props 1`] = `
     >
       <Component
         elementTypeClassName="end-element"
+        referenceElement={
+          Object {
+            "colStartIndex": 8,
+            "columnIndex": 8,
+            "precedingElement": ConvergingGatewayNode { "followingElement": EndNode },
+            "rowCount": 3,
+            "rowEndIndex": 4,
+            "rowStartIndex": 1,
+            "type": 7,
+          }
+        }
       />
     </Component>
     <Component
@@ -105,11 +177,25 @@ exports[`renders correctly with all render props 1`] = `
       rowStartIndex={2}
     >
       <HorizontalStroke
-        branchIndex={1}
-        editMenu={false}
-        gatewayId="2"
-        incomingConnection={2}
         onSelect={[Function]}
+        referenceElement={
+          Object {
+            "branchIndex": 1,
+            "colEndIndex": undefined,
+            "colStartIndex": 4,
+            "columnIndex": 4,
+            "connectionType": 2,
+            "data": Object {
+              "label": "Continue",
+            },
+            "followingElement": ContentNode { "id": "3.2" },
+            "precedingElement": DivergingGatewayNode { "id": "2" },
+            "rowCount": 1,
+            "rowEndIndex": 3,
+            "rowStartIndex": 2,
+            "type": 5,
+          }
+        }
       >
         <span>
           Continue
@@ -122,9 +208,23 @@ exports[`renders correctly with all render props 1`] = `
       rowStartIndex={2}
     >
       <ContentElement
-        editMenu={false}
         onSelect={[Function]}
-        referenceElement={FlowElement { "id": "3.2" }}
+        referenceElement={
+          Object {
+            "colStartIndex": 5,
+            "columnIndex": 5,
+            "data": Object {
+              "label": "Second Node",
+            },
+            "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            "id": "3.2",
+            "precedingElement": DivergingGatewayBranch { "followingElement": ContentNode { "id": "3.2" } },
+            "rowCount": 1,
+            "rowEndIndex": 3,
+            "rowStartIndex": 2,
+            "type": 2,
+          }
+        }
       >
         Second Node
       </ContentElement>
@@ -135,8 +235,11 @@ exports[`renders correctly with all render props 1`] = `
       key="6-2"
       rowStartIndex={2}
     >
-      <HorizontalStroke
-        outgoingConnection={2}
+      <div
+        className="stroke-horizontal"
+      />
+      <div
+        className="stroke-vertical full-height"
       />
     </Component>
     <Component
@@ -145,11 +248,25 @@ exports[`renders correctly with all render props 1`] = `
       rowStartIndex={3}
     >
       <HorizontalStroke
-        branchIndex={2}
-        editMenu={false}
-        gatewayId="2"
-        incomingConnection={3}
         onSelect={[Function]}
+        referenceElement={
+          Object {
+            "branchIndex": 2,
+            "colEndIndex": undefined,
+            "colStartIndex": 4,
+            "columnIndex": 4,
+            "connectionType": 3,
+            "data": Object {
+              "label": "Unless it is already done",
+            },
+            "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            "precedingElement": DivergingGatewayNode { "id": "2" },
+            "rowCount": 1,
+            "rowEndIndex": 4,
+            "rowStartIndex": 3,
+            "type": 5,
+          }
+        }
       >
         <span>
           Unless it is already done
@@ -162,8 +279,11 @@ exports[`renders correctly with all render props 1`] = `
       key="5-3"
       rowStartIndex={3}
     >
-      <HorizontalStroke
-        outgoingConnection={3}
+      <div
+        className="stroke-horizontal"
+      />
+      <div
+        className="stroke-vertical top-half"
       />
     </Component>
   </div>
@@ -200,9 +320,23 @@ exports[`renders correctly with minimal/default props 1`] = `
       rowStartIndex={1}
     >
       <ContentElement
-        editMenu={false}
         onSelect={[Function]}
-        referenceElement={FlowElement { "id": "1" }}
+        referenceElement={
+          Object {
+            "colStartIndex": 2,
+            "columnIndex": 2,
+            "data": Object {
+              "label": "First Node",
+            },
+            "followingElement": DivergingGatewayNode { "id": "2" },
+            "id": "1",
+            "precedingElement": StartNode,
+            "rowCount": 3,
+            "rowEndIndex": 4,
+            "rowStartIndex": 1,
+            "type": 2,
+          }
+        }
       >
         First Node
       </ContentElement>
@@ -214,10 +348,27 @@ exports[`renders correctly with minimal/default props 1`] = `
       rowStartIndex={1}
     >
       <Gateway
-        editMenu={false}
-        gateway={FlowElement { "id": "2" }}
+        gateway={
+          Object {
+            "colStartIndex": 3,
+            "columnIndex": 3,
+            "data": Object {
+              "label": "Alternatives",
+            },
+            "followingBranches": Array [
+              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } } },
+              DivergingGatewayBranch { "followingElement": ContentNode { "id": "3.2" } },
+              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } } },
+            ],
+            "id": "2",
+            "precedingElement": ContentNode { "id": "1" },
+            "rowCount": 3,
+            "rowEndIndex": 4,
+            "rowStartIndex": 1,
+            "type": 3,
+          }
+        }
         onSelect={[Function]}
-        type={3}
       />
     </Component>
     <Component
@@ -227,11 +378,25 @@ exports[`renders correctly with minimal/default props 1`] = `
       rowStartIndex={1}
     >
       <HorizontalStroke
-        branchIndex={0}
-        editMenu={false}
-        gatewayId="2"
-        incomingConnection={1}
         onSelect={[Function]}
+        referenceElement={
+          Object {
+            "branchIndex": 0,
+            "colEndIndex": undefined,
+            "colStartIndex": 4,
+            "columnIndex": 4,
+            "connectionType": 1,
+            "data": Object {
+              "label": "Stop Here",
+            },
+            "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            "precedingElement": DivergingGatewayNode { "id": "2" },
+            "rowCount": 1,
+            "rowEndIndex": 2,
+            "rowStartIndex": 1,
+            "type": 5,
+          }
+        }
       />
     </Component>
     <Component
@@ -241,8 +406,11 @@ exports[`renders correctly with minimal/default props 1`] = `
       rowEndIndex={2}
       rowStartIndex={1}
     >
-      <HorizontalStroke
-        outgoingConnection={1}
+      <div
+        className="stroke-horizontal"
+      />
+      <div
+        className="stroke-vertical bottom-half"
       />
     </Component>
     <Component
@@ -252,10 +420,23 @@ exports[`renders correctly with minimal/default props 1`] = `
       rowStartIndex={1}
     >
       <Gateway
-        editMenu={false}
-        followingElement={FlowElement { "id": "null" }}
+        gateway={
+          Object {
+            "colStartIndex": 7,
+            "columnIndex": 7,
+            "followingElement": EndNode,
+            "precedingBranches": Array [
+              ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+              ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+              ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            ],
+            "rowCount": 3,
+            "rowEndIndex": 4,
+            "rowStartIndex": 1,
+            "type": 4,
+          }
+        }
         onSelect={[Function]}
-        type={4}
       />
     </Component>
     <Component
@@ -266,6 +447,17 @@ exports[`renders correctly with minimal/default props 1`] = `
     >
       <Component
         elementTypeClassName="end-element"
+        referenceElement={
+          Object {
+            "colStartIndex": 8,
+            "columnIndex": 8,
+            "precedingElement": ConvergingGatewayNode { "followingElement": EndNode },
+            "rowCount": 3,
+            "rowEndIndex": 4,
+            "rowStartIndex": 1,
+            "type": 7,
+          }
+        }
       />
     </Component>
     <Component
@@ -275,11 +467,25 @@ exports[`renders correctly with minimal/default props 1`] = `
       rowStartIndex={2}
     >
       <HorizontalStroke
-        branchIndex={1}
-        editMenu={false}
-        gatewayId="2"
-        incomingConnection={2}
         onSelect={[Function]}
+        referenceElement={
+          Object {
+            "branchIndex": 1,
+            "colEndIndex": undefined,
+            "colStartIndex": 4,
+            "columnIndex": 4,
+            "connectionType": 2,
+            "data": Object {
+              "label": "Continue",
+            },
+            "followingElement": ContentNode { "id": "3.2" },
+            "precedingElement": DivergingGatewayNode { "id": "2" },
+            "rowCount": 1,
+            "rowEndIndex": 3,
+            "rowStartIndex": 2,
+            "type": 5,
+          }
+        }
       />
     </Component>
     <Component
@@ -289,9 +495,23 @@ exports[`renders correctly with minimal/default props 1`] = `
       rowStartIndex={2}
     >
       <ContentElement
-        editMenu={false}
         onSelect={[Function]}
-        referenceElement={FlowElement { "id": "3.2" }}
+        referenceElement={
+          Object {
+            "colStartIndex": 5,
+            "columnIndex": 5,
+            "data": Object {
+              "label": "Second Node",
+            },
+            "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            "id": "3.2",
+            "precedingElement": DivergingGatewayBranch { "followingElement": ContentNode { "id": "3.2" } },
+            "rowCount": 1,
+            "rowEndIndex": 3,
+            "rowStartIndex": 2,
+            "type": 2,
+          }
+        }
       >
         Second Node
       </ContentElement>
@@ -303,8 +523,11 @@ exports[`renders correctly with minimal/default props 1`] = `
       rowEndIndex={3}
       rowStartIndex={2}
     >
-      <HorizontalStroke
-        outgoingConnection={2}
+      <div
+        className="stroke-horizontal"
+      />
+      <div
+        className="stroke-vertical full-height"
       />
     </Component>
     <Component
@@ -314,11 +537,25 @@ exports[`renders correctly with minimal/default props 1`] = `
       rowStartIndex={3}
     >
       <HorizontalStroke
-        branchIndex={2}
-        editMenu={false}
-        gatewayId="2"
-        incomingConnection={3}
         onSelect={[Function]}
+        referenceElement={
+          Object {
+            "branchIndex": 2,
+            "colEndIndex": undefined,
+            "colStartIndex": 4,
+            "columnIndex": 4,
+            "connectionType": 3,
+            "data": Object {
+              "label": "Unless it is already done",
+            },
+            "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            "precedingElement": DivergingGatewayNode { "id": "2" },
+            "rowCount": 1,
+            "rowEndIndex": 4,
+            "rowStartIndex": 3,
+            "type": 5,
+          }
+        }
       />
     </Component>
     <Component
@@ -328,8 +565,11 @@ exports[`renders correctly with minimal/default props 1`] = `
       rowEndIndex={4}
       rowStartIndex={3}
     >
-      <HorizontalStroke
-        outgoingConnection={3}
+      <div
+        className="stroke-horizontal"
+      />
+      <div
+        className="stroke-vertical top-half"
       />
     </Component>
   </div>
