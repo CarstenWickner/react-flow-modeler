@@ -32,7 +32,7 @@ export const removeElement = (originalFlow: FlowModelerProps["flow"], referenceE
             if (precedingGatewayElement.nextElements.length === 1) {
                 // remove gateway as well, now that there is only one path left
                 replaceAllLinks(changedFlow, targetGatewayId, precedingGatewayElement.nextElements[0].id);
-                delete changedFlow.elements[targetContentId];
+                delete changedFlow.elements[targetGatewayId];
             }
             break;
     }

@@ -1,4 +1,14 @@
 import { isDivergingGateway, createElementTree } from "../../src/model/modelUtils";
+import {
+    ContentNode,
+    ConvergingGatewayBranch,
+    ConvergingGatewayNode,
+    DivergingGatewayNode,
+    DivergingGatewayBranch,
+    ElementType,
+    EndNode
+} from "../../src/model/ModelElement";
+import { cont, divGw } from "./testUtils";
 
 describe("isDivergingGateway()", () => {
     it.each`
@@ -15,176 +25,173 @@ describe("isDivergingGateway()", () => {
     });
 });
 describe("createElementTree()", () => {
-    it("returns empty element if no matching firstElement found", () => {
-        const rootElement = createElementTree({ firstElementId: "a", elements: {} }, "top");
-        expect(rootElement).toBeDefined();
-        expect(rootElement.getId()).toBe("a");
-        expect(rootElement.getColumnIndex()).toBe(2);
-        expect(rootElement.getRowCount()).toBe(1);
-        expect(rootElement.getPrecedingElements()).toHaveLength(0);
-        expect(rootElement.getFollowingElements()).toHaveLength(0);
+    it("returns just start/end if no matching firstElement found", () => {
+        const startElement = createElementTree({ firstElementId: "a", elements: {} }, "top");
+        expect(startElement).toBeDefined();
+        expect(startElement.type).toBe(ElementType.Start);
+        expect(startElement.columnIndex).toBe(1);
+        expect(startElement.rowCount).toBe(1);
+        const endElement = startElement.followingElement;
+        expect(endElement).toBeDefined();
+        expect(endElement.type).toBe(ElementType.End);
+        expect(endElement.columnIndex).toBe(2);
+        expect(endElement.rowCount).toBe(1);
     });
     it("can handle chained content elements", () => {
-        const rootElement = createElementTree(
-            {
-                firstElementId: "a",
-                elements: {
-                    a: { nextElementId: "b" },
-                    b: { nextElementId: "c" },
-                    c: {}
-                }
-            },
-            "top"
-        );
-        expect(rootElement).toBeDefined();
-        expect(rootElement.getId()).toBe("a");
-        expect(rootElement.getColumnIndex()).toBe(2);
-        expect(rootElement.getRowCount()).toBe(1);
-        expect(rootElement.getPrecedingElements()).toHaveLength(0);
-        expect(rootElement.getFollowingElements()).toHaveLength(1);
-        const bElement = rootElement.getFollowingElements()[0];
-        expect(bElement.getId()).toBe("b");
-        expect(bElement.getColumnIndex()).toBe(3);
-        expect(bElement.getRowCount()).toBe(1);
-        expect(bElement.getPrecedingElements()).toHaveLength(1);
-        expect(bElement.getPrecedingElements()[0]).toBe(rootElement);
-        expect(bElement.getFollowingElements()).toHaveLength(1);
-        const cElement = bElement.getFollowingElements()[0];
-        expect(cElement.getId()).toBe("c");
-        expect(cElement.getColumnIndex()).toBe(4);
-        expect(cElement.getRowCount()).toBe(1);
-        expect(cElement.getPrecedingElements()).toHaveLength(1);
-        expect(cElement.getPrecedingElements()[0]).toBe(bElement);
-        expect(cElement.getFollowingElements()).toHaveLength(1);
-        const endElement = cElement.getFollowingElements()[0];
-        expect(endElement.getId()).toBe(null);
-        expect(endElement.getColumnIndex()).toBe(5);
-        expect(endElement.getRowCount()).toBe(1);
-        expect(endElement.getPrecedingElements()).toHaveLength(1);
-        expect(endElement.getPrecedingElements()[0]).toBe(cElement);
-        expect(endElement.getFollowingElements()).toHaveLength(0);
+        const startElement = createElementTree({ firstElementId: "a", elements: { a: cont("b"), b: cont("c"), c: {} } }, "top");
+        expect(startElement).toBeDefined();
+        expect(startElement.type).toBe(ElementType.Start);
+        expect(startElement.columnIndex).toBe(1);
+        expect(startElement.rowCount).toBe(1);
+        const rootElement = startElement.followingElement as ContentNode;
+        expect(rootElement.type).toBe(ElementType.Content);
+        expect(rootElement.id).toBe("a");
+        expect(rootElement.columnIndex).toBe(2);
+        expect(rootElement.rowCount).toBe(1);
+        const bElement = rootElement.followingElement as ContentNode;
+        expect(bElement.type).toBe(ElementType.Content);
+        expect(bElement.id).toBe("b");
+        expect(bElement.columnIndex).toBe(3);
+        expect(bElement.rowCount).toBe(1);
+        expect(bElement.precedingElement).toBe(rootElement);
+        const cElement = bElement.followingElement as ContentNode;
+        expect(cElement.type).toBe(ElementType.Content);
+        expect(cElement.id).toBe("c");
+        expect(cElement.columnIndex).toBe(4);
+        expect(cElement.rowCount).toBe(1);
+        expect(cElement.precedingElement).toBe(bElement);
+        const endElement = cElement.followingElement as EndNode;
+        expect(endElement.type).toBe(ElementType.End);
+        expect(endElement.columnIndex).toBe(5);
+        expect(endElement.rowCount).toBe(1);
+        expect(endElement.precedingElement).toBe(cElement);
     });
     it("can handle mixed gateways", () => {
-        const rootElement = createElementTree(
+        const startElement = createElementTree(
             {
                 firstElementId: "div-gw-1",
                 elements: {
-                    "div-gw-1": { nextElements: [{ id: "cont-1" }, { id: "cont-3" }] },
-                    "cont-1": { nextElementId: "cont-2" },
-                    "cont-2": { nextElementId: "conv-gw-1/div-gw-2" },
-                    "cont-3": { nextElementId: "conv-gw-1/div-gw-2" },
-                    "conv-gw-1/div-gw-2": { nextElements: [{ id: "cont-4" }, { id: "cont-5" }, { id: "cont-6" }, { id: "cont-7" }] },
-                    "cont-4": { nextElementId: "conv-gw-2" },
-                    "cont-5": { nextElementId: "conv-gw-2" },
-                    "cont-6": { nextElementId: "conv-gw-2" },
-                    "cont-7": { nextElementId: "conv-gw-2" },
+                    "div-gw-1": divGw("cont-1", "cont-3"),
+                    "cont-1": cont("cont-2"),
+                    "cont-2": cont("conv-gw-1/div-gw-2"),
+                    "cont-3": cont("conv-gw-1/div-gw-2"),
+                    "conv-gw-1/div-gw-2": divGw("cont-4", "cont-5", "cont-6", "cont-7"),
+                    "cont-4": cont("conv-gw-2"),
+                    "cont-5": cont("conv-gw-2"),
+                    "cont-6": cont("conv-gw-2"),
+                    "cont-7": cont("conv-gw-2"),
                     "conv-gw-2": {}
                 }
             },
             "bottom"
         );
-        expect(rootElement.getFollowingElements()).toHaveLength(2);
-        const cont1 = rootElement.getFollowingElements()[0];
-        expect(cont1.getFollowingElements()).toHaveLength(1);
-        const cont2 = cont1.getFollowingElements()[0];
-        expect(cont2.getFollowingElements()).toHaveLength(1);
-        const cont3 = rootElement.getFollowingElements()[1];
-        expect(cont3.getFollowingElements()).toHaveLength(1);
-        const convGw1 = cont2.getFollowingElements()[0];
-        expect(cont3.getFollowingElements()[0]).toBe(convGw1);
-        expect(convGw1.getFollowingElements()).toHaveLength(4);
-        const cont4 = convGw1.getFollowingElements()[0];
-        expect(cont4.getFollowingElements()).toHaveLength(1);
-        const convGw2 = cont4.getFollowingElements()[0];
-        expect(convGw2.getFollowingElements()).toHaveLength(1);
-        const cont5 = convGw1.getFollowingElements()[1];
-        expect(cont5.getFollowingElements()).toHaveLength(1);
-        expect(cont5.getFollowingElements()[0]).toBe(convGw2);
-        const cont6 = convGw1.getFollowingElements()[2];
-        expect(cont6.getFollowingElements()).toHaveLength(1);
-        expect(cont6.getFollowingElements()[0]).toBe(convGw2);
-        const cont7 = convGw1.getFollowingElements()[3];
-        expect(cont7.getFollowingElements()).toHaveLength(1);
-        expect(cont7.getFollowingElements()[0]).toBe(convGw2);
-        const end = convGw2.getFollowingElements()[0];
+        const rootElement = startElement.followingElement as DivergingGatewayNode;
+        expect(rootElement.followingBranches).toHaveLength(2);
+        const div1Branch1 = rootElement.followingBranches[0] as DivergingGatewayBranch;
+        const div1Branch2 = rootElement.followingBranches[1] as DivergingGatewayBranch;
+        const cont1 = div1Branch1.followingElement as ContentNode;
+        const cont2 = cont1.followingElement as ContentNode;
+        const conv1Branch1 = cont2.followingElement as ConvergingGatewayBranch;
+        const cont3 = div1Branch2.followingElement as ContentNode;
+        const conv1Branch2 = cont3.followingElement as ConvergingGatewayBranch;
+        const convGw1 = conv1Branch1.followingElement as ConvergingGatewayNode;
+        expect(conv1Branch2.followingElement).toBe(convGw1);
+        const divGw2 = convGw1.followingElement as DivergingGatewayNode;
+        expect(divGw2.followingBranches).toHaveLength(4);
+        const div2Branch1 = divGw2.followingBranches[0];
+        const cont4 = div2Branch1.followingElement as ContentNode;
+        const conv2Branch1 = cont4.followingElement as ConvergingGatewayBranch;
+        const div2Branch2 = divGw2.followingBranches[1];
+        const cont5 = div2Branch2.followingElement as ContentNode;
+        const conv2Branch2 = cont5.followingElement as ConvergingGatewayBranch;
+        const div2Branch3 = divGw2.followingBranches[2];
+        const cont6 = div2Branch3.followingElement as ContentNode;
+        const conv2Branch3 = cont6.followingElement as ConvergingGatewayBranch;
+        const div2Branch4 = divGw2.followingBranches[3];
+        const cont7 = div2Branch4.followingElement as ContentNode;
+        const conv2Branch4 = cont7.followingElement as ConvergingGatewayBranch;
+        const convGw2 = conv2Branch1.followingElement;
+        expect(conv2Branch2.followingElement).toBe(convGw2);
+        expect(conv2Branch3.followingElement).toBe(convGw2);
+        expect(conv2Branch4.followingElement).toBe(convGw2);
+        const end = convGw2.followingElement as EndNode;
 
-        expect(rootElement.getRowCount()).toBe(4);
-        expect(cont1.getRowCount()).toBe(3);
-        expect(cont2.getRowCount()).toBe(3);
-        expect(cont3.getRowCount()).toBe(1);
-        expect(convGw1.getRowCount()).toBe(4);
-        expect(cont4.getRowCount()).toBe(1);
-        expect(cont5.getRowCount()).toBe(1);
-        expect(cont6.getRowCount()).toBe(1);
-        expect(cont7.getRowCount()).toBe(1);
-        expect(convGw2.getRowCount()).toBe(4);
-        expect(end.getRowCount()).toBe(4);
+        expect(startElement).toMatchInlineSnapshot(`StartNode`);
+        expect(startElement.rowCount).toBe(4);
+        expect(rootElement.rowCount).toBe(4);
+        expect(cont1.rowCount).toBe(3);
+        expect(cont2.rowCount).toBe(3);
+        expect(cont3.rowCount).toBe(1);
+        expect(convGw1.rowCount).toBe(4);
+        expect(cont4.rowCount).toBe(1);
+        expect(cont5.rowCount).toBe(1);
+        expect(cont6.rowCount).toBe(1);
+        expect(cont7.rowCount).toBe(1);
+        expect(convGw2.rowCount).toBe(4);
+        expect(end.rowCount).toBe(4);
     });
     it("can handle overlapping gateways (1)", () => {
-        const element1 = createElementTree(
+        const start = createElementTree(
             {
                 firstElementId: "1",
                 elements: {
-                    "1": { nextElements: [{ id: "2.1" }, {}, { id: "2.3" }] },
-                    "2.1": { nextElementId: "3.1" },
-                    "2.3": { nextElements: [{}, { id: "3.3.2" }] },
+                    "1": divGw("2.1", null, "2.3"),
+                    "2.1": cont("3.1"),
+                    "2.3": divGw(null, "3.3.2"),
                     "3.1": {},
-                    "3.3.2": { nextElements: [{}, { id: "4.3.2.2" }, {}] },
+                    "3.3.2": divGw(null, "4.3.2.2", null),
                     "4.3.2.2": {}
                 }
             },
             "top"
         );
-        const element21 = element1.getFollowingElements()[0];
-        const element31 = element21.getFollowingElements()[0];
-        const convGwEnd = element31.getFollowingElements()[0];
-        expect(element1.getFollowingElements()[1]).toBe(convGwEnd);
-        const element23 = element1.getFollowingElements()[2];
-        expect(element23.getFollowingElements()[0]).toBe(convGwEnd);
-        const element332 = element23.getFollowingElements()[1];
-        expect(element332.getFollowingElements()[0]).toBe(convGwEnd);
-        const element4322 = element332.getFollowingElements()[1];
-        expect(element332.getFollowingElements()[2]).toBe(convGwEnd);
+        const element1 = start.followingElement as DivergingGatewayNode;
+        const element21 = element1.followingBranches[0].followingElement as ContentNode;
+        const element31 = element21.followingElement as ContentNode;
+        const convGwEnd = (element31.followingElement as ConvergingGatewayBranch).followingElement;
+        expect(convGwEnd.followingElement.type).toBe(ElementType.End);
+        expect((element1.followingBranches[1].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);
+        const element23 = element1.followingBranches[2].followingElement as DivergingGatewayNode;
+        expect((element23.followingBranches[0].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);
+        const element332 = element23.followingBranches[1].followingElement as DivergingGatewayNode;
+        expect((element332.followingBranches[0].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);
+        const element4322 = element332.followingBranches[1].followingElement as ContentNode;
+        expect((element4322.followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);
+        expect((element332.followingBranches[2].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);
 
         // first element taking all six rows
-        expect(element1.getRowCount()).toBe(6);
+        expect(element1.rowCount).toBe(6);
         // one row for the first sub path
-        expect(element21.getRowCount()).toBe(1);
-        expect(element31.getRowCount()).toBe(1);
+        expect(element21.rowCount).toBe(1);
+        expect(element31.rowCount).toBe(1);
         // one row for the direct end connection
         // three rows for the last sub path
-        expect(element23.getRowCount()).toBe(4);
+        expect(element23.rowCount).toBe(4);
         // last sub path: one row for end connection
         // last sub path: one row for one more converging gateway
-        expect(element332.getRowCount()).toBe(3);
+        expect(element332.rowCount).toBe(3);
         // trailing converging gateway: one row for end connection
         // trailing converging gateway: one row for direct connection to final content element
-        expect(element4322.getRowCount()).toBe(1);
+        expect(element4322.rowCount).toBe(1);
         // trailing converging gateway: one row for end connection
         // converging gateway before single end node: taking all six rows
-        expect(convGwEnd.getRowCount()).toBe(6);
+        expect(convGwEnd.rowCount).toBe(6);
     });
     it("can handle overlapping gateways (2)", () => {
-        const a = createElementTree(
-            {
-                firstElementId: "a",
-                elements: {
-                    a: { nextElements: [{ id: "b" }, { id: "c" }] },
-                    b: { nextElements: [{}, { id: "c" }] },
-                    c: {}
-                }
-            },
-            "top"
-        );
-        const b = a.getFollowingElements()[0];
-        const c = a.getFollowingElements()[1];
-        const end = b.getFollowingElements()[0];
-        expect(b.getFollowingElements()[1]).toBe(c);
-        expect(c.getFollowingElements()[0]).toBe(end);
+        const start = createElementTree({ firstElementId: "a", elements: { a: divGw("b", "c"), b: divGw(null, "c"), c: {} } }, "top");
+        const a = start.followingElement as DivergingGatewayNode;
+        const b = a.followingBranches[0].followingElement as DivergingGatewayNode;
+        const convGwEnd = (b.followingBranches[0].followingElement as ConvergingGatewayBranch).followingElement;
+        const convGwC = (b.followingBranches[1].followingElement as ConvergingGatewayBranch).followingElement;
+        expect((a.followingBranches[1].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwC);
+        expect((b.followingBranches[1].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwC);
+        const c = convGwC.followingElement as ContentNode;
+        expect((c.followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);
+        const end = convGwEnd.followingElement as EndNode;
 
-        expect(a.getRowCount()).toBe(3);
-        expect(b.getRowCount()).toBe(2);
-        expect(c.getRowCount()).toBe(2);
-        expect(end.getRowCount()).toBe(3);
+        expect(a.rowCount).toBe(3);
+        expect(b.rowCount).toBe(2);
+        expect(c.rowCount).toBe(2);
+        expect(end.rowCount).toBe(3);
     });
 });
