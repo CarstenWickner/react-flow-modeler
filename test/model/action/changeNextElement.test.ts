@@ -6,12 +6,12 @@ import { ContentNode, ConvergingGatewayNode, DivergingGatewayBranch, ElementType
 import { cont, divGw } from "../testUtils";
 
 describe("changeNextElement()", () => {
-    const originalFlow = {
-        firstElementId: "a",
-        elements: { a: divGw("b", "c"), b: cont("c"), c: cont("d"), d: {} }
-    };
-    const { elementsInTree } = createMinimalElementTreeStructure(originalFlow);
     it("can handle content element pointing to other content element", () => {
+        const originalFlow = {
+            firstElementId: "a",
+            elements: { a: divGw("b", "c"), b: cont("c"), c: cont("d"), d: {} }
+        };
+        const { elementsInTree } = createMinimalElementTreeStructure(originalFlow);
         const { changedFlow } = changeNextElement(
             originalFlow,
             elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "d") as ContentNode,
@@ -24,6 +24,11 @@ describe("changeNextElement()", () => {
         });
     });
     it("can handle content element pointing to end", () => {
+        const originalFlow = {
+            firstElementId: "a",
+            elements: { a: divGw("b", "c"), b: cont("c"), c: cont("d"), d: {} }
+        };
+        const { elementsInTree } = createMinimalElementTreeStructure(originalFlow);
         const { changedFlow } = changeNextElement(
             originalFlow,
             elementsInTree.find((entry) => entry.type === ElementType.End) as EndNode,
@@ -36,6 +41,11 @@ describe("changeNextElement()", () => {
         });
     });
     it("can handle diverging gateway branch pointing to content element", () => {
+        const originalFlow = {
+            firstElementId: "a",
+            elements: { a: divGw("b", "c"), b: cont("c"), c: cont("d"), d: {} }
+        };
+        const { elementsInTree } = createMinimalElementTreeStructure(originalFlow);
         const { changedFlow } = changeNextElement(
             originalFlow,
             elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "b") as ContentNode,
@@ -50,6 +60,11 @@ describe("changeNextElement()", () => {
         });
     });
     it("can handle diverging gateway branch pointing to end", () => {
+        const originalFlow = {
+            firstElementId: "a",
+            elements: { a: divGw("b", "c"), b: cont("c"), c: cont("d"), d: {} }
+        };
+        const { elementsInTree } = createMinimalElementTreeStructure(originalFlow);
         const { changedFlow } = changeNextElement(
             originalFlow,
             elementsInTree.find((entry) => entry.type === ElementType.End) as EndNode,
@@ -64,39 +79,44 @@ describe("changeNextElement()", () => {
         });
     });
     describe("can handle converging gateway in front of", () => {
-        const flowBeforeChange = {
-            firstElementId: "a",
-            elements: { a: divGw("b", "c", null), b: cont("c"), c: {} }
-        };
-        const structureBeforeChange = createMinimalElementTreeStructure(flowBeforeChange);
         it("content element", () => {
+            const originalFlow = {
+                firstElementId: "a",
+                elements: { a: divGw("b", "c", null), b: cont("c"), c: {} }
+            };
+            const { elementsInTree } = createMinimalElementTreeStructure(originalFlow);
             const { changedFlow } = changeNextElement(
-                flowBeforeChange,
-                structureBeforeChange.elementsInTree.find(
+                originalFlow,
+                elementsInTree.find(
                     (entry) =>
                         entry.type === ElementType.GatewayConverging &&
                         entry.followingElement.type === ElementType.Content &&
                         entry.followingElement.id === "c"
                 ) as ConvergingGatewayNode,
-                structureBeforeChange.elementsInTree.find(
+                elementsInTree.find(
                     (entry) => entry.type === ElementType.ConnectGatewayToElement && entry.precedingElement.id === "a" && entry.branchIndex === 2
                 ) as DivergingGatewayBranch
             );
-            expect(changedFlow).not.toBe(flowBeforeChange);
+            expect(changedFlow).not.toBe(originalFlow);
             expect(changedFlow).toEqual({
                 firstElementId: "a",
                 elements: { a: divGw("b", "c", "c"), b: cont("c"), c: {} }
             });
         });
         it("end", () => {
+            const originalFlow = {
+                firstElementId: "a",
+                elements: { a: divGw("b", "c", null), b: cont("c"), c: {} }
+            };
+            const { elementsInTree } = createMinimalElementTreeStructure(originalFlow);
             const { changedFlow } = changeNextElement(
-                flowBeforeChange,
-                structureBeforeChange.elementsInTree.find(
+                originalFlow,
+                elementsInTree.find(
                     (entry) => entry.type === ElementType.GatewayConverging && entry.followingElement.type === ElementType.End
                 ) as ConvergingGatewayNode,
-                structureBeforeChange.elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "b") as ContentNode
+                elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "b") as ContentNode
             );
-            expect(changedFlow).not.toBe(flowBeforeChange);
+            expect(changedFlow).not.toBe(originalFlow);
             expect(changedFlow).toEqual({
                 firstElementId: "a",
                 elements: { a: divGw("b", "c", null), b: cont(null), c: {} }

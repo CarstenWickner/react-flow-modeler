@@ -1,7 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly with minimal/default props 1`] = `
-<Fragment>
+<HorizontalStroke
+  onSelect={[Function]}
+  referenceElement={DivergingGatewayBranch { "followingElement": undefined }}
+>
   <div
     className="stroke-vertical bottom-half"
   />
@@ -20,5 +23,5 @@ exports[`renders correctly with minimal/default props 1`] = `
       className="bottom-spacing"
     />
   </div>
-</Fragment>
+</HorizontalStroke>
 `;
