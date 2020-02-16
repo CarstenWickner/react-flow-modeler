@@ -132,7 +132,15 @@ describe("offers actions", () => {
     const event = ({ stopPropagation: jest.fn(() => {}) } as unknown) as React.MouseEvent;
     it("adding following content element", () => {
         const component = mount(
-            <EditMenu referenceElement={elementsInTree.find((entry) => entry.type === ElementType.Start) as StartNode} onChange={onChange} />
+            <EditMenu
+                referenceElement={elementsInTree.find((entry) => entry.type === ElementType.Start) as StartNode}
+                onChange={onChange}
+                menuOptions={{
+                    addFollowingContentElement: {
+                        getContentData: (): { x: boolean } => ({ x: false })
+                    }
+                }}
+            />
         );
         component.find(".add-content").prop("onClick")(event);
         expect(onChange.mock.calls).toHaveLength(1);
@@ -142,11 +150,20 @@ describe("offers actions", () => {
         const action = (onChange.mock.calls[0][0] as unknown) as (originalFlow: FlowModelerProps["flow"]) => EditActionResult;
         const actionResult = action(originalFlow);
         expect(actionResult.changedFlow.firstElementId).not.toBe("a");
-        expect(actionResult.changedFlow.elements[actionResult.changedFlow.firstElementId]).toEqual({ nextElementId: "a", data: {} });
+        expect(actionResult.changedFlow.elements[actionResult.changedFlow.firstElementId]).toEqual({ nextElementId: "a", data: { x: false } });
     });
     it("adding following diverging gateway", () => {
         const component = mount(
-            <EditMenu referenceElement={elementsInTree.find((entry) => entry.type === ElementType.Start) as StartNode} onChange={onChange} />
+            <EditMenu
+                referenceElement={elementsInTree.find((entry) => entry.type === ElementType.Start) as StartNode}
+                onChange={onChange}
+                menuOptions={{
+                    addFollowingDivergingGateway: {
+                        getGatewayData: (): { x: boolean } => ({ x: true }),
+                        getBranchConditionData: (): Array<{ y?: boolean; z?: boolean }> => [{ y: false }, { z: true }]
+                    }
+                }}
+            />
         );
         component.find(".add-gateway").prop("onClick")(event);
         expect(onChange.mock.calls).toHaveLength(1);
@@ -157,8 +174,11 @@ describe("offers actions", () => {
         const actionResult = action(originalFlow);
         expect(actionResult.changedFlow.firstElementId).not.toBe("a");
         expect(actionResult.changedFlow.elements[actionResult.changedFlow.firstElementId]).toEqual({
-            nextElements: [{ id: "a" }, { id: "a" }],
-            data: {}
+            data: { x: true },
+            nextElements: [
+                { id: "a", conditionData: { y: false } },
+                { id: "a", conditionData: { z: true } }
+            ]
         });
     });
     it("adding diverging branch", () => {
@@ -168,6 +188,11 @@ describe("offers actions", () => {
                     elementsInTree.find((entry) => entry.type === ElementType.GatewayDiverging && entry.id === "a") as DivergingGatewayNode
                 }
                 onChange={onChange}
+                menuOptions={{
+                    addDivergingBranch: {
+                        getBranchConditionData: (): { x: boolean } => ({ x: true })
+                    }
+                }}
             />
         );
         component.find(".add-branch").prop("onClick")(event);
@@ -178,7 +203,7 @@ describe("offers actions", () => {
         const action = (onChange.mock.calls[0][0] as unknown) as (originalFlow: FlowModelerProps["flow"]) => EditActionResult;
         const actionResult = action(originalFlow);
         expect(actionResult.changedFlow.elements.a).toEqual({
-            nextElements: [{ id: "b" }, { id: "c" }, { id: null }, { id: null, conditionData: {} }]
+            nextElements: [{ id: "b" }, { id: "c" }, { id: null }, { id: null, conditionData: { x: true } }]
         });
     });
     it("removing element", () => {

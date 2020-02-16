@@ -25,16 +25,26 @@ export interface FlowModelerProps {
                 className?: string;
                 title?: string;
                 isActionAllowed?: (gateway: DivergingGatewayNode) => boolean;
+                getBranchConditionData?: (gateway: DivergingGatewayNode) => { [key: string]: unknown };
             };
             addFollowingContentElement?: {
                 className?: string;
                 title?: string;
                 isActionAllowed?: (element: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode) => boolean;
+                getContentData?: (
+                    leadingElement: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode
+                ) => { [key: string]: unknown };
             };
             addFollowingDivergingGateway?: {
                 className?: string;
                 title?: string;
                 isActionAllowed?: (element: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode) => boolean;
+                getGatewayData?: (
+                    leadingElement: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode
+                ) => { [key: string]: unknown };
+                getBranchConditionData?: (
+                    leadingElement: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode
+                ) => Array<{ [key: string]: unknown }>;
             };
             changeNextElement?: {
                 className?: string;
@@ -51,9 +61,7 @@ export interface FlowModelerProps {
     renderContent: (target: ContentNode) => React.ReactNode;
     renderGatewayConditionType?: (target: DivergingGatewayNode) => React.ReactNode;
     renderGatewayConditionValue?: (target: DivergingGatewayBranch) => React.ReactNode;
-    onChange?: ({
-        changedFlow
-    }: {
+    onChange?: ({}: {
         changedFlow: {
             firstElementId: string;
             elements: { [key: string]: FlowContent | FlowGatewayDiverging };

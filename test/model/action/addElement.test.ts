@@ -71,16 +71,22 @@ describe("addContentElement()", () => {
             expect(changedFlow.elements[newElementId]).toEqual(expectedNewElement);
         });
     });
+
+    const branch = (id: string, conditionData: { [key: string]: unknown }): { id: string; conditionData: { [key: string]: unknown } } => ({
+        id,
+        conditionData
+    });
+
     describe("adding element after converging gateway that", () => {
         it.each`
             type                   | addElement             | expectedNewElement
             ${"content"}           | ${addContentElement}   | ${{ nextElementId: "c", data: { x: "y" } }}
-            ${"diverging gateway"} | ${addDivergingGateway} | ${{ nextElements: [{ id: "c" }, { id: "c" }], data: { x: "y" } }}
+            ${"diverging gateway"} | ${addDivergingGateway} | ${{ nextElements: [branch("c", { z: 0 }), branch("c", { z: 1 })], data: { x: "y" } }}
         `("is followed by some other element (adding: $type)", ({ addElement, expectedNewElement }) => {
             const originalFlow: FlowModelerProps["flow"] = { firstElementId: "a", elements: { a: divGw("b", "c"), b: cont("c"), c: {} } };
             const aReference = createElementTree(originalFlow, "top").followingElement as DivergingGatewayNode;
             const convGw = (aReference.followingBranches[1].followingElement as ConvergingGatewayBranch).followingElement;
-            const { changedFlow }: EditActionResult = addElement(originalFlow, convGw, { x: "y" });
+            const { changedFlow }: EditActionResult = addElement(originalFlow, convGw, { x: "y" }, [{ z: 0 }, { z: 1 }]);
 
             expect(changedFlow.firstElementId).toEqual("a");
             expect(Object.keys(changedFlow.elements)).toHaveLength(4);

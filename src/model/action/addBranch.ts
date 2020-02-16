@@ -7,7 +7,7 @@ import { EditActionResult } from "../../types/EditAction";
 export const addBranch = (
     originalFlow: FlowModelerProps["flow"],
     gateway: DivergingGatewayNode,
-    data: { [key: string]: unknown } | undefined
+    conditionData: { [key: string]: unknown } | undefined
 ): EditActionResult => {
     let nextConvergingBranch: DivergingGatewayNode | ContentNode | ConvergingGatewayBranch = gateway;
     do {
@@ -21,6 +21,6 @@ export const addBranch = (
     const nextElement = nextConvergingBranch.followingElement.followingElement;
     const changedFlow = cloneDeep(originalFlow);
     const gatewayInFlow = changedFlow.elements[gateway.id] as FlowGatewayDiverging;
-    gatewayInFlow.nextElements.push({ id: nextElement.type === ElementType.End ? null : nextElement.id, conditionData: data });
+    gatewayInFlow.nextElements.push({ id: nextElement.type === ElementType.End ? null : nextElement.id, conditionData });
     return { changedFlow };
 };

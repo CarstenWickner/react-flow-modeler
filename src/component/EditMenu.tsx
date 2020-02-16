@@ -39,14 +39,11 @@ export class EditMenu extends React.Component<{
     }
 
     onAddContentElementClick = (): void => {
-        const { onChange, referenceElement } = this.props;
-        onChange((originalFlow) =>
-            addContentElement(
-                originalFlow,
-                (referenceElement as unknown) as StartNode | ContentNode | ConvergingGatewayNode | DivergingGatewayBranch,
-                {}
-            )
-        );
+        const { onChange, referenceElement, menuOptions } = this.props;
+        const leadingElement = (referenceElement as unknown) as StartNode | ContentNode | ConvergingGatewayNode | DivergingGatewayBranch;
+        const options = menuOptions && menuOptions.addFollowingContentElement;
+        const contentData = (options && options.getContentData && options.getContentData(leadingElement)) || {};
+        onChange((originalFlow) => addContentElement(originalFlow, leadingElement, contentData));
     };
 
     renderAddContentElementItem(): React.ReactNode {
@@ -62,14 +59,12 @@ export class EditMenu extends React.Component<{
     }
 
     onAddDivergingGatewayClick = (): void => {
-        const { referenceElement, onChange } = this.props;
-        onChange((originalFlow) =>
-            addDivergingGateway(
-                originalFlow,
-                (referenceElement as unknown) as StartNode | ContentNode | ConvergingGatewayNode | DivergingGatewayBranch,
-                {}
-            )
-        );
+        const { referenceElement, onChange, menuOptions } = this.props;
+        const leadingElement = (referenceElement as unknown) as StartNode | ContentNode | ConvergingGatewayNode | DivergingGatewayBranch;
+        const options = menuOptions && menuOptions.addFollowingDivergingGateway;
+        const gatewayData = (options && options.getGatewayData && options.getGatewayData(leadingElement)) || undefined;
+        const branchConditionData = (options && options.getBranchConditionData && options.getBranchConditionData(leadingElement)) || undefined;
+        onChange((originalFlow) => addDivergingGateway(originalFlow, leadingElement, gatewayData, branchConditionData));
     };
 
     renderAddDivergingGatewayItem(): React.ReactNode {
@@ -89,8 +84,11 @@ export class EditMenu extends React.Component<{
     }
 
     onAddDivergingBranchClick = (): void => {
-        const { referenceElement, onChange } = this.props;
-        onChange((originalFlow) => addBranch(originalFlow, (referenceElement as unknown) as DivergingGatewayNode, {}));
+        const { referenceElement, onChange, menuOptions } = this.props;
+        const gateway = (referenceElement as unknown) as DivergingGatewayNode;
+        const options = menuOptions && menuOptions.addDivergingBranch;
+        const branchConditionData = (options && options.getBranchConditionData && options.getBranchConditionData(gateway)) || undefined;
+        onChange((originalFlow) => addBranch(originalFlow, gateway, branchConditionData));
     };
 
     renderAddDivergingBranchItem(): React.ReactNode {

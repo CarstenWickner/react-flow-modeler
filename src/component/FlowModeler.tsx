@@ -28,12 +28,6 @@ import { GridCellData } from "../types/GridCellData";
 
 import "./FlowModeler.scss";
 
-const menuOptionsPropType = PropTypes.shape({
-    className: PropTypes.string,
-    title: PropTypes.string,
-    isActionAllowed: PropTypes.func
-});
-
 type Selector = {
     type: SelectableElementType;
     id?: string;
@@ -265,11 +259,35 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
         options: PropTypes.shape({
             verticalAlign: PropTypes.oneOf(["top", "middle", "bottom"]),
             editActions: PropTypes.shape({
-                addDivergingBranch: menuOptionsPropType,
-                addFollowingContentElement: menuOptionsPropType,
-                addFollowingDivergingGateway: menuOptionsPropType,
-                changeNextElement: menuOptionsPropType,
-                removeElement: menuOptionsPropType
+                addDivergingBranch: PropTypes.shape({
+                    className: PropTypes.string,
+                    title: PropTypes.string,
+                    isActionAllowed: PropTypes.func,
+                    getBranchConditionData: PropTypes.func
+                }),
+                addFollowingContentElement: PropTypes.shape({
+                    className: PropTypes.string,
+                    title: PropTypes.string,
+                    isActionAllowed: PropTypes.func,
+                    getContentData: PropTypes.func
+                }),
+                addFollowingDivergingGateway: PropTypes.shape({
+                    className: PropTypes.string,
+                    title: PropTypes.string,
+                    isActionAllowed: PropTypes.func,
+                    getGatewayData: PropTypes.func,
+                    getBranchConditionData: PropTypes.func
+                }),
+                changeNextElement: PropTypes.shape({
+                    className: PropTypes.string,
+                    title: PropTypes.string,
+                    isActionAllowed: PropTypes.func
+                }),
+                removeElement: PropTypes.shape({
+                    className: PropTypes.string,
+                    title: PropTypes.string,
+                    isActionAllowed: PropTypes.func
+                })
             })
         }),
         renderContent: PropTypes.func.isRequired,
