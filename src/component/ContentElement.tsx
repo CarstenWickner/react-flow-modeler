@@ -1,8 +1,8 @@
 import * as React from "react";
 
 import { FlowElementWrapper } from "./FlowElementWrapper";
-import { ContentNode } from "../model/ModelElement";
 
+import { ContentNode } from "../types/ModelElement";
 import { onLinkDropCallback } from "../types/EditAction";
 
 export class ContentElement extends React.Component<{

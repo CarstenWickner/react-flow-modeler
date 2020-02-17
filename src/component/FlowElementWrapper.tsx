@@ -1,9 +1,9 @@
 import * as React from "react";
 import { useDrop } from "react-dnd";
 
-import { ContentNode, ConvergingGatewayNode, DivergingGatewayNode, ElementType, EndNode, ModelElementExclStart } from "../model/ModelElement";
 import { isFlowValid } from "../model/pathValidationUtils";
 
+import { ContentNode, ConvergingGatewayNode, DivergingGatewayNode, ElementType, EndNode, ModelElementExclStart } from "../types/ModelElement";
 import { DraggableType, DraggedLinkContext, onLinkDropCallback } from "../types/EditAction";
 
 const isTargetAncestorOfDragItem = (
@@ -13,10 +13,12 @@ const isTargetAncestorOfDragItem = (
     if (originElement === referenceElement) {
         return true;
     }
-    if (originElement.type === ElementType.GatewayConverging) {
+    if (originElement.type === ElementType.ConvergingGatewayNode) {
         return originElement.precedingBranches.some((branch) => isTargetAncestorOfDragItem(branch, referenceElement));
     }
-    return originElement.precedingElement.type !== ElementType.Start && isTargetAncestorOfDragItem(originElement.precedingElement, referenceElement);
+    return (
+        originElement.precedingElement.type !== ElementType.StartNode && isTargetAncestorOfDragItem(originElement.precedingElement, referenceElement)
+    );
 };
 
 const isDropValid = (referenceElement: ContentNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode, onDrop: onLinkDropCallback) => (

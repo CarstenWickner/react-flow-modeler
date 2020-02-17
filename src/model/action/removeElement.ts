@@ -1,8 +1,8 @@
 import cloneDeep from "lodash.clonedeep";
 
-import { ContentNode, DivergingGatewayBranch, ElementType } from "../ModelElement";
 import { replaceAllLinks } from "./editUtils";
 
+import { ContentNode, DivergingGatewayBranch, ElementType } from "../../types/ModelElement";
 import { EditActionResult } from "../../types/EditAction";
 import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 
@@ -13,19 +13,19 @@ import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types
  * @returns {boolean} whether removeElement() is allowed to be called for the targeted element
  */
 export const isRemoveElementAllowed = (referenceElement: ContentNode | DivergingGatewayBranch): boolean =>
-    referenceElement.type === ElementType.Content ||
-    (referenceElement.type === ElementType.ConnectGatewayToElement && referenceElement.followingElement.type === ElementType.ConnectElementToGateway);
+    referenceElement.type === ElementType.ContentNode ||
+    (referenceElement.type === ElementType.DivergingGatewayBranch && referenceElement.followingElement.type === ElementType.ConvergingGatewayBranch);
 
 export const removeElement = (originalFlow: FlowModelerProps["flow"], referenceElement: ContentNode | DivergingGatewayBranch): EditActionResult => {
     const changedFlow = cloneDeep(originalFlow);
     switch (referenceElement.type) {
-        case ElementType.Content:
+        case ElementType.ContentNode:
             const targetContentId = referenceElement.id;
             const targetContentElement = (changedFlow.elements[targetContentId] as unknown) as FlowContent;
             replaceAllLinks(changedFlow, targetContentId, targetContentElement.nextElementId);
             delete changedFlow.elements[targetContentId];
             break;
-        case ElementType.ConnectGatewayToElement:
+        case ElementType.DivergingGatewayBranch:
             const targetGatewayId = referenceElement.precedingElement.id;
             const precedingGatewayElement = (changedFlow.elements[targetGatewayId] as unknown) as FlowGatewayDiverging;
             precedingGatewayElement.nextElements.splice(referenceElement.branchIndex, 1);

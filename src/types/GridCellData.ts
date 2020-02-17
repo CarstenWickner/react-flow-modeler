@@ -6,7 +6,7 @@ import {
     DivergingGatewayNode,
     EndNode,
     StartNode
-} from "../model/ModelElement";
+} from "./ModelElement";
 
 export const enum ConnectionType {
     First = 1,

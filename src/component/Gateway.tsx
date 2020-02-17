@@ -2,8 +2,8 @@ import * as React from "react";
 
 import { FlowElementWrapper } from "./FlowElementWrapper";
 import { HorizontalStroke } from "./HorizontalStroke";
-import { ConvergingGatewayNode, DivergingGatewayNode, ElementType, DivergingGatewayBranch } from "../model/ModelElement";
 
+import { ConvergingGatewayNode, DivergingGatewayNode, ElementType, DivergingGatewayBranch } from "../types/ModelElement";
 import { onLinkDropCallback } from "../types/EditAction";
 
 const returnNull = (): null => null;
@@ -22,7 +22,7 @@ export class Gateway extends React.Component<{
 
     render(): React.ReactNode {
         const { gateway, editMenu, onLinkDrop: onDrop, onSelect, children } = this.props;
-        const cssType = gateway.type == ElementType.GatewayDiverging ? "diverging" : "converging";
+        const cssType = gateway.type == ElementType.DivergingGatewayNode ? "diverging" : "converging";
         return (
             <>
                 <FlowElementWrapper
@@ -32,8 +32,8 @@ export class Gateway extends React.Component<{
                     onLinkDrop={onDrop}
                     onClick={this.onClick}
                 />
-                {gateway.type === ElementType.GatewayConverging && <div className="stroke-horizontal optional" />}
-                {gateway.type === ElementType.GatewayDiverging && (
+                {gateway.type === ElementType.ConvergingGatewayNode && <div className="stroke-horizontal optional" />}
+                {gateway.type === ElementType.DivergingGatewayNode && (
                     // if this gateway is selected, provide a function as editMenu to indicate that, but let the function not render a second menu
                     <HorizontalStroke referenceElement={gateway} editMenu={children && editMenu ? returnNull : undefined} onSelect={onSelect}>
                         {children}

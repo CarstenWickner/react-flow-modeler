@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { ConnectionType } from "../types/GridCellData";
-import { DivergingGatewayNode, DivergingGatewayBranch, ConvergingGatewayBranch, ElementType } from "../model/ModelElement";
+import { DivergingGatewayNode, DivergingGatewayBranch, ConvergingGatewayBranch, ElementType } from "../types/ModelElement";
 
 export const getConnectionClassName = ({ connectionType }: { connectionType: ConnectionType }): string => {
     switch (connectionType) {
@@ -52,11 +52,11 @@ export class HorizontalStroke extends React.Component<
         const { referenceElement, editMenu, children } = this.props;
         return (
             <>
-                {referenceElement && referenceElement.type === ElementType.ConnectGatewayToElement && (
+                {referenceElement && referenceElement.type === ElementType.DivergingGatewayBranch && (
                     <div className={`stroke-vertical ${getConnectionClassName(referenceElement)}`} />
                 )}
                 <div className={`stroke-horizontal${editMenu ? " selected" : ""}`}>
-                    {referenceElement.type !== ElementType.ConnectElementToGateway && (
+                    {referenceElement.type !== ElementType.ConvergingGatewayBranch && (
                         <>
                             <div className="top-label" onClick={this.onTopLabelClick}>
                                 {children && <div ref={this.topLabelRef}>{children}</div>}
@@ -69,7 +69,7 @@ export class HorizontalStroke extends React.Component<
                     )}
                 </div>
                 {editMenu && editMenu()}
-                {referenceElement && referenceElement.type === ElementType.ConnectElementToGateway && (
+                {referenceElement && referenceElement.type === ElementType.ConvergingGatewayBranch && (
                     <div className={`stroke-vertical ${getConnectionClassName(referenceElement)}`} />
                 )}
             </>

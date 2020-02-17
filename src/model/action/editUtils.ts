@@ -1,6 +1,6 @@
-import { ContentNode, DivergingGatewayBranch, ElementType } from "../ModelElement";
 import { isDivergingGateway } from "../modelUtils";
 
+import { ContentNode, DivergingGatewayBranch, ElementType } from "../../types/ModelElement";
 import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 
 const checkIfIdNeedsReplacing = (flow: FlowModelerProps["flow"], currentId: string): ((id: string) => boolean) => {
@@ -42,6 +42,6 @@ export const replaceLinksInList = (
 ): void => {
     const replacingContainedLink = createLinkReplacer(checkIfIdNeedsReplacing(flow, currentId), replacementId);
     targets
-        .map((target) => flow.elements[target.type === ElementType.Content ? target.id : target.precedingElement.id])
+        .map((target) => flow.elements[target.type === ElementType.ContentNode ? target.id : target.precedingElement.id])
         .forEach(replacingContainedLink);
 };

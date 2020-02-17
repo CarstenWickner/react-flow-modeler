@@ -1,7 +1,7 @@
 import { addContentElement, addDivergingGateway } from "../../../src/model/action/addElement";
 
-import { ContentNode, ConvergingGatewayBranch, DivergingGatewayNode, ElementType, StartNode } from "../../../src/model/ModelElement";
 import { createElementTree } from "../../../src/model/modelUtils";
+import { ContentNode, ConvergingGatewayBranch, DivergingGatewayNode, ElementType, StartNode } from "../../../src/types/ModelElement";
 import { EditActionResult } from "../../../src/types/EditAction";
 import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../../src/types/FlowModelerProps";
 
@@ -15,7 +15,7 @@ describe("addContentElement()", () => {
             ${"diverging gateway"} | ${addDivergingGateway} | ${{ nextElements: [{ id: "a" }, { id: "a" }], data: { y: "value" } }}
         `("for simple model (adding: $type)", ({ addElement, expectedNewElement }) => {
             const originalFlow: FlowModelerProps["flow"] = { firstElementId: "a", elements: { a: {} } };
-            const { changedFlow }: EditActionResult = addElement(originalFlow, { type: ElementType.Start } as StartNode, { y: "value" });
+            const { changedFlow }: EditActionResult = addElement(originalFlow, { type: ElementType.StartNode } as StartNode, { y: "value" });
 
             const newElementId = changedFlow.firstElementId;
             expect(newElementId).not.toBeNull();
@@ -30,7 +30,7 @@ describe("addContentElement()", () => {
             ${"diverging gateway"} | ${addDivergingGateway} | ${{ nextElements: [{ id: null }, { id: null }], data: { defaultData: "x" } }}
         `("for empty model (adding $type)", ({ addElement, expectedNewElement }) => {
             const originalFlow: FlowModelerProps["flow"] = { firstElementId: null, elements: {} };
-            const { changedFlow }: EditActionResult = addElement(originalFlow, { type: ElementType.Start }, { defaultData: "x" });
+            const { changedFlow }: EditActionResult = addElement(originalFlow, { type: ElementType.StartNode }, { defaultData: "x" });
 
             const firstElementId = changedFlow.firstElementId;
             expect(firstElementId).not.toBeNull();

@@ -1,9 +1,17 @@
-import { ElementType, ModelElement, StartNode } from "./ModelElement";
+import { ElementType, ModelElement, StartNode } from "../types/ModelElement";
 
 const getPreceding = (element: ModelElement): Array<ModelElement> =>
-    element.type === ElementType.Start ? [] : element.type === ElementType.GatewayConverging ? element.precedingBranches : [element.precedingElement];
+    element.type === ElementType.StartNode
+        ? []
+        : element.type === ElementType.ConvergingGatewayNode
+        ? element.precedingBranches
+        : [element.precedingElement];
 const getFollowing = (element: ModelElement): Array<ModelElement> =>
-    element.type === ElementType.End ? [] : element.type == ElementType.GatewayDiverging ? element.followingBranches : [element.followingElement];
+    element.type === ElementType.EndNode
+        ? []
+        : element.type == ElementType.DivergingGatewayNode
+        ? element.followingBranches
+        : [element.followingElement];
 
 const assignMinimumIndependentRowCount = (target: ModelElement): void => {
     target.rowCount = Math.max(getPreceding(target).length, getFollowing(target).length);

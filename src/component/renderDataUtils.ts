@@ -1,14 +1,14 @@
-import { ElementType, ModelElement } from "../model/ModelElement";
 import { createValidatedElementTree } from "../model/pathValidationUtils";
 
+import { ElementType, ModelElement } from "../types/ModelElement";
 import { FlowModelerProps } from "../types/FlowModelerProps";
 import { GridCellData, ConnectionType } from "../types/GridCellData";
 
 const collectGridCellData = (renderElement: ModelElement, rowStartIndex: number, renderData: Array<GridCellData>): void => {
-    if (renderElement.type === ElementType.ConnectGatewayToElement || renderElement.type === ElementType.ConnectElementToGateway) {
+    if (renderElement.type === ElementType.DivergingGatewayBranch || renderElement.type === ElementType.ConvergingGatewayBranch) {
         let colEndIndex: number;
         let branchCount: number;
-        if (renderElement.type === ElementType.ConnectGatewayToElement) {
+        if (renderElement.type === ElementType.DivergingGatewayBranch) {
             branchCount = renderElement.precedingElement.followingBranches.length;
         } else {
             colEndIndex = renderElement.followingElement.columnIndex;
@@ -36,22 +36,22 @@ const collectGridCellData = (renderElement: ModelElement, rowStartIndex: number,
         });
     }
     switch (renderElement.type) {
-        case ElementType.Start:
-        case ElementType.Content:
-        case ElementType.GatewayConverging:
+        case ElementType.StartNode:
+        case ElementType.ContentNode:
+        case ElementType.ConvergingGatewayNode:
             collectGridCellData(renderElement.followingElement, rowStartIndex, renderData);
             break;
-        case ElementType.GatewayDiverging:
+        case ElementType.DivergingGatewayNode:
             let nextChildRowStartIndex = rowStartIndex;
             renderElement.followingBranches.forEach((branch) => {
                 collectGridCellData(branch, nextChildRowStartIndex, renderData);
                 nextChildRowStartIndex += branch.rowCount;
             });
             break;
-        case ElementType.ConnectGatewayToElement:
+        case ElementType.DivergingGatewayBranch:
             collectGridCellData(renderElement.followingElement, rowStartIndex, renderData);
             break;
-        case ElementType.ConnectElementToGateway:
+        case ElementType.ConvergingGatewayBranch:
             if (renderElement.branchIndex === 0) {
                 collectGridCellData(renderElement.followingElement, rowStartIndex, renderData);
             }
@@ -63,9 +63,11 @@ const sortGridCellDataByPosition = (a: GridCellData, b: GridCellData): number =>
     a.rowStartIndex - b.rowStartIndex || a.colStartIndex - b.colStartIndex;
 
 const getMaxColumnIndex = (element: ModelElement): number =>
-    element.type === ElementType.End
+    element.type === ElementType.EndNode
         ? element.columnIndex
-        : getMaxColumnIndex(element.type === ElementType.GatewayDiverging ? element.followingBranches[0].followingElement : element.followingElement);
+        : getMaxColumnIndex(
+              element.type === ElementType.DivergingGatewayNode ? element.followingBranches[0].followingElement : element.followingElement
+          );
 
 export const buildRenderData = (
     flow: FlowModelerProps["flow"],

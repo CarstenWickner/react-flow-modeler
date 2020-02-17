@@ -1,3 +1,4 @@
+import { determineRowCounts } from "./rowCountUtils";
 import {
     ContentNode,
     ConvergingGatewayBranch,
@@ -8,8 +9,7 @@ import {
     EndNode,
     ModelElement,
     StartNode
-} from "./ModelElement";
-import { determineRowCounts } from "./rowCountUtils";
+} from "../types/ModelElement";
 import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../types/FlowModelerProps";
 
 export const isDivergingGateway = (inputElement: FlowContent | FlowGatewayDiverging): inputElement is FlowGatewayDiverging =>
@@ -18,11 +18,11 @@ export const isDivergingGateway = (inputElement: FlowContent | FlowGatewayDiverg
 export const isMatchingModelElement = (elementId: string): ((element: ModelElement) => element is ContentNode | DivergingGatewayNode | EndNode) => (
     element: ModelElement
 ): element is ContentNode | DivergingGatewayNode | EndNode =>
-    ((element.type === ElementType.Content || element.type === ElementType.GatewayDiverging) && element.id === elementId) ||
-    (elementId === null && element.type === ElementType.End);
+    ((element.type === ElementType.ContentNode || element.type === ElementType.DivergingGatewayNode) && element.id === elementId) ||
+    (elementId === null && element.type === ElementType.EndNode);
 
 const createEndNode = (precedingElement: StartNode | ContentNode | ConvergingGatewayNode, resultingModelElements: Array<ModelElement>): EndNode => {
-    const end: EndNode = { type: ElementType.End, precedingElement, columnIndex: undefined, rowCount: undefined };
+    const end: EndNode = { type: ElementType.EndNode, precedingElement, columnIndex: undefined, rowCount: undefined };
     resultingModelElements.push(end);
     return end;
 };
@@ -33,18 +33,18 @@ const addAdditionalBranchToConvergingGateway = (
     precedingElement: ContentNode | DivergingGatewayBranch
 ): ConvergingGatewayBranch => {
     let convergingGateway: ConvergingGatewayNode;
-    if (elementBehindConvergingGateway.precedingElement.type === ElementType.GatewayConverging) {
+    if (elementBehindConvergingGateway.precedingElement.type === ElementType.ConvergingGatewayNode) {
         convergingGateway = elementBehindConvergingGateway.precedingElement;
     } else {
         convergingGateway = {
-            type: ElementType.GatewayConverging,
+            type: ElementType.ConvergingGatewayNode,
             precedingBranches: [],
             followingElement: elementBehindConvergingGateway,
             columnIndex: undefined,
             rowCount: undefined
         };
         const existingBranch: ConvergingGatewayBranch = {
-            type: ElementType.ConnectElementToGateway,
+            type: ElementType.ConvergingGatewayBranch,
             precedingElement: (elementBehindConvergingGateway.precedingElement as unknown) as ContentNode | DivergingGatewayBranch,
             followingElement: convergingGateway,
             branchIndex: 0,
@@ -57,7 +57,7 @@ const addAdditionalBranchToConvergingGateway = (
         elementBehindConvergingGateway.precedingElement = convergingGateway;
     }
     const newBranch: ConvergingGatewayBranch = {
-        type: ElementType.ConnectElementToGateway,
+        type: ElementType.ConvergingGatewayBranch,
         precedingElement,
         followingElement: elementBehindConvergingGateway.precedingElement,
         branchIndex: convergingGateway.precedingBranches.length,
@@ -103,7 +103,7 @@ const createContentNode = (
     precedingElement: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode
 ): ContentNode => {
     const content: ContentNode = {
-        type: ElementType.Content,
+        type: ElementType.ContentNode,
         id,
         precedingElement,
         followingElement: undefined,
@@ -124,7 +124,7 @@ const createDivergingGatewayNode = (
     precedingElement: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode
 ): DivergingGatewayNode => {
     const divergingGateway: DivergingGatewayNode = {
-        type: ElementType.GatewayDiverging,
+        type: ElementType.DivergingGatewayNode,
         id,
         precedingElement,
         followingBranches: [],
@@ -144,7 +144,7 @@ const createDivergingGatewayNode = (
     }
     subElements.forEach((branchTarget, branchIndex) => {
         const branch: DivergingGatewayBranch = {
-            type: ElementType.ConnectGatewayToElement,
+            type: ElementType.DivergingGatewayBranch,
             precedingElement: divergingGateway,
             followingElement: undefined,
             branchIndex,
@@ -165,9 +165,9 @@ const createDivergingGatewayNode = (
 
 const determineColumnIndex = (target: ModelElement): number => {
     if (!target.columnIndex) {
-        if (target.type === ElementType.GatewayConverging) {
+        if (target.type === ElementType.ConvergingGatewayNode) {
             target.columnIndex = 1 + Math.max(...target.precedingBranches.map(determineColumnIndex));
-        } else if (target.type === ElementType.Start) {
+        } else if (target.type === ElementType.StartNode) {
             target.columnIndex = 1;
         } else {
             target.columnIndex = 1 + determineColumnIndex(target.precedingElement);
@@ -181,7 +181,7 @@ export const createMinimalElementTreeStructure = ({
     elements
 }: FlowModelerProps["flow"]): { start: StartNode; elementsInTree: Array<ModelElement> } => {
     const start: StartNode = {
-        type: ElementType.Start,
+        type: ElementType.StartNode,
         followingElement: undefined,
         columnIndex: undefined,
         rowCount: undefined

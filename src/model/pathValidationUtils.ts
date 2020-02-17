@@ -1,3 +1,5 @@
+import { isDivergingGateway, createElementTree, createMinimalElementTreeStructure } from "./modelUtils";
+
 import {
     ContentNode,
     ConvergingGatewayBranch,
@@ -7,9 +9,7 @@ import {
     ElementType,
     ModelElement,
     StartNode
-} from "./ModelElement";
-import { isDivergingGateway, createElementTree, createMinimalElementTreeStructure } from "./modelUtils";
-
+} from "../types/ModelElement";
 import { FlowModelerProps } from "../types/FlowModelerProps";
 
 /**
@@ -49,8 +49,9 @@ const collectTopPath = (
     path: Array<ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode>
 ): void => {
     path.push(element);
-    if (element.type !== ElementType.ConnectGatewayToElement || element.branchIndex === 0) {
-        const nextElement = element.type === ElementType.GatewayConverging ? element.precedingBranches[0].precedingElement : element.precedingElement;
+    if (element.type !== ElementType.DivergingGatewayBranch || element.branchIndex === 0) {
+        const nextElement =
+            element.type === ElementType.ConvergingGatewayNode ? element.precedingBranches[0].precedingElement : element.precedingElement;
         // since this function is intended for any but the very top path, it should never end at the start node
         collectTopPath((nextElement as unknown) as ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode, path);
         // checking it explicitly at run-time like this is unnecessary:
@@ -65,11 +66,11 @@ const bottomAncestorIsAbovePath = (
     pathToIntersectWith: Array<ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode>
 ): boolean => {
     switch (element.type) {
-        case ElementType.Start:
+        case ElementType.StartNode:
             return false;
-        case ElementType.ConnectGatewayToElement:
+        case ElementType.DivergingGatewayBranch:
             const branchAfterCommonGateway = (pathToIntersectWith.find(
-                (entry) => entry.type === ElementType.ConnectGatewayToElement && entry.precedingElement === element.precedingElement
+                (entry) => entry.type === ElementType.DivergingGatewayBranch && entry.precedingElement === element.precedingElement
             ) as unknown) as DivergingGatewayBranch;
             if (branchAfterCommonGateway) {
                 return element.branchIndex + 1 === branchAfterCommonGateway.branchIndex;
@@ -78,7 +79,7 @@ const bottomAncestorIsAbovePath = (
                 element.branchIndex + 1 === element.precedingElement.followingBranches.length &&
                 bottomAncestorIsAbovePath(element.precedingElement.precedingElement, pathToIntersectWith)
             );
-        case ElementType.GatewayConverging:
+        case ElementType.ConvergingGatewayNode:
             const convergingBranches = element.precedingBranches;
             return bottomAncestorIsAbovePath(convergingBranches[convergingBranches.length - 1].precedingElement, pathToIntersectWith);
         default:
@@ -122,12 +123,12 @@ const validatePaths = (start: StartNode): void => {
     // use Set to automatically filter out duplicates and thereby avoid checking the same gateway repeatedly
     const convergingGateways = new Set<ConvergingGatewayNode>();
     const collectConvergingGateways = (element: ModelElement): void => {
-        if (element.type === ElementType.GatewayConverging) {
+        if (element.type === ElementType.ConvergingGatewayNode) {
             convergingGateways.add(element);
         }
-        if (element.type === ElementType.GatewayDiverging) {
+        if (element.type === ElementType.DivergingGatewayNode) {
             element.followingBranches.forEach(collectConvergingGateways);
-        } else if (element.type !== ElementType.End) {
+        } else if (element.type !== ElementType.EndNode) {
             collectConvergingGateways(element.followingElement);
         }
     };
@@ -136,7 +137,7 @@ const validatePaths = (start: StartNode): void => {
     if (invalidElements.length) {
         throw new Error(
             `Multiple references only valid from neighbouring paths. Invalid references to: ${invalidElements
-                .map((gateway) => (gateway.followingElement.type === ElementType.End ? "end" : `'${gateway.followingElement.id}'`))
+                .map((gateway) => (gateway.followingElement.type === ElementType.EndNode ? "end" : `'${gateway.followingElement.id}'`))
                 .join(", ")}`
         );
     }

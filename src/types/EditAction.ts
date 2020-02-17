@@ -1,12 +1,12 @@
-import { ContentNode, DivergingGatewayBranch, DivergingGatewayNode, ConvergingGatewayNode, ElementType, EndNode } from "../model/ModelElement";
+import { ContentNode, DivergingGatewayBranch, DivergingGatewayNode, ConvergingGatewayNode, ElementType, EndNode } from "./ModelElement";
 import { FlowModelerProps } from "./FlowModelerProps";
 
 export type SelectableElementType =
-    | ElementType.Start
-    | ElementType.Content
-    | ElementType.GatewayDiverging
-    | ElementType.GatewayConverging
-    | ElementType.ConnectGatewayToElement;
+    | ElementType.StartNode
+    | ElementType.ContentNode
+    | ElementType.DivergingGatewayNode
+    | ElementType.ConvergingGatewayNode
+    | ElementType.DivergingGatewayBranch;
 
 export interface EditActionResult {
     changedFlow: FlowModelerProps["flow"];

@@ -13,7 +13,7 @@ import {
     ConvergingGatewayNode,
     DivergingGatewayBranch,
     DivergingGatewayNode
-} from "../../src/model/ModelElement";
+} from "../../src/types/ModelElement";
 import { FlowModelerProps } from "../../src/types/FlowModelerProps";
 import { EditActionResult } from "../../src/types/EditAction";
 
@@ -27,14 +27,14 @@ describe("renders correctly", () => {
     const onChange = (): void => {};
     it("for start element", () => {
         const component = shallow(
-            <EditMenu referenceElement={elementsInTree.find((entry) => entry.type === ElementType.Start) as StartNode} onChange={onChange} />
+            <EditMenu referenceElement={elementsInTree.find((entry) => entry.type === ElementType.StartNode) as StartNode} onChange={onChange} />
         );
         expect(component).toMatchSnapshot();
     });
     it("for content element", () => {
         const component = shallow(
             <EditMenu
-                referenceElement={elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "b") as ContentNode}
+                referenceElement={elementsInTree.find((entry) => entry.type === ElementType.ContentNode && entry.id === "b") as ContentNode}
                 onChange={onChange}
             />
         );
@@ -44,7 +44,7 @@ describe("renders correctly", () => {
         const component = shallow(
             <EditMenu
                 referenceElement={
-                    elementsInTree.find((entry) => entry.type === ElementType.GatewayDiverging && entry.id === "a") as DivergingGatewayNode
+                    elementsInTree.find((entry) => entry.type === ElementType.DivergingGatewayNode && entry.id === "a") as DivergingGatewayNode
                 }
                 onChange={onChange}
             />
@@ -57,8 +57,8 @@ describe("renders correctly", () => {
                 referenceElement={
                     elementsInTree.find(
                         (entry) =>
-                            entry.type === ElementType.GatewayConverging &&
-                            entry.followingElement.type === ElementType.Content &&
+                            entry.type === ElementType.ConvergingGatewayNode &&
+                            entry.followingElement.type === ElementType.ContentNode &&
                             entry.followingElement.id === "c"
                     ) as ConvergingGatewayNode
                 }
@@ -72,7 +72,7 @@ describe("renders correctly", () => {
             <EditMenu
                 referenceElement={
                     elementsInTree.find(
-                        (entry) => entry.type === ElementType.ConnectGatewayToElement && entry.precedingElement.id === "a" && entry.branchIndex === 1
+                        (entry) => entry.type === ElementType.DivergingGatewayBranch && entry.precedingElement.id === "a" && entry.branchIndex === 1
                     ) as DivergingGatewayBranch
                 }
                 onChange={onChange}
@@ -97,11 +97,11 @@ describe("renders correctly", () => {
                     referenceElement={
                         elementsInTree.find(
                             (entry) =>
-                                entry.type === ElementType.ConnectGatewayToElement && entry.precedingElement.id === "a" && entry.branchIndex === 1
+                                entry.type === ElementType.DivergingGatewayBranch && entry.precedingElement.id === "a" && entry.branchIndex === 1
                         ) as DivergingGatewayBranch
                     }
                     onChange={onChange}
-                    menuOptions={{
+                    editActions={{
                         [optionKey]: { isActionAllowed: (): boolean => isAllowed }
                     }}
                 />
@@ -113,10 +113,10 @@ describe("renders correctly", () => {
         const component = shallow(
             <EditMenu
                 referenceElement={
-                    elementsInTree.find((entry) => entry.type === ElementType.GatewayDiverging && entry.id === "a") as DivergingGatewayNode
+                    elementsInTree.find((entry) => entry.type === ElementType.DivergingGatewayNode && entry.id === "a") as DivergingGatewayNode
                 }
                 onChange={onChange}
-                menuOptions={{ addDivergingBranch: { isActionAllowed: (): boolean => false } }}
+                editActions={{ addDivergingBranch: { isActionAllowed: (): boolean => false } }}
             />
         );
         expect(component).toEqual({});
@@ -133,9 +133,9 @@ describe("offers actions", () => {
     it("adding following content element", () => {
         const component = mount(
             <EditMenu
-                referenceElement={elementsInTree.find((entry) => entry.type === ElementType.Start) as StartNode}
+                referenceElement={elementsInTree.find((entry) => entry.type === ElementType.StartNode) as StartNode}
                 onChange={onChange}
-                menuOptions={{
+                editActions={{
                     addFollowingContentElement: {
                         getContentData: (): { x: boolean } => ({ x: false })
                     }
@@ -155,9 +155,9 @@ describe("offers actions", () => {
     it("adding following diverging gateway", () => {
         const component = mount(
             <EditMenu
-                referenceElement={elementsInTree.find((entry) => entry.type === ElementType.Start) as StartNode}
+                referenceElement={elementsInTree.find((entry) => entry.type === ElementType.StartNode) as StartNode}
                 onChange={onChange}
-                menuOptions={{
+                editActions={{
                     addFollowingDivergingGateway: {
                         getGatewayData: (): { x: boolean } => ({ x: true }),
                         getBranchConditionData: (): Array<{ y?: boolean; z?: boolean }> => [{ y: false }, { z: true }]
@@ -185,10 +185,10 @@ describe("offers actions", () => {
         const component = mount(
             <EditMenu
                 referenceElement={
-                    elementsInTree.find((entry) => entry.type === ElementType.GatewayDiverging && entry.id === "a") as DivergingGatewayNode
+                    elementsInTree.find((entry) => entry.type === ElementType.DivergingGatewayNode && entry.id === "a") as DivergingGatewayNode
                 }
                 onChange={onChange}
-                menuOptions={{
+                editActions={{
                     addDivergingBranch: {
                         getBranchConditionData: (): { x: boolean } => ({ x: true })
                     }
@@ -210,7 +210,7 @@ describe("offers actions", () => {
         const component = mount(
             <DndProvider backend={Backend}>
                 <EditMenu
-                    referenceElement={elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "b") as ContentNode}
+                    referenceElement={elementsInTree.find((entry) => entry.type === ElementType.ContentNode && entry.id === "b") as ContentNode}
                     onChange={onChange}
                 />
             </DndProvider>

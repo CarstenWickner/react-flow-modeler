@@ -2,8 +2,8 @@ import { v4 } from "uuid";
 import cloneDeep from "lodash.clonedeep";
 
 import { replaceLinksInList } from "./editUtils";
-import { ContentNode, ConvergingGatewayNode, DivergingGatewayBranch, ElementType, StartNode } from "../ModelElement";
 
+import { ContentNode, ConvergingGatewayNode, DivergingGatewayBranch, ElementType, StartNode } from "../../types/ModelElement";
 import { EditActionResult } from "../../types/EditAction";
 import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 
@@ -16,17 +16,17 @@ const addElement = (
     const newElementId = v4();
     let nextElementId: string;
     switch (precedingElement.type) {
-        case ElementType.Start:
+        case ElementType.StartNode:
             nextElementId = changedFlow.firstElementId;
             changedFlow.firstElementId = newElementId;
             break;
-        case ElementType.Content:
+        case ElementType.ContentNode:
             const precedingContentElement = (changedFlow.elements[precedingElement.id] as unknown) as FlowContent;
             nextElementId = precedingContentElement.nextElementId;
             precedingContentElement.nextElementId = newElementId;
             break;
-        case ElementType.GatewayConverging:
-            nextElementId = precedingElement.followingElement.type === ElementType.End ? null : precedingElement.followingElement.id;
+        case ElementType.ConvergingGatewayNode:
+            nextElementId = precedingElement.followingElement.type === ElementType.EndNode ? null : precedingElement.followingElement.id;
             replaceLinksInList(
                 precedingElement.precedingBranches.map((branch) => branch.precedingElement),
                 changedFlow,
@@ -34,7 +34,7 @@ const addElement = (
                 newElementId
             );
             break;
-        case ElementType.ConnectGatewayToElement:
+        case ElementType.DivergingGatewayBranch:
             const precedingGatewayElement = (changedFlow.elements[precedingElement.precedingElement.id] as unknown) as FlowGatewayDiverging;
             nextElementId = precedingGatewayElement.nextElements[precedingElement.branchIndex].id;
             precedingGatewayElement.nextElements[precedingElement.branchIndex].id = newElementId;
