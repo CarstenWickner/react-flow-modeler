@@ -1,6 +1,6 @@
 import { determineRowCounts } from "../../src/model/rowCountUtils";
 
-import { ContentNode, ConvergingGatewayBranch, DivergingGatewayNode, EndNode } from "../../src/model/ModelElement";
+import { ContentNode, ConvergingGatewayBranch, DivergingGatewayNode, EndNode } from "../../src/types/ModelElement";
 import { createMinimalElementTreeStructure } from "../../src/model/modelUtils";
 import { FlowModelerProps } from "../../src/types/FlowModelerProps";
 

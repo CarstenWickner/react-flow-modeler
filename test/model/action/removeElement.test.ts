@@ -1,7 +1,7 @@
 import { removeElement } from "../../../src/model/action/removeElement";
 
 import { createMinimalElementTreeStructure } from "../../../src/model/modelUtils";
-import { ContentNode, ElementType, DivergingGatewayBranch } from "../../../src/model/ModelElement";
+import { ContentNode, ElementType, DivergingGatewayBranch } from "../../../src/types/ModelElement";
 
 import { cont, divGw } from "../testUtils";
 
@@ -15,7 +15,7 @@ describe("removeElement()", () => {
         it("being first in model", () => {
             const { changedFlow } = removeElement(
                 originalFlow,
-                elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "a") as ContentNode
+                elementsInTree.find((entry) => entry.type === ElementType.ContentNode && entry.id === "a") as ContentNode
             );
             expect(changedFlow).not.toBe(originalFlow);
             expect(changedFlow).toEqual({
@@ -28,7 +28,7 @@ describe("removeElement()", () => {
             const structureWithOneElement = createMinimalElementTreeStructure(originalFlow);
             const { changedFlow } = removeElement(
                 modelWithOneElement,
-                structureWithOneElement.elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "a") as ContentNode
+                structureWithOneElement.elementsInTree.find((entry) => entry.type === ElementType.ContentNode && entry.id === "a") as ContentNode
             );
             expect(changedFlow).not.toBe(modelWithOneElement);
             expect(changedFlow).toEqual({
@@ -39,7 +39,7 @@ describe("removeElement()", () => {
         it("behind converging gateway", () => {
             const { changedFlow } = removeElement(
                 originalFlow,
-                elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "d") as ContentNode
+                elementsInTree.find((entry) => entry.type === ElementType.ContentNode && entry.id === "d") as ContentNode
             );
             expect(changedFlow).not.toBe(originalFlow);
             expect(changedFlow).toEqual({
@@ -50,7 +50,7 @@ describe("removeElement()", () => {
         it("before end", () => {
             const { changedFlow } = removeElement(
                 originalFlow,
-                elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "e") as ContentNode
+                elementsInTree.find((entry) => entry.type === ElementType.ContentNode && entry.id === "e") as ContentNode
             );
             expect(changedFlow).not.toBe(originalFlow);
             expect(changedFlow).toEqual({
@@ -64,7 +64,7 @@ describe("removeElement()", () => {
             const { changedFlow } = removeElement(
                 originalFlow,
                 elementsInTree.find(
-                    (entry) => entry.type === ElementType.ConnectGatewayToElement && entry.precedingElement.id === "b" && entry.branchIndex === 1
+                    (entry) => entry.type === ElementType.DivergingGatewayBranch && entry.precedingElement.id === "b" && entry.branchIndex === 1
                 ) as DivergingGatewayBranch
             );
             expect(changedFlow).not.toBe(originalFlow);
@@ -82,7 +82,7 @@ describe("removeElement()", () => {
             const { changedFlow } = removeElement(
                 flowBeforeRemoval,
                 structureBeforeRemoval.elementsInTree.find(
-                    (entry) => entry.type === ElementType.ConnectGatewayToElement && entry.precedingElement.id === "a" && entry.branchIndex === 0
+                    (entry) => entry.type === ElementType.DivergingGatewayBranch && entry.precedingElement.id === "a" && entry.branchIndex === 0
                 ) as DivergingGatewayBranch
             );
             expect(changedFlow).not.toBe(flowBeforeRemoval);

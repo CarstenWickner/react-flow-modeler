@@ -1,7 +1,7 @@
 import { addBranch } from "../../../src/model/action/addBranch";
 
 import { createMinimalElementTreeStructure } from "../../../src/model/modelUtils";
-import { DivergingGatewayNode } from "../../../src/model/ModelElement";
+import { DivergingGatewayNode } from "../../../src/types/ModelElement";
 
 describe("addBranch()", () => {
     it("can handle gateway before end", () => {

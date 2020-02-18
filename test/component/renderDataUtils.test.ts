@@ -1,5 +1,5 @@
 import { buildRenderData } from "../../src/component/renderDataUtils";
-import { ElementType } from "../../src/model/ModelElement";
+import { ElementType } from "../../src/types/ModelElement";
 
 describe("buildRenderData()", () => {
     it.each`
@@ -15,13 +15,13 @@ describe("buildRenderData()", () => {
                     colStartIndex: 1,
                     rowStartIndex: 1,
                     rowEndIndex: 2,
-                    type: ElementType.Start
+                    type: ElementType.StartNode
                 },
                 {
                     colStartIndex: 2,
                     rowStartIndex: 1,
                     rowEndIndex: 2,
-                    type: ElementType.End
+                    type: ElementType.EndNode
                 }
             ]
         });

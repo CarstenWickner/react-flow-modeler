@@ -5,7 +5,7 @@ import { mount, shallow } from "enzyme";
 
 import { EditMenuItem } from "../../src/component/EditMenuItem";
 import { DraggableType } from "../../src/types/EditAction";
-import { ElementType } from "../../src/model/ModelElement";
+import { ElementType } from "../../src/types/ModelElement";
 import { DraggedLinkContext } from "../../build/types/EditAction";
 
 describe("renders correctly", () => {
@@ -21,7 +21,7 @@ describe("renders correctly", () => {
         const dragItem: DraggedLinkContext = {
             type: DraggableType.LINK,
             originElement: {
-                type: ElementType.Content,
+                type: ElementType.ContentNode,
                 id: "id",
                 precedingElement: undefined,
                 followingElement: undefined

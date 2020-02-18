@@ -2,10 +2,10 @@ import * as React from "react";
 import { mount, shallow } from "enzyme";
 
 import { Gateway } from "../../src/component/Gateway";
-import { ConvergingGatewayNode, DivergingGatewayNode, ElementType } from "../../src/model/ModelElement";
+import { ConvergingGatewayNode, DivergingGatewayNode, ElementType } from "../../src/types/ModelElement";
 
 const mockDivergingGateway = (id: string): DivergingGatewayNode => ({
-    type: ElementType.GatewayDiverging,
+    type: ElementType.DivergingGatewayNode,
     id,
     precedingElement: undefined,
     followingBranches: [],
@@ -13,7 +13,7 @@ const mockDivergingGateway = (id: string): DivergingGatewayNode => ({
     rowCount: 2
 });
 const mockConvergingGateway = (): ConvergingGatewayNode => ({
-    type: ElementType.GatewayConverging,
+    type: ElementType.ConvergingGatewayNode,
     precedingBranches: [],
     followingElement: undefined,
     columnIndex: 5,

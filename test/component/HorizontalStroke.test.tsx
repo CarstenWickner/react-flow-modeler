@@ -3,10 +3,10 @@ import { mount } from "enzyme";
 
 import { HorizontalStroke } from "../../src/component/HorizontalStroke";
 import { ConnectionType } from "../../src/types/GridCellData";
-import { ElementType, ConvergingGatewayBranch, DivergingGatewayBranch } from "../../src/model/ModelElement";
+import { ElementType, ConvergingGatewayBranch, DivergingGatewayBranch } from "../../src/types/ModelElement";
 
 const mockDivergingBranch = (connectionType: ConnectionType): DivergingGatewayBranch & { connectionType: ConnectionType } => ({
-    type: ElementType.ConnectGatewayToElement,
+    type: ElementType.DivergingGatewayBranch,
     precedingElement: undefined,
     followingElement: undefined,
     connectionType,
@@ -14,7 +14,7 @@ const mockDivergingBranch = (connectionType: ConnectionType): DivergingGatewayBr
     rowCount: 1
 });
 const mockConvergingBranch = (connectionType: ConnectionType): ConvergingGatewayBranch & { connectionType: ConnectionType } => ({
-    type: ElementType.ConnectElementToGateway,
+    type: ElementType.ConvergingGatewayBranch,
     precedingElement: undefined,
     followingElement: undefined,
     connectionType,

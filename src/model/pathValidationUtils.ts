@@ -55,7 +55,7 @@ const collectTopPath = (
         // since this function is intended for any but the very top path, it should never end at the start node
         collectTopPath((nextElement as unknown) as ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode, path);
         // checking it explicitly at run-time like this is unnecessary:
-        // if (nextElement.type !== ElementType.Start) {
+        // if (nextElement.type !== ElementType.StartNode) {
         //    collectTopPath(nextElement, path);
         // }
     }

@@ -1,7 +1,7 @@
 import { changeNextElement } from "../../../src/model/action/changeNextElement";
 
 import { createMinimalElementTreeStructure } from "../../../src/model/modelUtils";
-import { ContentNode, ConvergingGatewayNode, DivergingGatewayBranch, ElementType, EndNode } from "../../../src/model/ModelElement";
+import { ContentNode, ConvergingGatewayNode, DivergingGatewayBranch, ElementType, EndNode } from "../../../src/types/ModelElement";
 
 import { cont, divGw } from "../testUtils";
 
@@ -14,8 +14,8 @@ describe("changeNextElement()", () => {
         const { elementsInTree } = createMinimalElementTreeStructure(originalFlow);
         const { changedFlow } = changeNextElement(
             originalFlow,
-            elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "d") as ContentNode,
-            elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "b") as ContentNode
+            elementsInTree.find((entry) => entry.type === ElementType.ContentNode && entry.id === "d") as ContentNode,
+            elementsInTree.find((entry) => entry.type === ElementType.ContentNode && entry.id === "b") as ContentNode
         );
         expect(changedFlow).not.toBe(originalFlow);
         expect(changedFlow).toEqual({
@@ -31,8 +31,8 @@ describe("changeNextElement()", () => {
         const { elementsInTree } = createMinimalElementTreeStructure(originalFlow);
         const { changedFlow } = changeNextElement(
             originalFlow,
-            elementsInTree.find((entry) => entry.type === ElementType.End) as EndNode,
-            elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "b") as ContentNode
+            elementsInTree.find((entry) => entry.type === ElementType.EndNode) as EndNode,
+            elementsInTree.find((entry) => entry.type === ElementType.ContentNode && entry.id === "b") as ContentNode
         );
         expect(changedFlow).not.toBe(originalFlow);
         expect(changedFlow).toEqual({
@@ -48,9 +48,9 @@ describe("changeNextElement()", () => {
         const { elementsInTree } = createMinimalElementTreeStructure(originalFlow);
         const { changedFlow } = changeNextElement(
             originalFlow,
-            elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "b") as ContentNode,
+            elementsInTree.find((entry) => entry.type === ElementType.ContentNode && entry.id === "b") as ContentNode,
             elementsInTree.find(
-                (entry) => entry.type === ElementType.ConnectGatewayToElement && entry.precedingElement.id === "a" && entry.branchIndex === 1
+                (entry) => entry.type === ElementType.DivergingGatewayBranch && entry.precedingElement.id === "a" && entry.branchIndex === 1
             ) as DivergingGatewayBranch
         );
         expect(changedFlow).not.toBe(originalFlow);
@@ -67,9 +67,9 @@ describe("changeNextElement()", () => {
         const { elementsInTree } = createMinimalElementTreeStructure(originalFlow);
         const { changedFlow } = changeNextElement(
             originalFlow,
-            elementsInTree.find((entry) => entry.type === ElementType.End) as EndNode,
+            elementsInTree.find((entry) => entry.type === ElementType.EndNode) as EndNode,
             elementsInTree.find(
-                (entry) => entry.type === ElementType.ConnectGatewayToElement && entry.precedingElement.id === "a" && entry.branchIndex === 1
+                (entry) => entry.type === ElementType.DivergingGatewayBranch && entry.precedingElement.id === "a" && entry.branchIndex === 1
             ) as DivergingGatewayBranch
         );
         expect(changedFlow).not.toBe(originalFlow);
@@ -89,12 +89,12 @@ describe("changeNextElement()", () => {
                 originalFlow,
                 elementsInTree.find(
                     (entry) =>
-                        entry.type === ElementType.GatewayConverging &&
-                        entry.followingElement.type === ElementType.Content &&
+                        entry.type === ElementType.ConvergingGatewayNode &&
+                        entry.followingElement.type === ElementType.ContentNode &&
                         entry.followingElement.id === "c"
                 ) as ConvergingGatewayNode,
                 elementsInTree.find(
-                    (entry) => entry.type === ElementType.ConnectGatewayToElement && entry.precedingElement.id === "a" && entry.branchIndex === 2
+                    (entry) => entry.type === ElementType.DivergingGatewayBranch && entry.precedingElement.id === "a" && entry.branchIndex === 2
                 ) as DivergingGatewayBranch
             );
             expect(changedFlow).not.toBe(originalFlow);
@@ -112,9 +112,9 @@ describe("changeNextElement()", () => {
             const { changedFlow } = changeNextElement(
                 originalFlow,
                 elementsInTree.find(
-                    (entry) => entry.type === ElementType.GatewayConverging && entry.followingElement.type === ElementType.End
+                    (entry) => entry.type === ElementType.ConvergingGatewayNode && entry.followingElement.type === ElementType.EndNode
                 ) as ConvergingGatewayNode,
-                elementsInTree.find((entry) => entry.type === ElementType.Content && entry.id === "b") as ContentNode
+                elementsInTree.find((entry) => entry.type === ElementType.ContentNode && entry.id === "b") as ContentNode
             );
             expect(changedFlow).not.toBe(originalFlow);
             expect(changedFlow).toEqual({

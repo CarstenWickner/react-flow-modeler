@@ -7,7 +7,7 @@ import {
     DivergingGatewayBranch,
     ElementType,
     EndNode
-} from "../../src/model/ModelElement";
+} from "../../src/types/ModelElement";
 import { cont, divGw } from "./testUtils";
 
 describe("isDivergingGateway()", () => {
@@ -28,40 +28,40 @@ describe("createElementTree()", () => {
     it("returns just start/end if no matching firstElement found", () => {
         const startElement = createElementTree({ firstElementId: "a", elements: {} }, "top");
         expect(startElement).toBeDefined();
-        expect(startElement.type).toBe(ElementType.Start);
+        expect(startElement.type).toBe(ElementType.StartNode);
         expect(startElement.columnIndex).toBe(1);
         expect(startElement.rowCount).toBe(1);
         const endElement = startElement.followingElement;
         expect(endElement).toBeDefined();
-        expect(endElement.type).toBe(ElementType.End);
+        expect(endElement.type).toBe(ElementType.EndNode);
         expect(endElement.columnIndex).toBe(2);
         expect(endElement.rowCount).toBe(1);
     });
     it("can handle chained content elements", () => {
         const startElement = createElementTree({ firstElementId: "a", elements: { a: cont("b"), b: cont("c"), c: {} } }, "top");
         expect(startElement).toBeDefined();
-        expect(startElement.type).toBe(ElementType.Start);
+        expect(startElement.type).toBe(ElementType.StartNode);
         expect(startElement.columnIndex).toBe(1);
         expect(startElement.rowCount).toBe(1);
         const rootElement = startElement.followingElement as ContentNode;
-        expect(rootElement.type).toBe(ElementType.Content);
+        expect(rootElement.type).toBe(ElementType.ContentNode);
         expect(rootElement.id).toBe("a");
         expect(rootElement.columnIndex).toBe(2);
         expect(rootElement.rowCount).toBe(1);
         const bElement = rootElement.followingElement as ContentNode;
-        expect(bElement.type).toBe(ElementType.Content);
+        expect(bElement.type).toBe(ElementType.ContentNode);
         expect(bElement.id).toBe("b");
         expect(bElement.columnIndex).toBe(3);
         expect(bElement.rowCount).toBe(1);
         expect(bElement.precedingElement).toBe(rootElement);
         const cElement = bElement.followingElement as ContentNode;
-        expect(cElement.type).toBe(ElementType.Content);
+        expect(cElement.type).toBe(ElementType.ContentNode);
         expect(cElement.id).toBe("c");
         expect(cElement.columnIndex).toBe(4);
         expect(cElement.rowCount).toBe(1);
         expect(cElement.precedingElement).toBe(bElement);
         const endElement = cElement.followingElement as EndNode;
-        expect(endElement.type).toBe(ElementType.End);
+        expect(endElement.type).toBe(ElementType.EndNode);
         expect(endElement.columnIndex).toBe(5);
         expect(endElement.rowCount).toBe(1);
         expect(endElement.precedingElement).toBe(cElement);
@@ -149,7 +149,7 @@ describe("createElementTree()", () => {
         const element21 = element1.followingBranches[0].followingElement as ContentNode;
         const element31 = element21.followingElement as ContentNode;
         const convGwEnd = (element31.followingElement as ConvergingGatewayBranch).followingElement;
-        expect(convGwEnd.followingElement.type).toBe(ElementType.End);
+        expect(convGwEnd.followingElement.type).toBe(ElementType.EndNode);
         expect((element1.followingBranches[1].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);
         const element23 = element1.followingBranches[2].followingElement as DivergingGatewayNode;
         expect((element23.followingBranches[0].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);

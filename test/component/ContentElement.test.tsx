@@ -2,10 +2,10 @@ import * as React from "react";
 import { mount, shallow } from "enzyme";
 
 import { ContentElement } from "../../src/component/ContentElement";
-import { ContentNode, ElementType } from "../../src/model/ModelElement";
+import { ContentNode, ElementType } from "../../src/types/ModelElement";
 
 const mockFlowElementReference = (id: string): ContentNode => ({
-    type: ElementType.Content,
+    type: ElementType.ContentNode,
     id,
     precedingElement: undefined,
     followingElement: undefined,
