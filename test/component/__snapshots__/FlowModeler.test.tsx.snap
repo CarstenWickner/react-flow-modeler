@@ -63,9 +63,9 @@ exports[`renders correctly with all render props 1`] = `
               "label": "Alternatives",
             },
             "followingBranches": Array [
-              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } } },
+              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
               DivergingGatewayBranch { "followingElement": ContentNode { "id": "3.2" } },
-              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } } },
+              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
             ],
             "id": "2",
             "precedingElement": ContentNode { "id": "1" },
@@ -99,7 +99,7 @@ exports[`renders correctly with all render props 1`] = `
             "data": Object {
               "label": "Stop Here",
             },
-            "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            "followingElement": ConvergingGatewayBranch,
             "precedingElement": DivergingGatewayNode { "id": "2" },
             "rowCount": 1,
             "rowEndIndex": 2,
@@ -138,9 +138,9 @@ exports[`renders correctly with all render props 1`] = `
             "columnIndex": 7,
             "followingElement": EndNode,
             "precedingBranches": Array [
-              ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
-              ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
-              ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+              ConvergingGatewayBranch,
+              ConvergingGatewayBranch,
+              ConvergingGatewayBranch,
             ],
             "rowCount": 3,
             "rowEndIndex": 4,
@@ -216,7 +216,7 @@ exports[`renders correctly with all render props 1`] = `
             "data": Object {
               "label": "Second Node",
             },
-            "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            "followingElement": ConvergingGatewayBranch,
             "id": "3.2",
             "precedingElement": DivergingGatewayBranch { "followingElement": ContentNode { "id": "3.2" } },
             "rowCount": 1,
@@ -259,7 +259,7 @@ exports[`renders correctly with all render props 1`] = `
             "data": Object {
               "label": "Unless it is already done",
             },
-            "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            "followingElement": ConvergingGatewayBranch,
             "precedingElement": DivergingGatewayNode { "id": "2" },
             "rowCount": 1,
             "rowEndIndex": 4,
@@ -356,9 +356,9 @@ exports[`renders correctly with minimal/default props 1`] = `
               "label": "Alternatives",
             },
             "followingBranches": Array [
-              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } } },
+              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
               DivergingGatewayBranch { "followingElement": ContentNode { "id": "3.2" } },
-              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } } },
+              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
             ],
             "id": "2",
             "precedingElement": ContentNode { "id": "1" },
@@ -389,7 +389,7 @@ exports[`renders correctly with minimal/default props 1`] = `
             "data": Object {
               "label": "Stop Here",
             },
-            "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            "followingElement": ConvergingGatewayBranch,
             "precedingElement": DivergingGatewayNode { "id": "2" },
             "rowCount": 1,
             "rowEndIndex": 2,
@@ -426,9 +426,9 @@ exports[`renders correctly with minimal/default props 1`] = `
             "columnIndex": 7,
             "followingElement": EndNode,
             "precedingBranches": Array [
-              ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
-              ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
-              ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+              ConvergingGatewayBranch,
+              ConvergingGatewayBranch,
+              ConvergingGatewayBranch,
             ],
             "rowCount": 3,
             "rowEndIndex": 4,
@@ -503,7 +503,7 @@ exports[`renders correctly with minimal/default props 1`] = `
             "data": Object {
               "label": "Second Node",
             },
-            "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            "followingElement": ConvergingGatewayBranch,
             "id": "3.2",
             "precedingElement": DivergingGatewayBranch { "followingElement": ContentNode { "id": "3.2" } },
             "rowCount": 1,
@@ -548,7 +548,7 @@ exports[`renders correctly with minimal/default props 1`] = `
             "data": Object {
               "label": "Unless it is already done",
             },
-            "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": EndNode } },
+            "followingElement": ConvergingGatewayBranch,
             "precedingElement": DivergingGatewayNode { "id": "2" },
             "rowCount": 1,
             "rowEndIndex": 4,

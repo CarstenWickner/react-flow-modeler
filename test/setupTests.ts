@@ -30,7 +30,7 @@ const serializeModelElement = (value: ModelElement): string => {
                 value.followingElement ? serializeModelElement(value.followingElement) : undefined
             } }`;
         case ElementType.ConvergingGatewayBranch:
-            return `ConvergingGatewayBranch { "gateway": ${value.followingElement ? serializeModelElement(value.followingElement) : undefined} }`;
+            return "ConvergingGatewayBranch";
         case ElementType.ConvergingGatewayNode:
             return `ConvergingGatewayNode { "followingElement": ${
                 value.followingElement ? serializeModelElement(value.followingElement) : undefined

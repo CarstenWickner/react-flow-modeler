@@ -83,7 +83,7 @@ exports[`renders correctly for diverging gateway branch 1`] = `
     defaultClassName="change-next"
     dragItem={
       Object {
-        "originElement": DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch { "gateway": ConvergingGatewayNode { "followingElement": ContentNode { "id": "c" } } } },
+        "originElement": DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
         "type": "link",
       }
     }
