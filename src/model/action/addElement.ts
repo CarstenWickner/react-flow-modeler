@@ -1,7 +1,6 @@
 import { v4 } from "uuid";
-import cloneDeep from "lodash.clonedeep";
 
-import { replaceLinksInList } from "./editUtils";
+import { replaceLinksInList, cloneFlow } from "./editUtils";
 
 import { ContentNode, ConvergingGatewayNode, DivergingGatewayBranch, ElementType, StartNode } from "../../types/ModelElement";
 import { EditActionResult } from "../../types/EditAction";
@@ -12,7 +11,7 @@ const addElement = (
     createElement: (nextElementId: string) => FlowContent | FlowGatewayDiverging,
     precedingElement: StartNode | ContentNode | ConvergingGatewayNode | DivergingGatewayBranch
 ): EditActionResult => {
-    const changedFlow = cloneDeep(originalFlow);
+    const changedFlow = cloneFlow(originalFlow);
     const newElementId = v4();
     let nextElementId: string;
     switch (precedingElement.type) {

@@ -83,7 +83,6 @@
         "typescript": "~3.6.4"
     },
     "dependencies": {
-        "lodash.clonedeep": "^4.5.0",
         "react-dnd": "^10.0.2",
         "react-dnd-html5-backend": "^10.0.2",
         "uuid": "^3.4.0"

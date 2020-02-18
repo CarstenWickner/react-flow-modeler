@@ -1,6 +1,4 @@
-import cloneDeep from "lodash.clonedeep";
-
-import { replaceAllLinks } from "./editUtils";
+import { replaceAllLinks, cloneFlow } from "./editUtils";
 
 import { ContentNode, DivergingGatewayBranch, ElementType } from "../../types/ModelElement";
 import { EditActionResult } from "../../types/EditAction";
@@ -17,7 +15,7 @@ export const isRemoveElementAllowed = (referenceElement: ContentNode | Diverging
     (referenceElement.type === ElementType.DivergingGatewayBranch && referenceElement.followingElement.type === ElementType.ConvergingGatewayBranch);
 
 export const removeElement = (originalFlow: FlowModelerProps["flow"], referenceElement: ContentNode | DivergingGatewayBranch): EditActionResult => {
-    const changedFlow = cloneDeep(originalFlow);
+    const changedFlow = cloneFlow(originalFlow);
     switch (referenceElement.type) {
         case ElementType.ContentNode:
             const targetContentId = referenceElement.id;

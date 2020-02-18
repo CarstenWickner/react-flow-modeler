@@ -1,4 +1,4 @@
-import cloneDeep from "lodash.clonedeep";
+import { cloneFlow } from "./editUtils";
 
 import { DivergingGatewayNode, ContentNode, ConvergingGatewayBranch, ElementType } from "../../types/ModelElement";
 import { FlowModelerProps, FlowGatewayDiverging } from "../../types/FlowModelerProps";
@@ -19,7 +19,7 @@ export const addBranch = (
         }
     } while (nextConvergingBranch.type !== ElementType.ConvergingGatewayBranch);
     const nextElement = nextConvergingBranch.followingElement.followingElement;
-    const changedFlow = cloneDeep(originalFlow);
+    const changedFlow = cloneFlow(originalFlow);
     const gatewayInFlow = changedFlow.elements[gateway.id] as FlowGatewayDiverging;
     gatewayInFlow.nextElements.push({ id: nextElement.type === ElementType.EndNode ? null : nextElement.id, conditionData });
     return { changedFlow };

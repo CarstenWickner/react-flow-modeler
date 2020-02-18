@@ -1,4 +1,4 @@
-import cloneDeep from "lodash.clonedeep";
+import { cloneFlow } from "./editUtils";
 
 import { ContentNode, DivergingGatewayNode, DivergingGatewayBranch, ConvergingGatewayNode, ElementType, EndNode } from "../../types/ModelElement";
 import { EditActionResult } from "../../types/EditAction";
@@ -12,7 +12,7 @@ export const changeNextElement = (
     newNextElement: ContentNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode,
     originElement: ContentNode | DivergingGatewayBranch
 ): EditActionResult => {
-    const changedFlow = cloneDeep(originalFlow);
+    const changedFlow = cloneFlow(originalFlow);
     let newNextElementId;
     if (newNextElement.type === ElementType.EndNode) {
         newNextElementId = null;

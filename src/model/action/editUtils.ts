@@ -3,6 +3,26 @@ import { isDivergingGateway } from "../modelUtils";
 import { ContentNode, DivergingGatewayBranch, ElementType } from "../../types/ModelElement";
 import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 
+export const cloneFlow = (originalFlow: FlowModelerProps["flow"]): FlowModelerProps["flow"] => {
+    const clone: FlowModelerProps["flow"] = {
+        firstElementId: originalFlow.firstElementId,
+        elements: {}
+    };
+    for (const key in originalFlow.elements) {
+        const element = originalFlow.elements[key];
+        if (isDivergingGateway(element)) {
+            const { data } = element;
+            // preserving the original "data" and "conditionData" entries
+            clone.elements[key] = { nextElements: element.nextElements.map((branch) => ({ ...branch })), data };
+        } else {
+            const { nextElementId, data } = element;
+            // preserve the original "data" entry
+            clone.elements[key] = { nextElementId, data };
+        }
+    }
+    return clone;
+};
+
 const checkIfIdNeedsReplacing = (flow: FlowModelerProps["flow"], currentId: string): ((id: string) => boolean) => {
     const currentIdIsPointingToEnd = !(currentId in flow.elements);
     return (id: string): boolean => id === currentId || (currentIdIsPointingToEnd && !(id in flow.elements));
