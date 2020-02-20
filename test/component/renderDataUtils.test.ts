@@ -48,7 +48,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 1,
+                  "type": "start",
                 },
                 Object {
                   "colStartIndex": 2,
@@ -60,7 +60,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 2,
+                  "type": "step",
                 },
                 Object {
                   "colStartIndex": 3,
@@ -74,7 +74,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 2,
+                  "type": "step",
                 },
                 Object {
                   "colStartIndex": 4,
@@ -83,7 +83,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 7,
+                  "type": "end",
                 },
               ],
             }
@@ -108,7 +108,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 1,
+                  "type": "start",
                 },
                 Object {
                   "colStartIndex": 2,
@@ -123,7 +123,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 3,
+                  "type": "div-gw",
                 },
                 Object {
                   "branchIndex": 0,
@@ -137,7 +137,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "branchIndex": 0,
@@ -150,7 +150,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
                 Object {
                   "colStartIndex": 5,
@@ -163,7 +163,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 4,
+                  "type": "conv-gw",
                 },
                 Object {
                   "colStartIndex": 6,
@@ -172,7 +172,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 7,
+                  "type": "end",
                 },
                 Object {
                   "branchIndex": 1,
@@ -186,7 +186,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 3,
                   "rowStartIndex": 2,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "branchIndex": 1,
@@ -199,7 +199,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 3,
                   "rowStartIndex": 2,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
               ],
             }
@@ -227,7 +227,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 1,
+                  "type": "start",
                 },
                 Object {
                   "colStartIndex": 2,
@@ -242,7 +242,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 3,
+                  "type": "div-gw",
                 },
                 Object {
                   "branchIndex": 0,
@@ -258,7 +258,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "colStartIndex": 4,
@@ -272,7 +272,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 2,
+                  "type": "step",
                 },
                 Object {
                   "branchIndex": 0,
@@ -285,7 +285,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
                 Object {
                   "colStartIndex": 6,
@@ -298,7 +298,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 4,
+                  "type": "conv-gw",
                 },
                 Object {
                   "colStartIndex": 7,
@@ -307,7 +307,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 7,
+                  "type": "end",
                 },
                 Object {
                   "branchIndex": 1,
@@ -321,7 +321,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 3,
                   "rowStartIndex": 2,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "branchIndex": 1,
@@ -334,7 +334,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 3,
                   "rowStartIndex": 2,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
               ],
             }
@@ -366,7 +366,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 3,
                   "rowEndIndex": 4,
                   "rowStartIndex": 1,
-                  "type": 1,
+                  "type": "start",
                 },
                 Object {
                   "colStartIndex": 2,
@@ -384,7 +384,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 3,
                   "rowEndIndex": 4,
                   "rowStartIndex": 1,
-                  "type": 3,
+                  "type": "div-gw",
                 },
                 Object {
                   "branchIndex": 0,
@@ -400,7 +400,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "colStartIndex": 4,
@@ -414,7 +414,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 2,
+                  "type": "step",
                 },
                 Object {
                   "branchIndex": 0,
@@ -427,7 +427,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
                 Object {
                   "colStartIndex": 6,
@@ -441,7 +441,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 3,
                   "rowEndIndex": 4,
                   "rowStartIndex": 1,
-                  "type": 4,
+                  "type": "conv-gw",
                 },
                 Object {
                   "colStartIndex": 7,
@@ -450,7 +450,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 3,
                   "rowEndIndex": 4,
                   "rowStartIndex": 1,
-                  "type": 7,
+                  "type": "end",
                 },
                 Object {
                   "branchIndex": 1,
@@ -466,7 +466,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 3,
                   "rowStartIndex": 2,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "branchIndex": 1,
@@ -479,7 +479,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 3,
                   "rowStartIndex": 2,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
                 Object {
                   "branchIndex": 2,
@@ -493,7 +493,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 4,
                   "rowStartIndex": 3,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "colStartIndex": 4,
@@ -507,7 +507,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 4,
                   "rowStartIndex": 3,
-                  "type": 2,
+                  "type": "step",
                 },
                 Object {
                   "branchIndex": 2,
@@ -520,7 +520,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 4,
                   "rowStartIndex": 3,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
               ],
             }
@@ -560,7 +560,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 6,
                   "rowEndIndex": 7,
                   "rowStartIndex": 1,
-                  "type": 1,
+                  "type": "start",
                 },
                 Object {
                   "colStartIndex": 2,
@@ -576,7 +576,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 6,
                   "rowEndIndex": 7,
                   "rowStartIndex": 1,
-                  "type": 3,
+                  "type": "div-gw",
                 },
                 Object {
                   "branchIndex": 0,
@@ -590,7 +590,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "colStartIndex": 4,
@@ -602,7 +602,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 2,
+                  "type": "step",
                 },
                 Object {
                   "colStartIndex": 5,
@@ -614,7 +614,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 2,
+                  "type": "step",
                 },
                 Object {
                   "branchIndex": 0,
@@ -627,7 +627,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
                 Object {
                   "colStartIndex": 10,
@@ -644,7 +644,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 6,
                   "rowEndIndex": 7,
                   "rowStartIndex": 1,
-                  "type": 4,
+                  "type": "conv-gw",
                 },
                 Object {
                   "colStartIndex": 11,
@@ -653,7 +653,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 6,
                   "rowEndIndex": 7,
                   "rowStartIndex": 1,
-                  "type": 7,
+                  "type": "end",
                 },
                 Object {
                   "branchIndex": 1,
@@ -667,7 +667,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 3,
                   "rowStartIndex": 2,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "branchIndex": 1,
@@ -680,7 +680,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 3,
                   "rowStartIndex": 2,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
                 Object {
                   "branchIndex": 2,
@@ -694,7 +694,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 4,
                   "rowEndIndex": 7,
                   "rowStartIndex": 3,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "colStartIndex": 4,
@@ -709,7 +709,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 4,
                   "rowEndIndex": 7,
                   "rowStartIndex": 3,
-                  "type": 3,
+                  "type": "div-gw",
                 },
                 Object {
                   "branchIndex": 0,
@@ -723,7 +723,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 4,
                   "rowStartIndex": 3,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "branchIndex": 2,
@@ -736,7 +736,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 4,
                   "rowStartIndex": 3,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
                 Object {
                   "branchIndex": 1,
@@ -750,7 +750,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 3,
                   "rowEndIndex": 7,
                   "rowStartIndex": 4,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "colStartIndex": 6,
@@ -766,7 +766,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 3,
                   "rowEndIndex": 7,
                   "rowStartIndex": 4,
-                  "type": 3,
+                  "type": "div-gw",
                 },
                 Object {
                   "branchIndex": 0,
@@ -780,7 +780,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 5,
                   "rowStartIndex": 4,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "branchIndex": 3,
@@ -793,7 +793,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 5,
                   "rowStartIndex": 4,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
                 Object {
                   "branchIndex": 1,
@@ -807,7 +807,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 6,
                   "rowStartIndex": 5,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "colStartIndex": 8,
@@ -819,7 +819,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 6,
                   "rowStartIndex": 5,
-                  "type": 2,
+                  "type": "step",
                 },
                 Object {
                   "branchIndex": 4,
@@ -832,7 +832,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 6,
                   "rowStartIndex": 5,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
                 Object {
                   "branchIndex": 2,
@@ -846,7 +846,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 7,
                   "rowStartIndex": 6,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "branchIndex": 5,
@@ -859,7 +859,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 7,
                   "rowStartIndex": 6,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
               ],
             }
@@ -888,7 +888,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 1,
+                  "type": "start",
                 },
                 Object {
                   "colStartIndex": 2,
@@ -903,7 +903,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 3,
+                  "type": "div-gw",
                 },
                 Object {
                   "branchIndex": 0,
@@ -917,7 +917,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "colStartIndex": 4,
@@ -929,7 +929,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 2,
+                  "type": "step",
                 },
                 Object {
                   "branchIndex": 0,
@@ -942,7 +942,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
                 Object {
                   "colStartIndex": 6,
@@ -955,7 +955,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 4,
+                  "type": "conv-gw",
                 },
                 Object {
                   "colStartIndex": 7,
@@ -967,7 +967,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 2,
+                  "type": "step",
                 },
                 Object {
                   "colStartIndex": 8,
@@ -976,7 +976,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 7,
+                  "type": "end",
                 },
                 Object {
                   "branchIndex": 1,
@@ -990,7 +990,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 3,
                   "rowStartIndex": 2,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "branchIndex": 1,
@@ -1003,7 +1003,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 3,
                   "rowStartIndex": 2,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
               ],
             }
@@ -1032,7 +1032,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 3,
                   "rowEndIndex": 4,
                   "rowStartIndex": 1,
-                  "type": 1,
+                  "type": "start",
                 },
                 Object {
                   "colStartIndex": 2,
@@ -1047,7 +1047,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 3,
                   "rowEndIndex": 4,
                   "rowStartIndex": 1,
-                  "type": 3,
+                  "type": "div-gw",
                 },
                 Object {
                   "branchIndex": 0,
@@ -1061,7 +1061,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "colStartIndex": 4,
@@ -1076,7 +1076,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 3,
                   "rowStartIndex": 1,
-                  "type": 3,
+                  "type": "div-gw",
                 },
                 Object {
                   "branchIndex": 0,
@@ -1090,7 +1090,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "branchIndex": 0,
@@ -1103,7 +1103,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 2,
                   "rowStartIndex": 1,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
                 Object {
                   "colStartIndex": 10,
@@ -1116,7 +1116,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 3,
                   "rowEndIndex": 4,
                   "rowStartIndex": 1,
-                  "type": 4,
+                  "type": "conv-gw",
                 },
                 Object {
                   "colStartIndex": 11,
@@ -1125,7 +1125,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 3,
                   "rowEndIndex": 4,
                   "rowStartIndex": 1,
-                  "type": 7,
+                  "type": "end",
                 },
                 Object {
                   "branchIndex": 1,
@@ -1139,7 +1139,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 3,
                   "rowStartIndex": 2,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "branchIndex": 0,
@@ -1152,7 +1152,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 3,
                   "rowStartIndex": 2,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
                 Object {
                   "colStartIndex": 7,
@@ -1165,7 +1165,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 4,
                   "rowStartIndex": 2,
-                  "type": 4,
+                  "type": "conv-gw",
                 },
                 Object {
                   "colStartIndex": 8,
@@ -1177,7 +1177,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 4,
                   "rowStartIndex": 2,
-                  "type": 2,
+                  "type": "step",
                 },
                 Object {
                   "branchIndex": 1,
@@ -1190,7 +1190,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 2,
                   "rowEndIndex": 4,
                   "rowStartIndex": 2,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
                 Object {
                   "branchIndex": 1,
@@ -1204,7 +1204,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 4,
                   "rowStartIndex": 3,
-                  "type": 5,
+                  "type": "div-branch",
                 },
                 Object {
                   "branchIndex": 1,
@@ -1217,7 +1217,7 @@ describe("buildRenderData()", () => {
                   "rowCount": 1,
                   "rowEndIndex": 4,
                   "rowStartIndex": 3,
-                  "type": 6,
+                  "type": "conv-branch",
                 },
               ],
             }

@@ -1,11 +1,11 @@
 export const enum ElementType {
-    StartNode = 1,
-    StepNode,
-    DivergingGatewayNode,
-    ConvergingGatewayNode,
-    DivergingGatewayBranch,
-    ConvergingGatewayBranch,
-    EndNode
+    StartNode = "start",
+    StepNode = "step",
+    DivergingGatewayNode = "div-gw",
+    ConvergingGatewayNode = "conv-gw",
+    DivergingGatewayBranch = "div-branch",
+    ConvergingGatewayBranch = "conv-branch",
+    EndNode = "end"
 }
 
 interface BaseModelNode {
