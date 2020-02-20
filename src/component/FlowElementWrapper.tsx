@@ -1,47 +1,47 @@
 import * as React from "react";
 import { useDrop } from "react-dnd";
 
-import { FlowElementReference } from "../model/FlowElement";
-import { DraggableType, DraggedLinkContext, onLinkDropCallback } from "../types/EditAction";
 import { isFlowValid } from "../model/pathValidationUtils";
 
-const isTargetAncestorOfDragItem = (originElement?: FlowElementReference, referenceElement?: FlowElementReference): boolean => {
-    if (!originElement || !referenceElement) {
-        // reference cannot be ancestor of the start; and end reference cannot be ancestor of anything
-        return false;
-    }
+import { StepNode, ConvergingGatewayNode, DivergingGatewayNode, ElementType, EndNode, ModelElementExclStart } from "../types/ModelElement";
+import { DraggableType, DraggedLinkContext, onLinkDropCallback } from "../types/EditAction";
+
+const isTargetAncestorOfDragItem = (
+    originElement: ModelElementExclStart,
+    referenceElement: StepNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode
+): boolean => {
     if (originElement === referenceElement) {
         return true;
     }
-    return originElement.getPrecedingElements().some((preceding) => isTargetAncestorOfDragItem(preceding, referenceElement));
+    if (originElement.type === ElementType.ConvergingGatewayNode) {
+        return originElement.precedingBranches.some((branch) => isTargetAncestorOfDragItem(branch, referenceElement));
+    }
+    return (
+        originElement.precedingElement.type !== ElementType.StartNode && isTargetAncestorOfDragItem(originElement.precedingElement, referenceElement)
+    );
 };
 
-const isDropValid = (referenceElement: FlowElementReference, onDrop: onLinkDropCallback) => (dragContext: DraggedLinkContext): boolean => {
-    if (isTargetAncestorOfDragItem(dragContext.originElement, referenceElement)) {
-        return false;
-    }
-    const currentNextElement = dragContext.originElement.getFollowingElements()[0];
-    if (currentNextElement === referenceElement || (!referenceElement && currentNextElement.getFollowingElements().length === 0)) {
-        // linking to the current follower will not change anything
-        return false;
-    }
-    return isFlowValid(onDrop(referenceElement, dragContext, true).changedFlow);
-};
+const isDropValid = (referenceElement: StepNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode, onDrop: onLinkDropCallback) => (
+    dragContext: DraggedLinkContext
+): boolean =>
+    !isTargetAncestorOfDragItem(dragContext.originElement, referenceElement) &&
+    dragContext.originElement.followingElement !== referenceElement &&
+    isFlowValid(onDrop(referenceElement, dragContext, true).changedFlow);
 
 const disabledDropping: [{ isOver: boolean; canDrop: false }, React.LegacyRef<HTMLDivElement>] = [{ isOver: false, canDrop: false }, undefined];
 
 export const FlowElementWrapper: React.FC<{
     elementTypeClassName: string;
-    referenceElement?: FlowElementReference;
+    referenceElement: StepNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode;
     editMenu?: (() => React.ReactNode) | undefined;
     onLinkDrop?: onLinkDropCallback | undefined;
     onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
-}> = ({ elementTypeClassName, referenceElement, editMenu, onLinkDrop: onDrop, onClick, children }) => {
-    const [{ isOver, canDrop }, drop] = onDrop
+}> = ({ elementTypeClassName, referenceElement, editMenu, onLinkDrop, onClick, children }) => {
+    const [{ isOver, canDrop }, drop] = onLinkDrop
         ? useDrop({
               accept: DraggableType.LINK,
-              canDrop: isDropValid(referenceElement, onDrop),
-              drop: (dragContext: DraggedLinkContext) => onDrop(referenceElement, dragContext),
+              canDrop: isDropValid(referenceElement, onLinkDrop),
+              drop: (dragContext: DraggedLinkContext) => onLinkDrop(referenceElement, dragContext),
               collect: (monitor) => ({
                   isOver: !!monitor.isOver(),
                   canDrop: !!monitor.canDrop()

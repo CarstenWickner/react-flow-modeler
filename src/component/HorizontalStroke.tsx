@@ -1,8 +1,9 @@
 import * as React from "react";
 
 import { ConnectionType } from "../types/GridCellData";
+import { DivergingGatewayNode, DivergingGatewayBranch, ConvergingGatewayBranch, ElementType } from "../types/ModelElement";
 
-const getConnectionClassName = (connectionType: ConnectionType): string => {
+export const getConnectionClassName = ({ connectionType }: { connectionType: ConnectionType }): string => {
     switch (connectionType) {
         case ConnectionType.First:
             return "bottom-half";
@@ -15,22 +16,14 @@ const getConnectionClassName = (connectionType: ConnectionType): string => {
 
 export class HorizontalStroke extends React.Component<
     | {
-          incomingConnection?: ConnectionType;
-          gatewayId: string;
-          branchIndex?: number;
-          editMenu: (() => React.ReactNode) | undefined;
-          onSelect: (gatewayId: string, branchIndex?: number) => void;
-          outgoingConnection?: never;
-          optional?: never;
+          referenceElement: { connectionType: ConnectionType } & ConvergingGatewayBranch;
+          onSelect?: never;
+          editMenu?: never;
       }
     | {
-          incomingConnection?: never;
-          gatewayId?: never;
-          branchIndex?: never;
-          editMenu?: never;
-          onSelect?: never;
-          outgoingConnection?: ConnectionType;
-          optional?: boolean;
+          referenceElement: DivergingGatewayNode | ({ connectionType: ConnectionType } & DivergingGatewayBranch);
+          onSelect: (element: DivergingGatewayNode | DivergingGatewayBranch) => void;
+          editMenu: (() => React.ReactNode) | undefined;
       },
     { wrapperTopHeight: number }
 > {
@@ -50,18 +43,20 @@ export class HorizontalStroke extends React.Component<
     }
 
     onTopLabelClick = (event: React.MouseEvent): void => {
-        const { onSelect, gatewayId, branchIndex } = this.props;
-        onSelect(gatewayId, branchIndex);
+        const { onSelect, referenceElement } = this.props;
+        onSelect((referenceElement as unknown) as DivergingGatewayNode | DivergingGatewayBranch);
         event.stopPropagation();
     };
 
     render(): React.ReactNode {
-        const { incomingConnection, outgoingConnection, optional, editMenu, children } = this.props;
+        const { referenceElement, editMenu, children } = this.props;
         return (
             <>
-                {incomingConnection && <div className={`stroke-vertical ${getConnectionClassName(incomingConnection)}`} />}
-                <div className={`stroke-horizontal${editMenu ? " selected" : ""}${optional ? " optional" : ""}`}>
-                    {!optional && !outgoingConnection && (
+                {referenceElement && referenceElement.type === ElementType.DivergingGatewayBranch && (
+                    <div className={`stroke-vertical ${getConnectionClassName(referenceElement)}`} />
+                )}
+                <div className={`stroke-horizontal${editMenu ? " selected" : ""}`}>
+                    {referenceElement.type !== ElementType.ConvergingGatewayBranch && (
                         <>
                             <div className="top-label" onClick={this.onTopLabelClick}>
                                 {children && <div ref={this.topLabelRef}>{children}</div>}
@@ -74,7 +69,9 @@ export class HorizontalStroke extends React.Component<
                     )}
                 </div>
                 {editMenu && editMenu()}
-                {outgoingConnection && <div className={`stroke-vertical ${getConnectionClassName(outgoingConnection)}`} />}
+                {referenceElement && referenceElement.type === ElementType.ConvergingGatewayBranch && (
+                    <div className={`stroke-vertical ${getConnectionClassName(referenceElement)}`} />
+                )}
             </>
         );
     }

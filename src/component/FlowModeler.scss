@@ -50,7 +50,7 @@
             border-radius: 50%;
             margin: $strokeStrength ($strokeStrength * 0.9);
         }
-        &.content-element {
+        &.step-element {
             border: ($strokeStrength / 3) solid $standardElementColor;
             border-radius: 0.25em;
             min-width: $standardElementSize;
@@ -84,7 +84,7 @@
             }
         }
         &.start-element.selected,
-        &.content-element.selected,
+        &.step-element.selected,
         &.gateway-element.selected::before {
             border-color: $selectionColor;
         }
@@ -112,7 +112,7 @@
             &.add-branch::before {
                 content: "↳";
             }
-            &.add-content::before {
+            &.add-step::before {
                 content: "■";
             }
             &.add-gateway::before {
@@ -222,13 +222,13 @@
         }
         & .start-element.selected,
         & .start-element:hover,
-        & .content-element.selected,
-        & .content-element:hover,
+        & .step-element.selected,
+        & .step-element:hover,
         & .gateway-element.selected::before,
         & .gateway-element:hover::before {
             box-shadow: 0 0 0.1em 0.1em rgba(0, 0, 0, 0.25);
         }
-        & .flow-element-wrapper.can-drop > .content-element,
+        & .flow-element-wrapper.can-drop > .step-element,
         & .flow-element-wrapper.can-drop > .gateway-element::before {
             box-shadow: 0 0 0.125em 0.125em rgba(0, 176, 255, 0.5);
         }

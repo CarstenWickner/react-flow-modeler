@@ -1,20 +1,19 @@
 import * as React from "react";
 
 import { FlowElementWrapper } from "./FlowElementWrapper";
-import { HorizontalStroke } from "./HorizontalStroke";
-import { FlowElementReference } from "../model/FlowElement";
 
+import { StepNode } from "../types/ModelElement";
 import { onLinkDropCallback } from "../types/EditAction";
 
-export class ContentElement extends React.Component<{
-    referenceElement: FlowElementReference;
+export class StepElement extends React.Component<{
+    referenceElement: StepNode;
     editMenu: (() => React.ReactNode) | undefined;
     onLinkDrop: onLinkDropCallback | undefined;
-    onSelect: (elementId: string) => void;
+    onSelect: (element: StepNode) => void;
 }> {
     onClick = (event: React.MouseEvent): void => {
-        const { referenceElement, onSelect } = this.props;
-        onSelect(referenceElement.getId());
+        const { onSelect, referenceElement } = this.props;
+        onSelect(referenceElement);
         event.stopPropagation();
     };
 
@@ -23,7 +22,7 @@ export class ContentElement extends React.Component<{
         return (
             <>
                 <FlowElementWrapper
-                    elementTypeClassName="content-element"
+                    elementTypeClassName="step-element"
                     referenceElement={referenceElement}
                     editMenu={editMenu}
                     onLinkDrop={onDrop}
@@ -31,7 +30,7 @@ export class ContentElement extends React.Component<{
                 >
                     {children}
                 </FlowElementWrapper>
-                <HorizontalStroke optional />
+                <div className="stroke-horizontal optional" />
             </>
         );
     }

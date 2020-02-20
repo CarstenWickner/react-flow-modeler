@@ -1,6 +1,7 @@
 import { addBranch } from "../../../src/model/action/addBranch";
 
 import { createMinimalElementTreeStructure } from "../../../src/model/modelUtils";
+import { DivergingGatewayNode } from "../../../src/types/ModelElement";
 
 describe("addBranch()", () => {
     it("can handle gateway before end", () => {
@@ -10,8 +11,8 @@ describe("addBranch()", () => {
                 a: { nextElements: [{}, {}] }
             }
         };
-        const gateway = createMinimalElementTreeStructure(originalFlow).firstElement;
-        const { changedFlow } = addBranch(originalFlow, { x: "y" }, gateway);
+        const gateway = createMinimalElementTreeStructure(originalFlow).start.followingElement as DivergingGatewayNode;
+        const { changedFlow } = addBranch(originalFlow, gateway, { x: "y" });
         expect(changedFlow).not.toBe(originalFlow);
         expect(changedFlow).toEqual({
             firstElementId: "a",
@@ -29,8 +30,8 @@ describe("addBranch()", () => {
                 c: {}
             }
         };
-        const gateway = createMinimalElementTreeStructure(originalFlow).firstElement;
-        const { changedFlow } = addBranch(originalFlow, undefined, gateway);
+        const gateway = createMinimalElementTreeStructure(originalFlow).start.followingElement as DivergingGatewayNode;
+        const { changedFlow } = addBranch(originalFlow, gateway, undefined);
         expect(changedFlow).not.toBe(originalFlow);
         expect(changedFlow).toEqual({
             firstElementId: "a",
@@ -51,8 +52,8 @@ describe("addBranch()", () => {
                 d: {}
             }
         };
-        const gateway = createMinimalElementTreeStructure(originalFlow).firstElement;
-        const { changedFlow } = addBranch(originalFlow, { x: "y" }, gateway);
+        const gateway = createMinimalElementTreeStructure(originalFlow).start.followingElement as DivergingGatewayNode;
+        const { changedFlow } = addBranch(originalFlow, gateway, { x: "y" });
         expect(changedFlow).not.toBe(originalFlow);
         expect(changedFlow).toEqual({
             firstElementId: "a",

@@ -1,45 +1,36 @@
-import cloneDeep from "lodash.clonedeep";
+import { replaceAllLinks, cloneFlow } from "./editUtils";
 
-import { replaceAllLinks } from "./editUtils";
-import { FlowElementReference } from "../FlowElement";
-
+import { StepNode, DivergingGatewayBranch, ElementType } from "../../types/ModelElement";
 import { EditActionResult } from "../../types/EditAction";
-import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
-import { ElementType } from "../../types/GridCellData";
+import { FlowModelerProps, FlowStep, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 
 /**
- * Only content elements may be removed or gateway branches that point to converging gateways (to not remove other elements implicitly).
+ * Only step elements may be removed or gateway branches that point to converging gateways (to not remove other elements implicitly).
  *
- * @param {ElementType} targetType - indication of type of element being target for removal
- * @param {FlowElementReference} referenceElement - content or diverging gateway element
- * @param {?number} branchIndex - index in reference gateway identifying the targeted ConnectGatewayToElement
+ * @param {StepNode | DivergingGatewayBranch} referenceElement - step element or diverging gateway branch
  * @returns {boolean} whether removeElement() is allowed to be called for the targeted element
  */
-export const isRemoveElementAllowed = (targetType: ElementType, referenceElement: FlowElementReference, branchIndex?: number): boolean =>
-    targetType === ElementType.Content ||
-    (targetType === ElementType.ConnectGatewayToElement && referenceElement.getFollowingElements()[branchIndex].getPrecedingElements().length > 1);
+export const isRemoveElementAllowed = (referenceElement: StepNode | DivergingGatewayBranch): boolean =>
+    referenceElement.type === ElementType.StepNode ||
+    (referenceElement.type === ElementType.DivergingGatewayBranch && referenceElement.followingElement.type === ElementType.ConvergingGatewayBranch);
 
-export const removeElement = (
-    originalFlow: FlowModelerProps["flow"],
-    targetType: ElementType.Content | ElementType.ConnectGatewayToElement,
-    referenceElement: FlowElementReference,
-    branchIndex?: number
-): EditActionResult => {
-    const changedFlow = cloneDeep(originalFlow);
-    const targetId = referenceElement.getId();
-    switch (targetType) {
-        case ElementType.Content:
-            const targetContentElement = (changedFlow.elements[targetId] as unknown) as FlowContent;
-            replaceAllLinks(changedFlow, targetId, targetContentElement.nextElementId);
-            delete changedFlow.elements[targetId];
+export const removeElement = (originalFlow: FlowModelerProps["flow"], referenceElement: StepNode | DivergingGatewayBranch): EditActionResult => {
+    const changedFlow = cloneFlow(originalFlow);
+    switch (referenceElement.type) {
+        case ElementType.StepNode:
+            const targetStepId = referenceElement.id;
+            const targetStepElement = (changedFlow.elements[targetStepId] as unknown) as FlowStep;
+            replaceAllLinks(changedFlow, targetStepId, targetStepElement.nextElementId);
+            delete changedFlow.elements[targetStepId];
             break;
-        case ElementType.ConnectGatewayToElement:
-            const precedingGatewayElement = (changedFlow.elements[targetId] as unknown) as FlowGatewayDiverging;
-            precedingGatewayElement.nextElements.splice(branchIndex, 1);
+        case ElementType.DivergingGatewayBranch:
+            const targetGatewayId = referenceElement.precedingElement.id;
+            const precedingGatewayElement = (changedFlow.elements[targetGatewayId] as unknown) as FlowGatewayDiverging;
+            precedingGatewayElement.nextElements.splice(referenceElement.branchIndex, 1);
             if (precedingGatewayElement.nextElements.length === 1) {
                 // remove gateway as well, now that there is only one path left
-                replaceAllLinks(changedFlow, targetId, precedingGatewayElement.nextElements[0].id);
-                delete changedFlow.elements[targetId];
+                replaceAllLinks(changedFlow, targetGatewayId, precedingGatewayElement.nextElements[0].id);
+                delete changedFlow.elements[targetGatewayId];
             }
             break;
     }

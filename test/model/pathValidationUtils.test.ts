@@ -1,16 +1,16 @@
 import { createValidatedElementTree, isFlowValid } from "../../src/model/pathValidationUtils";
 import { FlowModelerProps } from "../../src/types/FlowModelerProps";
 
-const ref = (nextId: string): { nextElementId: string } => ({ nextElementId: nextId });
+import { step, divGw } from "./testUtils";
 
 describe("createValidatedElementTree() / isFlowValid()", () => {
     describe.each`
         testDescription                | flowElements
-        ${"direct self-reference"}     | ${{ a: ref("a") }}
-        ${"nested one level"}          | ${{ a: ref("b"), b: ref("a") }}
-        ${"nested six levels"}         | ${{ a: ref("b"), b: ref("c"), c: ref("d"), d: ref("e"), e: ref("f"), f: ref("g"), g: ref("a") }}
-        ${"behind diverging gateway"}  | ${{ a: { nextElements: [{ id: "b" }, { id: "c" }] }, b: {}, c: ref("d"), d: ref("a") }}
-        ${"behind converging gateway"} | ${{ a: { nextElements: [{ id: "b" }, { id: "c" }] }, b: ref("d"), c: ref("d"), d: ref("a") }}
+        ${"direct self-reference"}     | ${{ a: step("a") }}
+        ${"nested one level"}          | ${{ a: step("b"), b: step("a") }}
+        ${"nested six levels"}         | ${{ a: step("b"), b: step("c"), c: step("d"), d: step("e"), e: step("f"), f: step("g"), g: step("a") }}
+        ${"behind diverging gateway"}  | ${{ a: divGw("b", "c"), b: {}, c: step("d"), d: step("a") }}
+        ${"behind converging gateway"} | ${{ a: divGw("b", "c"), b: step("d"), c: step("d"), d: step("a") }}
     `("circular reference $testDescription", ({ flowElements }: { flowElements: FlowModelerProps["flow"]["elements"] }) => {
         const flow = { firstElementId: "a", elements: flowElements };
 
@@ -27,13 +27,13 @@ describe("createValidatedElementTree() / isFlowValid()", () => {
         const flow = {
             firstElementId: "a",
             elements: {
-                a: ref("b"),
-                b: { nextElements: [{ id: "c" }, { id: "d" }, { id: "e" }] },
-                c: ref("f"),
-                d: { nextElements: [{ id: "d1" }, { id: "d2" }] },
-                d1: ref("f"),
-                d2: ref("f"),
-                e: ref("f"),
+                a: step("b"),
+                b: divGw("c", "d", "e"),
+                c: step("f"),
+                d: divGw("d1", "d2"),
+                d1: step("f"),
+                d2: step("f"),
+                e: step("f"),
                 f: {}
             }
         };
@@ -48,21 +48,16 @@ describe("createValidatedElementTree() / isFlowValid()", () => {
     describe.each`
         testDescription                     | firstElementId | additionalElements
         ${"root"}                           | ${"a"}         | ${{}}
-        ${"behind content element"}         | ${"root"}      | ${{ root: ref("a") }}
-        ${"behind empty diverging gateway"} | ${"root"}      | ${{ root: { nextElements: [{ id: "a" }, { id: "a" }] } }}
-        ${"behind converging gateway"}      | ${"root"}      | ${{ root: { nextElements: [{ id: "x" }, { id: "y" }] }, x: ref("a"), y: ref("a") }}
+        ${"behind step element"}            | ${"root"}      | ${{ root: step("a") }}
+        ${"behind empty diverging gateway"} | ${"root"}      | ${{ root: divGw("a", "a") }}
+        ${"behind converging gateway"}      | ${"root"}      | ${{ root: divGw("x", "y"), x: step("a"), y: step("a") }}
     `(
         "properly performs validation when gateway is $testDescription",
         ({ firstElementId, additionalElements }: { firstElementId: string; additionalElements: FlowModelerProps["flow"]["elements"] }) => {
             describe("accepts link between diverging gateway and one of its children", () => {
                 const flow = {
                     firstElementId,
-                    elements: {
-                        ...additionalElements,
-                        a: { nextElements: [{ id: "b" }, { id: "c" }] },
-                        b: ref("c"),
-                        c: {}
-                    }
+                    elements: { ...additionalElements, a: divGw("b", "c"), b: step("c"), c: {} }
                 };
                 it("createValidatedElementTree() builds model", () => {
                     expect(createValidatedElementTree(flow, "top")).toBeDefined();
@@ -74,13 +69,7 @@ describe("createValidatedElementTree() / isFlowValid()", () => {
             describe("accepts link between neighbouring children of diverging gateway", () => {
                 const flow = {
                     firstElementId,
-                    elements: {
-                        ...additionalElements,
-                        a: { nextElements: [{ id: "b" }, { id: "c" }] },
-                        b: ref("d"),
-                        c: ref("d"),
-                        d: {}
-                    }
+                    elements: { ...additionalElements, a: divGw("b", "c"), b: step("d"), c: step("d"), d: {} }
                 };
                 it("createValidatedElementTree() builds model", () => {
                     expect(createValidatedElementTree(flow, "top")).toBeDefined();
@@ -94,13 +83,13 @@ describe("createValidatedElementTree() / isFlowValid()", () => {
                     firstElementId,
                     elements: {
                         ...additionalElements,
-                        a: { nextElements: [{ id: "b" }, { id: "c" }, { id: "d" }, { id: "e" }] },
-                        b: ref("bc"),
-                        c: ref("bc"),
-                        bc: ref("f"),
-                        d: ref("de"),
-                        e: ref("de"),
-                        de: ref("f"),
+                        a: divGw("b", "c", "d", "e"),
+                        b: step("bc"),
+                        c: step("bc"),
+                        bc: step("f"),
+                        d: step("de"),
+                        e: step("de"),
+                        de: step("f"),
                         f: {}
                     }
                 };
@@ -116,11 +105,11 @@ describe("createValidatedElementTree() / isFlowValid()", () => {
                     firstElementId,
                     elements: {
                         ...additionalElements,
-                        a: { nextElements: [{ id: "b" }, { id: "c" }, { id: "d" }, { id: "e" }] },
-                        b: ref("f"),
+                        a: divGw("b", "c", "d", "e"),
+                        b: step("f"),
                         c: {},
-                        d: ref("f"),
-                        e: ref("b"),
+                        d: step("f"),
+                        e: step("b"),
                         f: {}
                     }
                 };
@@ -137,8 +126,8 @@ describe("createValidatedElementTree() / isFlowValid()", () => {
     describe("properly handles the same element being referenced multiple times from one diverging gateway", () => {
         describe.each`
             testDescription                           | elements
-            ${"to same element"}                      | ${{ a: { nextElements: [{ id: "b" }, { id: "b" }, { id: "b" }] }, b: {} }}
-            ${"with intermediate converging gateway"} | ${{ a: { nextElements: [{ id: "b" }, { id: "c" }, { id: "b" }] }, b: {}, c: ref("b") }}
+            ${"to same element"}                      | ${{ a: divGw("b", "b", "b"), b: {} }}
+            ${"with intermediate converging gateway"} | ${{ a: divGw("b", "c", "b"), b: {}, c: step("b") }}
         `("accepts uninterrupted references $testDescription", ({ elements }) => {
             const flow = { firstElementId: "a", elements };
 
@@ -150,15 +139,19 @@ describe("createValidatedElementTree() / isFlowValid()", () => {
             });
         });
         describe.each`
-            testDescription                             | elements
-            ${"pointing to invalid converging gateway"} | ${{ a: { nextElements: [{ id: "b" }, { id: "c" }, { id: "b" }] }, b: ref("c"), c: {} }}
-            ${"pointing to end"}                        | ${{ a: { nextElements: [{ id: "b" }, {}, { id: "b" }] }, b: {} }}
-        `("throws error for interrupted references – $testDescription", ({ elements }) => {
+            testDescription                     | elements
+            ${"invalid converging gateway (1)"} | ${{ a: divGw("x", "b", "x"), x: step("b"), b: {} }}
+            ${"invalid converging gateway (2)"} | ${{ a: divGw("x", "b", "c"), x: {}, b: {}, c: step("x") }}
+            ${"invalid converging gateway (3)"} | ${{ a: divGw("b", "c", "x"), b: step("x"), c: {}, x: {} }}
+            ${"invalid converging gateway (4)"} | ${{ a: divGw("b", "c"), b: divGw("x", "d"), x: {}, c: step("x"), d: {} }}
+            ${"invalid converging gateway (5)"} | ${{ a: divGw("b", "c"), b: step("x"), x: {}, c: divGw("d", "x"), d: {} }}
+            ${"end"}                            | ${{ a: divGw("x", null, "x"), x: {} }}
+        `("throws error for interrupted references – pointing to $testDescription", ({ elements }) => {
             const flow = { firstElementId: "a", elements };
 
             it("createValidatedElementTree() throws error", () => {
                 const execution = (): never => createValidatedElementTree(flow, "top");
-                expect(execution).toThrowError("Multiple references only valid from neighbouring paths. Invalid references to: 'b'");
+                expect(execution).toThrowError("Multiple references only valid from neighbouring paths. Invalid references to: 'x'");
             });
             it("isFlowValid() returns false", () => {
                 expect(isFlowValid(flow)).toBe(false);

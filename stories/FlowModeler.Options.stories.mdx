@@ -37,9 +37,9 @@ import { FlowModeler } from "../src/index";
                 }
             }}
             options={{ verticalAlign: "top" }}
-            renderContent={({ elementData }) => <span>{elementData.label}</span>}
-            renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData.label}</label>}
-            renderGatewayConditionValue={({ conditionData }) => <label>{conditionData.label}</label>}
+            renderStep={({ data }) => <span>{data.label}</span>}
+            renderGatewayConditionType={({ data }) => <label>{data.label}</label>}
+            renderGatewayConditionValue={({ data }) => <label>{data.label}</label>}
         />
     </Story>
 </Preview>
@@ -68,9 +68,9 @@ If no `options`/`options.verticalAlign` prop is defined, the paths will be verti
                     "5.3": { data: { label: "Opt. F" } }
                 }
             }}
-            renderContent={({ elementData }) => <span>{elementData.label}</span>}
-            renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData.label}</label>}
-            renderGatewayConditionValue={({ conditionData }) => <label>{conditionData.label}</label>}
+            renderStep={({ data }) => <span>{data.label}</span>}
+            renderGatewayConditionType={({ data }) => <label>{data.label}</label>}
+            renderGatewayConditionValue={({ data }) => <label>{data.label}</label>}
         />
     </Story>
 </Preview>
@@ -101,9 +101,9 @@ If no `options`/`options.verticalAlign` prop is defined, the paths will be verti
                 }
             }}
             options={{ verticalAlign: "bottom" }}
-            renderContent={({ elementData }) => <span>{elementData.label}</span>}
-            renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData.label}</label>}
-            renderGatewayConditionValue={({ conditionData }) => <label>{conditionData.label}</label>}
+            renderStep={({ data }) => <span>{data.label}</span>}
+            renderGatewayConditionType={({ data }) => <label>{data.label}</label>}
+            renderGatewayConditionValue={({ data }) => <label>{data.label}</label>}
         />
     </Story>
 </Preview>

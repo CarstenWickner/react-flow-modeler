@@ -1,32 +1,36 @@
-import cloneDeep from "lodash.clonedeep";
+import { cloneFlow } from "./editUtils";
 
-import { FlowElementReference } from "../FlowElement";
-
+import { StepNode, DivergingGatewayNode, DivergingGatewayBranch, ConvergingGatewayNode, ElementType, EndNode } from "../../types/ModelElement";
 import { EditActionResult } from "../../types/EditAction";
-import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
-import { ElementType } from "../../types/GridCellData";
+import { FlowModelerProps, FlowStep, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 
-export const isChangeNextElementAllowed = (targetType: ElementType, referenceElement: FlowElementReference, branchIndex?: number): boolean =>
-    (targetType === ElementType.Content || targetType === ElementType.ConnectGatewayToElement) &&
-    referenceElement.getFollowingElements()[branchIndex || 0].getPrecedingElements().length > 1;
+export const isChangeNextElementAllowed = (referenceElement: StepNode | DivergingGatewayBranch): boolean =>
+    referenceElement.followingElement && referenceElement.followingElement.type === ElementType.ConvergingGatewayBranch;
 
 export const changeNextElement = (
     originalFlow: FlowModelerProps["flow"],
-    newNextElement: FlowElementReference,
-    originType: ElementType.Content | ElementType.ConnectGatewayToElement,
-    originElement?: FlowElementReference,
-    originBranchIndex?: number
+    newNextElement: StepNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode,
+    originElement: StepNode | DivergingGatewayBranch
 ): EditActionResult => {
-    const changedFlow = cloneDeep(originalFlow);
-    const newNextElementId = newNextElement ? newNextElement.getId() : null;
-    switch (originType) {
-        case ElementType.Content:
-            const contentElementInFlow = (changedFlow.elements[originElement.getId()] as unknown) as FlowContent;
-            contentElementInFlow.nextElementId = newNextElementId;
+    const changedFlow = cloneFlow(originalFlow);
+    let newNextElementId;
+    if (newNextElement.type === ElementType.EndNode) {
+        newNextElementId = null;
+    } else if (newNextElement.type !== ElementType.ConvergingGatewayNode) {
+        newNextElementId = newNextElement.id;
+    } else if (newNextElement.followingElement.type !== ElementType.EndNode) {
+        newNextElementId = newNextElement.followingElement.id;
+    } else {
+        newNextElementId = null;
+    }
+    switch (originElement.type) {
+        case ElementType.StepNode:
+            const stepElementInFlow = (changedFlow.elements[originElement.id] as unknown) as FlowStep;
+            stepElementInFlow.nextElementId = newNextElementId;
             break;
-        case ElementType.ConnectGatewayToElement:
-            const divergingGatewayInFlow = (changedFlow.elements[originElement.getId()] as unknown) as FlowGatewayDiverging;
-            divergingGatewayInFlow.nextElements[originBranchIndex].id = newNextElementId;
+        case ElementType.DivergingGatewayBranch:
+            const divergingGatewayInFlow = (changedFlow.elements[originElement.precedingElement.id] as unknown) as FlowGatewayDiverging;
+            divergingGatewayInFlow.nextElements[originElement.branchIndex].id = newNextElementId;
             break;
     }
     return { changedFlow };

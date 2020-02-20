@@ -10,35 +10,184 @@ import { FlowModeler } from "../src/index";
 # FlowModeler
 ## Editing Structure
 
+<Props of={FlowModeler} exclude={Object.keys(FlowModeler.propTypes).filter(propName => propName !== "onChange" && propName !== "editActions")} />
+
 Enable editing by providing an `onChange` callback function that will receive the updated `flow` after each structural change.
 This should then be stored in some external (e.g. Redux) store/state and provided as `flow` prop.
 
-export const externalState = {
-    flow:  {
-        firstElementId: "1",
-        elements: {
-            "1": { data: { label: "First" }, nextElementId: "2" },
-            "2": { data: { label: "Second" }, nextElementId: "3" },
-            "3": { data: { label: "Condition" }, nextElements: [
-                { id: "4.1", conditionData: { label: "Fulfilled" } },
-                { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
-            "4.1": { data: { label: "Option 1" }, nextElementId: "5" },
-            "4.2": { data: { label: "Option 2" }, nextElementId: "5" },
-            "5": { data: { label: "Follow-Up"}}
-        }
+export const initialState = {
+    firstElementId: "1",
+    elements: {
+        "1": { data: { label: "First" }, nextElementId: "2" },
+        "2": { data: { label: "Second" }, nextElementId: "3" },
+        "3": { data: { label: "Condition" }, nextElements: [
+            { id: "4.1", conditionData: { label: "Fulfilled" } },
+            { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
+        "4.1": { data: { label: "Option 1" }, nextElementId: "5" },
+        "4.2": { data: { label: "Option 2" }, nextElementId: "5" },
+        "5": { data: { label: "Follow-Up"}}
     }
+}
+
+export const externalState = {
+    flow1: initialState,
+    flow2: initialState,
+    flow3: initialState,
+    flow4: initialState,
+    flow5: initialState
 }
 
 <Preview>
     <Story name="structure">
         <FlowModeler
-            flow={externalState.flow}
-            renderContent={({ elementData }) => <span>{elementData && elementData.label}</span>}
-            renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData && gatewayData.label}</label>}
-            renderGatewayConditionValue={({ conditionData }) => <label>{conditionData && conditionData.label}</label>}
+            flow={externalState.flow1}
+            renderStep={({ data }) => <span>{data && data.label}</span>}
+            renderGatewayConditionType={({ data }) => <label>{data && data.label}</label>}
+            renderGatewayConditionValue={({ data }) => <label>{data && data.label}</label>}
             onChange={({ changedFlow }) => {
-                externalState.flow = changedFlow;
+                externalState.flow1 = changedFlow;
                 forceReRender();
+            }}
+        />
+    </Story>
+</Preview>
+
+If the elements themselves are supposed to be editable, you'll have to use the appropriate components within the
+`renderStep()`/`renderGatewayConditionType()`/`renderGatewayConditionValue()` functions and take care of the update of the state yourself.
+
+<Preview>
+    <Story name="elements">
+        <FlowModeler
+            flow={externalState.flow2}
+            renderStep={({ id, data }) => (
+                <input
+                    type="text"
+                    value={data ? data.label : ""}
+                    onChange={(event) => {
+                        externalState.flow2.elements[id].data = ({ label: event.target.value });
+                        forceReRender();
+                    }}
+                />
+            )}
+            renderGatewayConditionType={({ id, data }) => (
+                <select
+                    value={data ? data.label : ""}
+                    onChange={(event) => {
+                        externalState.flow2.elements[id].data = ({ label: event.target.value });
+                        event.stopPropagation();
+                        forceReRender();
+                    }}>
+                    <option value="">n/a</option>
+                    <option value="Condition">Condition</option>
+                    <option value="Check">Check</option>
+                </select>
+            )}
+            renderGatewayConditionValue={({ precedingElement, branchIndex, data }) => (
+                <input
+                    type="text"
+                    value={data ? data.label : ""}
+                    onChange={(event) => {
+                        externalState.flow2.elements[precedingElement.id].nextElements[branchIndex].conditionData = ({ label: event.target.value });
+                        forceReRender();
+                    }}
+                />
+            )}
+            onChange={({ changedFlow }) => {
+                externalState.flow2 = changedFlow;
+                forceReRender();
+            }}
+        />
+    </Story>
+</Preview>
+
+----
+
+You can additionally customise the `editActions` to align the `<FlowModeler>` with the rest of your application and/or offer meaningful defaults.
+
+Via the `editActions` you can specify your own `className` for each action in the edit context menu – e.g. enabling you to use your own icons.
+This completely replaces the standard styles (via which the standard symbols are associated),
+i.e. to build on-top of the existing styles, you'll need to include the standard css classes again.
+Additionally, you may specify an alternative `title` as tool-tip for each offered action.
+
+<Preview>
+    <Story name="menu styles and tool-tips">
+        <FlowModeler
+            flow={externalState.flow3}
+            renderStep={({ data }) => <span>{data && data.label}</span>}
+            renderGatewayConditionType={({ data }) => <label>{data && data.label}</label>}
+            renderGatewayConditionValue={({ data }) => <label>{data && data.label}</label>}
+            onChange={({ changedFlow }) => {
+                externalState.flow3 = changedFlow;
+                forceReRender();
+            }}
+            editActions={{
+                addDivergingBranch: { className: "menu-item add-branch customised-color-1", title: "Add Branch" },
+                addFollowingStepElement: { className: "menu-item add-step customised-color-2", title: "Add Step Element" },
+                addFollowingDivergingGateway: { className: "menu-item add-gateway customised-color-3", title: "Add Diverging Gateway" },
+                changeNextElement: { className: "menu-item change-next customised-color-4", title: "Change next Element to…" },
+                removeElement: { className: "menu-item remove customised-color-5", title: "Remove" }
+            }}
+        />
+    </Story>
+</Preview>
+
+Via the `editActions` you can also influence the default contents of newly added step, diverging gateway or branches of diverging gateways
+– through the corresponding callbacks.
+
+<Preview>
+    <Story name="custom contents on creation">
+        <FlowModeler
+            flow={externalState.flow4}
+            renderStep={({ data }) => <span>{data && data.label}</span>}
+            renderGatewayConditionType={({ data }) => <label>{data && data.label}</label>}
+            renderGatewayConditionValue={({ data }) => <label>{data && data.label}</label>}
+            onChange={({ changedFlow }) => {
+                externalState.flow4 = changedFlow;
+                forceReRender();
+            }}
+            editActions={{
+                addDivergingBranch: { getBranchConditionData: (gateway) => ({ label: `custom branch ${1 + gateway.followingBranches.length}` }) },
+                addFollowingStepElement: { getStepData: () => ({ label: "custom element" }) },
+                addFollowingDivergingGateway: {
+                    getGatewayData: () => ({ label: "custom gateway" }),
+                    getBranchConditionData: () => [{ label: "branch 1" }, { label: "branch 2" }, { label: "branch 3" }]
+                }
+            }}
+        />
+    </Story>
+</Preview>
+
+One more setting in the `editActions` is to answer in a particular context the question: `isActionAllowed`? This allows you to preserve certain parts
+of the model as-is while still allowing other parts to be changed. Or to completely disable certain actions, e.g. not even allow any gateways or
+additional branches to be added.
+
+<Preview>
+    <Story name="disabled actions">
+        <FlowModeler
+            flow={externalState.flow5}
+            renderStep={({ data }) => <span>{data && data.label}</span>}
+            renderGatewayConditionType={({ data }) => <label>{data && data.label}</label>}
+            renderGatewayConditionValue={({ data }) => <label>{data && data.label}</label>}
+            onChange={({ changedFlow }) => {
+                externalState.flow5 = changedFlow;
+                forceReRender();
+            }}
+            editActions={{
+                addDivergingBranch: {
+                    isActionAllowed: (gateway) => (gateway.followingBranches.length < 3)
+                },
+                addFollowingStepElement: {
+                    isActionAllowed: (prior) => prior.type !== "step" || prior.followingElement.type !== "step"
+                },
+                addFollowingDivergingGateway: {
+                    isActionAllowed: (prior) => prior.type !== "conv-gw"
+                },
+                changeNextElement: {
+                    isActionAllowed: () => false
+                },
+                removeElement: {
+                    isActionAllowed: () => true
+                }
             }}
         />
     </Story>

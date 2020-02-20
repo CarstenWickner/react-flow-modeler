@@ -3,66 +3,93 @@ import * as React from "react";
 import { DndProvider } from "react-dnd";
 import Backend from "react-dnd-html5-backend";
 
-import { ContentElement } from "./ContentElement";
-import { Gateway } from "./Gateway";
-import { HorizontalStroke } from "./HorizontalStroke";
+import { StepElement } from "./StepElement";
 import { EditMenu } from "./EditMenu";
+import { FlowElementWrapper } from "./FlowElementWrapper";
+import { Gateway } from "./Gateway";
 import { GridCell } from "./GridCell";
+import { HorizontalStroke, getConnectionClassName } from "./HorizontalStroke";
 import { buildRenderData } from "./renderDataUtils";
-import { FlowElementReference } from "../model/FlowElement";
-
-import { EditActionResult, SelectableElementType, DraggedLinkContext } from "../types/EditAction";
+import { changeNextElement } from "../model/action/changeNextElement";
+import {
+    StepNode,
+    ConvergingGatewayNode,
+    DivergingGatewayBranch,
+    DivergingGatewayNode,
+    ElementType,
+    EndNode,
+    StartNode
+} from "../types/ModelElement";
+import { EditActionResult, DraggedLinkContext, SelectableElementType } from "../types/EditAction";
 import { FlowModelerProps } from "../types/FlowModelerProps";
-import { GridCellData, ElementType } from "../types/GridCellData";
+import { GridCellData } from "../types/GridCellData";
 
 import "./FlowModeler.scss";
-import { FlowElementWrapper } from "./FlowElementWrapper";
-import { changeNextElement } from "../model/action/changeNextElement";
 
-const menuOptionsPropType = PropTypes.shape({
-    className: PropTypes.string,
-    title: PropTypes.string,
-    isActionAllowed: PropTypes.func
-});
+type Selector = {
+    type: SelectableElementType;
+    id?: string;
+    branchIndex?: number;
+};
 
 interface FlowModelerState {
-    selection: null | { type: SelectableElementType; id?: string; branchIndex?: number };
+    selection: null | Selector;
 }
+
+const createSelector = (
+    reference: { type: ElementType.StartNode } | StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode
+): Selector => {
+    if (reference.type === ElementType.StartNode) {
+        return reference;
+    }
+    if (reference.type === ElementType.ConvergingGatewayNode) {
+        return { type: reference.type, id: reference.followingElement.type === ElementType.EndNode ? null : reference.followingElement.id };
+    }
+    if (reference.type === ElementType.DivergingGatewayBranch) {
+        return {
+            type: reference.type,
+            id: reference.precedingElement.id,
+            branchIndex: reference.branchIndex
+        };
+    }
+    return { type: reference.type, id: reference.id };
+};
 
 export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerState> {
     state: FlowModelerState = { selection: null };
 
-    isTargetSelected(type: SelectableElementType, id?: string, branchIndex?: number): boolean {
+    isTargetSelected(
+        reference: { type: ElementType.StartNode } | StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode | null
+    ): boolean {
+        if (this.state.selection === null) {
+            return reference === null;
+        }
+        if (reference === null) {
+            return false;
+        }
+        const selector = createSelector(reference);
         return (
-            this.state.selection !== null &&
-            this.state.selection.type === type &&
-            this.state.selection.id === id &&
-            this.state.selection.branchIndex == branchIndex
+            this.state.selection.type === selector.type &&
+            this.state.selection.id === selector.id &&
+            this.state.selection.branchIndex === selector.branchIndex
         );
     }
 
-    onSelect = (type: SelectableElementType | null, id?: string, branchIndex?: number): void => {
+    onSelect = (
+        reference: { type: ElementType.StartNode } | StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode | null
+    ): void => {
         const { onChange } = this.props;
-        if (onChange && !this.isTargetSelected(type, id, branchIndex)) {
+        if (onChange && !this.isTargetSelected(reference)) {
             this.setState({
-                selection: type === null ? null : { type, id, branchIndex }
+                selection: reference === null ? null : createSelector(reference)
             });
         }
     };
 
     onClickStart = (event: React.MouseEvent): void => {
-        this.onSelect(ElementType.Start);
+        this.onSelect({ type: ElementType.StartNode });
         event.stopPropagation();
     };
-
-    onSelectContent = (elementId: string): void => this.onSelect(ElementType.Content, elementId);
-
-    onSelectGatewayDiverging = (gatewayId: string): void => this.onSelect(ElementType.GatewayDiverging, gatewayId);
-
-    onSelectGatewayConverging = (followingElementId: string | null): void => this.onSelect(ElementType.GatewayConverging, followingElementId);
-
-    onSelectConnectGatewayToElement = (gatewayId: string, branchIndex: number): void =>
-        this.onSelect(ElementType.ConnectGatewayToElement, gatewayId, branchIndex);
 
     clearSelection = (event: React.MouseEvent): void => {
         this.onSelect(null);
@@ -77,33 +104,26 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
     };
 
     renderEditMenu = (
-        targetType: SelectableElementType,
-        reference?: FlowElementReference,
-        branchIndex?: number
+        reference: StartNode | StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode
     ): undefined | (() => React.ReactNode) => {
-        if (!this.isTargetSelected(targetType, reference ? reference.getId() : undefined, branchIndex)) {
+        if (!this.isTargetSelected(reference)) {
             return undefined;
         }
-        const { options } = this.props;
-        const menuOptions = options ? options.editActions : undefined;
-        return (): React.ReactNode => (
-            <EditMenu
-                targetType={targetType}
-                referenceElement={reference}
-                branchIndex={branchIndex}
-                menuOptions={menuOptions}
-                onChange={this.handleOnChange}
-            />
-        );
+        const { editActions } = this.props;
+        return (): React.ReactNode => <EditMenu referenceElement={reference} editActions={editActions} onChange={this.handleOnChange} />;
     };
 
-    handleOnLinkDrop = (dropTarget: FlowElementReference, dragContext: DraggedLinkContext, dryRun?: boolean): EditActionResult | undefined => {
-        const { flow } = this.props;
-        const { originType, originElement, originBranchIndex } = dragContext;
-        const change = (): EditActionResult => changeNextElement(flow, dropTarget, originType, originElement, originBranchIndex);
+    handleOnLinkDrop = (
+        dropTarget: StepNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode,
+        dragContext: DraggedLinkContext,
+        dryRun?: boolean
+    ): EditActionResult | undefined => {
+        const { originElement } = dragContext;
+        const change = (originalFlow: FlowModelerProps["flow"]): EditActionResult => changeNextElement(originalFlow, dropTarget, originElement);
         if (dryRun) {
+            const { flow } = this.props;
             // perform change without calling onChange, i.e. without triggering re-render
-            return change();
+            return change(flow);
         }
         this.handleOnChange(change);
         // onChange is expected to provide the changed flow as prop update, i.e. no need to return anything here
@@ -113,92 +133,73 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
     renderFlowElement(cellData: GridCellData, editable: boolean): React.ReactNode {
         const onLinkDrop = editable ? this.handleOnLinkDrop : undefined;
         switch (cellData.type) {
-            case ElementType.Start:
-                const startEditMenu = editable && this.renderEditMenu(cellData.type);
+            case ElementType.StartNode:
+                const startEditMenu = editable && this.renderEditMenu(cellData);
                 return (
                     <>
                         <div className={`flow-element start-element${startEditMenu ? " selected" : ""}`} onClick={this.onClickStart} />
                         {startEditMenu && startEditMenu()}
                     </>
                 );
-            case ElementType.Content:
-                const { renderContent } = this.props;
-                const contentEditMenu = editable && this.renderEditMenu(cellData.type, cellData.element);
+            case ElementType.StepNode:
+                const { renderStep } = this.props;
                 return (
-                    <ContentElement
-                        referenceElement={cellData.element}
-                        editMenu={contentEditMenu}
+                    <StepElement
+                        referenceElement={cellData}
+                        editMenu={editable ? this.renderEditMenu(cellData) : undefined}
                         onLinkDrop={onLinkDrop}
-                        onSelect={this.onSelectContent}
+                        onSelect={this.onSelect}
                     >
-                        {renderContent({
-                            elementData: cellData.data,
-                            contentElementId: cellData.element.getId()
-                        })}
-                    </ContentElement>
+                        {renderStep(cellData)}
+                    </StepElement>
                 );
-            case ElementType.GatewayDiverging:
+            case ElementType.DivergingGatewayNode:
                 const { renderGatewayConditionType } = this.props;
-                const divergingGatewayEditMenu = editable && this.renderEditMenu(cellData.type, cellData.gateway);
                 return (
                     <Gateway
-                        type={cellData.type}
-                        gateway={cellData.gateway}
-                        editMenu={divergingGatewayEditMenu}
+                        gateway={cellData}
+                        editMenu={editable ? this.renderEditMenu(cellData) : undefined}
                         onLinkDrop={onLinkDrop}
-                        onSelect={this.onSelectGatewayDiverging}
+                        onSelect={this.onSelect}
                     >
-                        {renderGatewayConditionType &&
-                            renderGatewayConditionType({
-                                gatewayData: cellData.data,
-                                gatewayElementId: cellData.gateway.getId()
-                            })}
+                        {renderGatewayConditionType && renderGatewayConditionType(cellData)}
                     </Gateway>
                 );
-            case ElementType.GatewayConverging:
-                const convergingGatewayEditMenu = editable && this.renderEditMenu(cellData.type, cellData.followingElement);
+            case ElementType.ConvergingGatewayNode:
                 return (
                     <Gateway
-                        type={cellData.type}
-                        followingElement={cellData.followingElement}
-                        editMenu={convergingGatewayEditMenu}
+                        gateway={cellData}
+                        editMenu={editable ? this.renderEditMenu(cellData) : undefined}
                         onLinkDrop={onLinkDrop}
-                        onSelect={this.onSelectGatewayConverging}
+                        onSelect={this.onSelect}
                     />
                 );
-            case ElementType.ConnectGatewayToElement:
+            case ElementType.DivergingGatewayBranch:
                 const { renderGatewayConditionValue } = this.props;
-                const leadingGateway = cellData.gateway;
-                const branchIndex = cellData.branchIndex;
-                const connectorEditMenu = editable && this.renderEditMenu(cellData.type, leadingGateway, branchIndex);
                 return (
                     <HorizontalStroke
-                        incomingConnection={cellData.connectionType}
-                        gatewayId={leadingGateway.getId()}
-                        branchIndex={branchIndex}
-                        editMenu={connectorEditMenu}
-                        onSelect={this.onSelectConnectGatewayToElement}
+                        referenceElement={cellData}
+                        editMenu={editable ? this.renderEditMenu(cellData) : undefined}
+                        onSelect={this.onSelect}
                     >
-                        {renderGatewayConditionValue &&
-                            renderGatewayConditionValue({
-                                conditionData: cellData.data,
-                                gatewayElementId: leadingGateway.getId(),
-                                branchElementId: leadingGateway.getFollowingElements()[branchIndex].getId()
-                            })}
+                        {renderGatewayConditionValue && renderGatewayConditionValue(cellData)}
                     </HorizontalStroke>
                 );
-            case ElementType.ConnectElementToGateway:
-                return <HorizontalStroke outgoingConnection={cellData.connectionType} />;
-            case ElementType.StrokeExtension:
-                return <HorizontalStroke optional />;
-            case ElementType.End:
-                return <FlowElementWrapper elementTypeClassName="end-element" onLinkDrop={onLinkDrop} />;
+            case ElementType.ConvergingGatewayBranch:
+                return (
+                    <>
+                        <div className="stroke-horizontal" />
+                        <div className={`stroke-vertical ${getConnectionClassName(cellData)}`} />
+                    </>
+                );
+            case ElementType.EndNode:
+                return <FlowElementWrapper referenceElement={cellData} elementTypeClassName="end-element" onLinkDrop={onLinkDrop} />;
         }
     }
 
     renderGridCell = (editable: boolean): ((cellData: GridCellData) => React.ReactNode) => {
         const { options } = this.props;
-        const { verticalAlign } = options || {};
+        const verticalAlign = options ? options.verticalAlign : undefined;
         return (cellData: GridCellData): React.ReactNode => {
             const { colStartIndex, colEndIndex, rowStartIndex, rowEndIndex } = cellData;
             return (
@@ -253,18 +254,42 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
             ).isRequired
         }).isRequired,
         options: PropTypes.shape({
-            verticalAlign: PropTypes.oneOf(["top", "middle", "bottom"]),
-            editActions: PropTypes.shape({
-                addDivergingBranch: menuOptionsPropType,
-                addFollowingContentElement: menuOptionsPropType,
-                addFollowingDivergingGateway: menuOptionsPropType,
-                changeNextElement: menuOptionsPropType,
-                removeElement: menuOptionsPropType
-            })
+            verticalAlign: PropTypes.oneOf(["top", "middle", "bottom"])
         }),
-        renderContent: PropTypes.func.isRequired,
+        renderStep: PropTypes.func.isRequired,
         renderGatewayConditionType: PropTypes.func,
         renderGatewayConditionValue: PropTypes.func,
-        onChange: PropTypes.func
+        onChange: PropTypes.func,
+        editActions: PropTypes.shape({
+            addDivergingBranch: PropTypes.shape({
+                className: PropTypes.string,
+                title: PropTypes.string,
+                isActionAllowed: PropTypes.func,
+                getBranchConditionData: PropTypes.func
+            }),
+            addFollowingStepElement: PropTypes.shape({
+                className: PropTypes.string,
+                title: PropTypes.string,
+                isActionAllowed: PropTypes.func,
+                getStepData: PropTypes.func
+            }),
+            addFollowingDivergingGateway: PropTypes.shape({
+                className: PropTypes.string,
+                title: PropTypes.string,
+                isActionAllowed: PropTypes.func,
+                getGatewayData: PropTypes.func,
+                getBranchConditionData: PropTypes.func
+            }),
+            changeNextElement: PropTypes.shape({
+                className: PropTypes.string,
+                title: PropTypes.string,
+                isActionAllowed: PropTypes.func
+            }),
+            removeElement: PropTypes.shape({
+                className: PropTypes.string,
+                title: PropTypes.string,
+                isActionAllowed: PropTypes.func
+            })
+        })
     };
 }

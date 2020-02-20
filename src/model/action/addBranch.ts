@@ -1,21 +1,26 @@
-import cloneDeep from "lodash.clonedeep";
+import { cloneFlow } from "./editUtils";
 
-import { FlowElementReference } from "../FlowElement";
+import { DivergingGatewayNode, StepNode, ConvergingGatewayBranch, ElementType } from "../../types/ModelElement";
 import { FlowModelerProps, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 import { EditActionResult } from "../../types/EditAction";
 
 export const addBranch = (
     originalFlow: FlowModelerProps["flow"],
-    data: { [key: string]: unknown } | undefined,
-    gateway: FlowElementReference
+    gateway: DivergingGatewayNode,
+    conditionData: { [key: string]: unknown } | undefined
 ): EditActionResult => {
-    const changedFlow = cloneDeep(originalFlow);
-    const gatewayInFlow = changedFlow.elements[gateway.getId()] as FlowGatewayDiverging;
-    let nextConvergingGateway: FlowElementReference = gateway;
+    let nextConvergingBranch: DivergingGatewayNode | StepNode | ConvergingGatewayBranch = gateway;
     do {
-        const followings = nextConvergingGateway.getFollowingElements();
-        nextConvergingGateway = followings[followings.length - 1];
-    } while (nextConvergingGateway.getPrecedingElements().length < 2);
-    gatewayInFlow.nextElements.push({ id: nextConvergingGateway.getId(), conditionData: data });
+        if (nextConvergingBranch.type === ElementType.DivergingGatewayNode) {
+            nextConvergingBranch = nextConvergingBranch.followingBranches[nextConvergingBranch.followingBranches.length - 1].followingElement;
+        } else {
+            // there can be no EndNode after a Diverging Gateway before the next Converging Gateway
+            nextConvergingBranch = (nextConvergingBranch.followingElement as unknown) as DivergingGatewayNode | StepNode | ConvergingGatewayBranch;
+        }
+    } while (nextConvergingBranch.type !== ElementType.ConvergingGatewayBranch);
+    const nextElement = nextConvergingBranch.followingElement.followingElement;
+    const changedFlow = cloneFlow(originalFlow);
+    const gatewayInFlow = changedFlow.elements[gateway.id] as FlowGatewayDiverging;
+    gatewayInFlow.nextElements.push({ id: nextElement.type === ElementType.EndNode ? null : nextElement.id, conditionData });
     return { changedFlow };
 };

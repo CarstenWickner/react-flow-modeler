@@ -1,12 +1,12 @@
 import * as React from "react";
 import { DndProvider } from "react-dnd";
-import Backend from "react-dnd-html5-backend";
+import Backend from "react-dnd-test-backend";
 import { mount, shallow } from "enzyme";
 
 import { EditMenuItem } from "../../src/component/EditMenuItem";
 import { DraggableType } from "../../src/types/EditAction";
-import { ElementType } from "../../src/types/GridCellData";
-import { FlowElementReference } from "../../src/model/FlowElement";
+import { ElementType } from "../../src/types/ModelElement";
+import { DraggedLinkContext } from "../../src/types/EditAction";
 
 describe("renders correctly", () => {
     it("for clicking", () => {
@@ -18,13 +18,13 @@ describe("renders correctly", () => {
         expect(element.prop("onClick")).toBe(onClick);
     });
     it("for dragging", () => {
-        const dragItem = {
+        const dragItem: DraggedLinkContext = {
             type: DraggableType.LINK,
-            originType: ElementType.Content,
             originElement: {
-                getId: (): string => "id",
-                getPrecedingElements: (): Array<FlowElementReference> => [],
-                getFollowingElements: (): Array<FlowElementReference> => []
+                type: ElementType.StepNode,
+                id: "id",
+                precedingElement: undefined,
+                followingElement: undefined
             }
         };
         const component = mount(

@@ -1,3 +1,4 @@
+import { forceReRender } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { Meta, Preview, Story, Props } from '@storybook/addon-docs/blocks';
 import "./style-overrides.css";
@@ -10,25 +11,103 @@ import { FlowModeler } from "../src/index";
 
 Introducing a component for viewing/editing simple flows.
 
+export const externalState = {
+    flow: {
+        firstElementId: "1",
+        elements: {
+            "1": { data: { label: "First" }, nextElementId: "2" },
+            "2": { data: { label: "Second" }, nextElementId: "3" },
+            "3": { data: { type: "one" }, nextElements: [
+                { id: "4.1", conditionData: { label: "Fulfilled" } },
+                { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
+            "4.1": { data: { label: "Option 1" }, nextElementId: "5" },
+            "4.2": { data: { label: "Option 2" }, nextElementId: "5" },
+            "5": { data: { label: "Follow-Up"}}
+        }
+    }
+}
+
 <Preview>
     <Story name="show-case">
         <FlowModeler
-            flow={{
-                firstElementId: "1",
-                elements: {
-                    "1": { data: { label: "First" }, nextElementId: "2" },
-                    "2": { data: { label: "Second" }, nextElementId: "3" },
-                    "3": { data: { label: "Condition" }, nextElements: [
-                        { id: "4.1", conditionData: { label: "Fulfilled" } },
-                        { id: "4.2", conditionData: { label: "Not fulfilled" } }] },
-                    "4.1": { data: { label: "Option 1" }, nextElementId: "5" },
-                    "4.2": { data: { label: "Option 2" }, nextElementId: "5" },
-                    "5": { data: { label: "Follow-Up"}}
-                }
+            flow={externalState.flow}
+            renderStep={({ id, data }) => (
+                <input
+                    type="text"
+                    value={data ? data.label : ""}
+                    style={{ marginRight: "0.5em", width: "6em", fontSize: "12px", lineHeight: "2em" }}
+                    onClick={(event) => { event.stopPropagation() }}
+                    onChange={(event) => {
+                        externalState.flow = {
+                            firstElementId: externalState.flow.firstElementId,
+                            elements: {
+                                ...externalState.flow.elements,
+                                [id]: {
+                                    ...externalState.flow.elements[id],
+                                    data: { label: event.target.value }
+                                }
+                            }
+                        };
+                        event.stopPropagation();
+                        forceReRender();
+                    }}
+                />
+            )}
+            renderGatewayConditionType={({ id, data }) => (
+                <select
+                    value={data ? data.type : "one"}
+                    style={{ width: "10em", fontSize: "12px" }}
+                    onClick={(event) => { event.stopPropagation() }}
+                    onChange={(event) => {
+                        externalState.flow = {
+                            firstElementId: externalState.flow.firstElementId,
+                            elements: {
+                                ...externalState.flow.elements,
+                                [id]: {
+                                    ...externalState.flow.elements[id],
+                                    data: { value: event.target.value }
+                                }
+                            }
+                        };
+                        event.stopPropagation();
+                        forceReRender();
+                    }}
+                >
+                    <option value="one">A Condition</option>
+                    <option value="two">Other Condition</option>
+                </select>
+            )}
+            renderGatewayConditionValue={({ precedingElement, branchIndex, data }) => (
+                precedingElement.followingBranches.length === 2
+                    ? <label>{data && data.label}</label>
+                    : <select
+                        value={data ? data.label : "Fulfilled"}
+                        style={{ width: "10em", marginLeft: "0.5em", fontSize: "12px" }}
+                        onClick={(event) => { event.stopPropagation() }}
+                        onChange={(event) => {
+                            externalState.flow = {
+                                firstElementId: externalState.flow.firstElementId,
+                                elements: {
+                                    ...externalState.flow.elements,
+                                    [precedingElement.id]: {
+                                        ...externalState.flow.elements[precedingElement.id],
+                                        nextElements: [...externalState.flow.elements[precedingElement.id].nextElements]
+                                            .map((branch, index) => index === branchIndex ? { id: branch.id, conditionData: { label: event.target.value } } : branch)
+                                    }
+                                }
+                            };
+                            event.stopPropagation();
+                            forceReRender();
+                        }}
+                    >
+                        <option value="Fulfilled">Fulfilled</option>
+                        <option value="Not fulfilled">Not fulfilled</option>
+                    </select>
+            )}
+            onChange={({ changedFlow }) => {
+                externalState.flow = changedFlow;
+                forceReRender();
             }}
-            renderContent={({ elementData }) => <span>{elementData && elementData.label}</span>}
-            renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData && gatewayData.label}</label>}
-            renderGatewayConditionValue={({ conditionData }) => <label>{conditionData && conditionData.label}</label>}
         />
     </Story>
 </Preview>

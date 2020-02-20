@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly for content element 1`] = `
+exports[`renders correctly for step element 1`] = `
 <div
   className="menu"
   onClick={[Function]}
 >
   <Component
-    defaultClassName="add-content"
-    key="add-content"
+    defaultClassName="add-step"
+    key="add-step"
     onClick={[Function]}
   />
   <Component
@@ -19,9 +19,7 @@ exports[`renders correctly for content element 1`] = `
     defaultClassName="change-next"
     dragItem={
       Object {
-        "originBranchIndex": undefined,
-        "originElement": FlowElement { "id": "b" },
-        "originType": 2,
+        "originElement": StepNode { "id": "b" },
         "type": "link",
       }
     }
@@ -41,8 +39,8 @@ exports[`renders correctly for converging gateway 1`] = `
   onClick={[Function]}
 >
   <Component
-    defaultClassName="add-content"
-    key="add-content"
+    defaultClassName="add-step"
+    key="add-step"
     onClick={[Function]}
   />
   <Component
@@ -72,13 +70,28 @@ exports[`renders correctly for diverging gateway branch 1`] = `
   onClick={[Function]}
 >
   <Component
-    defaultClassName="add-content"
-    key="add-content"
+    defaultClassName="add-step"
+    key="add-step"
     onClick={[Function]}
   />
   <Component
     defaultClassName="add-gateway"
     key="add-gateway"
+    onClick={[Function]}
+  />
+  <Component
+    defaultClassName="change-next"
+    dragItem={
+      Object {
+        "originElement": DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
+        "type": "link",
+      }
+    }
+    key="change-next"
+  />
+  <Component
+    defaultClassName="remove"
+    key="remove"
     onClick={[Function]}
   />
 </div>
@@ -90,8 +103,8 @@ exports[`renders correctly for start element 1`] = `
   onClick={[Function]}
 >
   <Component
-    defaultClassName="add-content"
-    key="add-content"
+    defaultClassName="add-step"
+    key="add-step"
     onClick={[Function]}
   />
   <Component

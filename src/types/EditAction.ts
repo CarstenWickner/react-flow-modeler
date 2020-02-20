@@ -1,13 +1,12 @@
-import { FlowElementReference } from "../model/FlowElement";
+import { StepNode, DivergingGatewayBranch, DivergingGatewayNode, ConvergingGatewayNode, ElementType, EndNode } from "./ModelElement";
 import { FlowModelerProps } from "./FlowModelerProps";
-import { ElementType } from "./GridCellData";
 
 export type SelectableElementType =
-    | ElementType.Start
-    | ElementType.Content
-    | ElementType.GatewayDiverging
-    | ElementType.GatewayConverging
-    | ElementType.ConnectGatewayToElement;
+    | ElementType.StartNode
+    | ElementType.StepNode
+    | ElementType.DivergingGatewayNode
+    | ElementType.ConvergingGatewayNode
+    | ElementType.DivergingGatewayBranch;
 
 export interface EditActionResult {
     changedFlow: FlowModelerProps["flow"];
@@ -19,12 +18,10 @@ export enum DraggableType {
 
 export interface DraggedLinkContext {
     type: DraggableType.LINK;
-    originType: ElementType.Content | ElementType.ConnectGatewayToElement;
-    originElement: FlowElementReference;
-    originBranchIndex?: number;
+    originElement: StepNode | DivergingGatewayBranch;
 }
 
 export type onLinkDropCallback = {
-    (dropTarget: FlowElementReference, dragContext: DraggedLinkContext, dryRun?: never): void;
-    (dropTarget: FlowElementReference, dragContext: DraggedLinkContext, dryRun?: true): EditActionResult;
+    (dropTarget: StepNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode, dragContext: DraggedLinkContext, dryRun?: never): void;
+    (dropTarget: StepNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode, dragContext: DraggedLinkContext, dryRun?: true): EditActionResult;
 };

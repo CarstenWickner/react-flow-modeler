@@ -26,7 +26,7 @@ import { FlowModeler } from "../src/index";
                     "3": { data: { label: "Third" } }
                 }
             }}
-            renderContent={({ elementData }) => <span>{elementData.label}</span>}
+            renderStep={({ data }) => <span>{data.label}</span>}
         />
     </Story>
 </Preview>
@@ -52,9 +52,9 @@ including the "unmentioned" and also automatically inserted end node.
                     "4": { data: { label: "Last" } }
                 }
             }}
-            renderContent={({ elementData }) => <span>{elementData.label}</span>}
-            renderGatewayConditionType={({ gatewayData }) => <label>{gatewayData.label}</label>}
-            renderGatewayConditionValue={({ conditionData }) => <label>{conditionData.label}</label>}
+            renderStep={({ data }) => <span>{data.label}</span>}
+            renderGatewayConditionType={({ data }) => <label>{data.label}</label>}
+            renderGatewayConditionValue={({ data }) => <label>{data.label}</label>}
         />
     </Story>
 </Preview>
@@ -86,7 +86,7 @@ including the "unmentioned" and also automatically inserted end node.
                     "4.3.2.2": { data: { label: "Step C" } }
                 }
             }}  
-            renderContent={({ elementData }) => <span>{elementData && elementData.label}</span>}
+            renderStep={({ data }) => <span>{data && data.label}</span>}
         />
     </Story>
 </Preview>
