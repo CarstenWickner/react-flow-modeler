@@ -1,6 +1,6 @@
 import { cloneFlow } from "./editUtils";
 
-import { DivergingGatewayNode, ContentNode, ConvergingGatewayBranch, ElementType } from "../../types/ModelElement";
+import { DivergingGatewayNode, StepNode, ConvergingGatewayBranch, ElementType } from "../../types/ModelElement";
 import { FlowModelerProps, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 import { EditActionResult } from "../../types/EditAction";
 
@@ -9,13 +9,13 @@ export const addBranch = (
     gateway: DivergingGatewayNode,
     conditionData: { [key: string]: unknown } | undefined
 ): EditActionResult => {
-    let nextConvergingBranch: DivergingGatewayNode | ContentNode | ConvergingGatewayBranch = gateway;
+    let nextConvergingBranch: DivergingGatewayNode | StepNode | ConvergingGatewayBranch = gateway;
     do {
         if (nextConvergingBranch.type === ElementType.DivergingGatewayNode) {
             nextConvergingBranch = nextConvergingBranch.followingBranches[nextConvergingBranch.followingBranches.length - 1].followingElement;
         } else {
             // there can be no EndNode after a Diverging Gateway before the next Converging Gateway
-            nextConvergingBranch = (nextConvergingBranch.followingElement as unknown) as DivergingGatewayNode | ContentNode | ConvergingGatewayBranch;
+            nextConvergingBranch = (nextConvergingBranch.followingElement as unknown) as DivergingGatewayNode | StepNode | ConvergingGatewayBranch;
         }
     } while (nextConvergingBranch.type !== ElementType.ConvergingGatewayBranch);
     const nextElement = nextConvergingBranch.followingElement.followingElement;

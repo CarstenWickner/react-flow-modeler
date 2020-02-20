@@ -1,11 +1,11 @@
 import * as React from "react";
 import { mount, shallow } from "enzyme";
 
-import { ContentElement } from "../../src/component/ContentElement";
-import { ContentNode, ElementType } from "../../src/types/ModelElement";
+import { StepElement } from "../../src/component/StepElement";
+import { StepNode, ElementType } from "../../src/types/ModelElement";
 
-const mockFlowElementReference = (id: string): ContentNode => ({
-    type: ElementType.ContentNode,
+const mockFlowElementReference = (id: string): StepNode => ({
+    type: ElementType.StepNode,
     id,
     precedingElement: undefined,
     followingElement: undefined,
@@ -17,25 +17,25 @@ describe("renders correctly", () => {
     const onSelect = (): void => {};
     it("with minimal props", () => {
         const component = shallow(
-            <ContentElement
+            <StepElement
                 referenceElement={mockFlowElementReference("element-id")}
                 editMenu={(): React.ReactNode => <div className="edit-menu-placeholder" />}
                 onLinkDrop={undefined}
                 onSelect={onSelect}
             >
                 {"text"}
-            </ContentElement>
+            </StepElement>
         );
         expect(component).toMatchSnapshot();
     });
     it("when not selected", () => {
         const component = mount(
-            <ContentElement referenceElement={mockFlowElementReference("element-id")} editMenu={undefined} onLinkDrop={undefined} onSelect={onSelect}>
+            <StepElement referenceElement={mockFlowElementReference("element-id")} editMenu={undefined} onLinkDrop={undefined} onSelect={onSelect}>
                 {"text"}
-            </ContentElement>
+            </StepElement>
         );
-        const contentElement = component.find(".content-element");
-        expect(contentElement.hasClass("selected")).toBe(false);
+        const stepElement = component.find(".step-element");
+        expect(stepElement.hasClass("selected")).toBe(false);
         expect(component.find(".edit-menu-placeholder").exists()).toBe(false);
     });
 });
@@ -43,15 +43,15 @@ describe("calls onSelect", () => {
     const onSelect = jest.fn(() => {});
     const event = ({ stopPropagation: jest.fn(() => {}) } as unknown) as React.MouseEvent;
     it("on click event", () => {
-        const contentNode = mockFlowElementReference("element-id");
+        const stepNode = mockFlowElementReference("element-id");
         const component = mount(
-            <ContentElement referenceElement={contentNode} editMenu={undefined} onLinkDrop={undefined} onSelect={onSelect}>
+            <StepElement referenceElement={stepNode} editMenu={undefined} onLinkDrop={undefined} onSelect={onSelect}>
                 {"text"}
-            </ContentElement>
+            </StepElement>
         );
-        component.find(".content-element").prop("onClick")(event);
+        component.find(".step-element").prop("onClick")(event);
         expect(onSelect.mock.calls).toHaveLength(1);
         expect(onSelect.mock.calls[0]).toHaveLength(1);
-        expect(onSelect.mock.calls[0][0]).toBe(contentNode);
+        expect(onSelect.mock.calls[0][0]).toBe(stepNode);
     });
 });

@@ -1,6 +1,6 @@
 import { determineRowCounts } from "./rowCountUtils";
 import {
-    ContentNode,
+    StepNode,
     ConvergingGatewayBranch,
     ConvergingGatewayNode,
     DivergingGatewayBranch,
@@ -10,27 +10,27 @@ import {
     ModelElement,
     StartNode
 } from "../types/ModelElement";
-import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../types/FlowModelerProps";
+import { FlowModelerProps, FlowStep, FlowGatewayDiverging } from "../types/FlowModelerProps";
 
-export const isDivergingGateway = (inputElement: FlowContent | FlowGatewayDiverging): inputElement is FlowGatewayDiverging =>
+export const isDivergingGateway = (inputElement: FlowStep | FlowGatewayDiverging): inputElement is FlowGatewayDiverging =>
     !!inputElement && (inputElement as FlowGatewayDiverging).nextElements !== undefined;
 
-export const isMatchingModelElement = (elementId: string): ((element: ModelElement) => element is ContentNode | DivergingGatewayNode | EndNode) => (
+export const isMatchingModelElement = (elementId: string): ((element: ModelElement) => element is StepNode | DivergingGatewayNode | EndNode) => (
     element: ModelElement
-): element is ContentNode | DivergingGatewayNode | EndNode =>
-    ((element.type === ElementType.ContentNode || element.type === ElementType.DivergingGatewayNode) && element.id === elementId) ||
+): element is StepNode | DivergingGatewayNode | EndNode =>
+    ((element.type === ElementType.StepNode || element.type === ElementType.DivergingGatewayNode) && element.id === elementId) ||
     (elementId === null && element.type === ElementType.EndNode);
 
-const createEndNode = (precedingElement: StartNode | ContentNode | ConvergingGatewayNode, resultingModelElements: Array<ModelElement>): EndNode => {
+const createEndNode = (precedingElement: StartNode | StepNode | ConvergingGatewayNode, resultingModelElements: Array<ModelElement>): EndNode => {
     const end: EndNode = { type: ElementType.EndNode, precedingElement, columnIndex: undefined, rowCount: undefined };
     resultingModelElements.push(end);
     return end;
 };
 
 const addAdditionalBranchToConvergingGateway = (
-    elementBehindConvergingGateway: ContentNode | DivergingGatewayNode | EndNode,
+    elementBehindConvergingGateway: StepNode | DivergingGatewayNode | EndNode,
     resultingModelElements: Array<ModelElement>,
-    precedingElement: ContentNode | DivergingGatewayBranch
+    precedingElement: StepNode | DivergingGatewayBranch
 ): ConvergingGatewayBranch => {
     let convergingGateway: ConvergingGatewayNode;
     if (elementBehindConvergingGateway.precedingElement.type === ElementType.ConvergingGatewayNode) {
@@ -45,7 +45,7 @@ const addAdditionalBranchToConvergingGateway = (
         };
         const existingBranch: ConvergingGatewayBranch = {
             type: ElementType.ConvergingGatewayBranch,
-            precedingElement: (elementBehindConvergingGateway.precedingElement as unknown) as ContentNode | DivergingGatewayBranch,
+            precedingElement: (elementBehindConvergingGateway.precedingElement as unknown) as StepNode | DivergingGatewayBranch,
             followingElement: convergingGateway,
             branchIndex: 0,
             columnIndex: undefined,
@@ -73,37 +73,37 @@ const handleNextElement = (
     id: string,
     inputElements: FlowModelerProps["flow"]["elements"],
     resultingModelElements: Array<ModelElement>,
-    precedingElement: ContentNode | DivergingGatewayBranch | ConvergingGatewayNode
-): ContentNode | DivergingGatewayNode | ConvergingGatewayBranch | EndNode => {
+    precedingElement: StepNode | DivergingGatewayBranch | ConvergingGatewayNode
+): StepNode | DivergingGatewayNode | ConvergingGatewayBranch | EndNode => {
     const existingElement = resultingModelElements.find(isMatchingModelElement(id in inputElements ? id : null));
     if (existingElement) {
         return addAdditionalBranchToConvergingGateway(
             existingElement,
             resultingModelElements,
-            (precedingElement as unknown) as ContentNode | DivergingGatewayBranch
+            (precedingElement as unknown) as StepNode | DivergingGatewayBranch
         );
     }
     const inputElement = inputElements[id];
     if (!inputElement) {
-        return createEndNode((precedingElement as unknown) as StartNode | ContentNode | ConvergingGatewayNode, resultingModelElements);
+        return createEndNode((precedingElement as unknown) as StartNode | StepNode | ConvergingGatewayNode, resultingModelElements);
     }
     if (isDivergingGateway(inputElement)) {
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         return createDivergingGatewayNode(id, inputElement, inputElements, resultingModelElements, precedingElement);
     }
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    return createContentNode(id, inputElement, inputElements, resultingModelElements, precedingElement);
+    return createStepNode(id, inputElement, inputElements, resultingModelElements, precedingElement);
 };
 
-const createContentNode = (
+const createStepNode = (
     id: string,
-    inputElement: FlowContent,
+    inputElement: FlowStep,
     inputElements: FlowModelerProps["flow"]["elements"],
     resultingModelElements: Array<ModelElement>,
-    precedingElement: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode
-): ContentNode => {
-    const content: ContentNode = {
-        type: ElementType.ContentNode,
+    precedingElement: StartNode | StepNode | DivergingGatewayBranch | ConvergingGatewayNode
+): StepNode => {
+    const step: StepNode = {
+        type: ElementType.StepNode,
         id,
         precedingElement,
         followingElement: undefined,
@@ -111,9 +111,9 @@ const createContentNode = (
         columnIndex: undefined,
         rowCount: undefined
     };
-    resultingModelElements.push(content);
-    content.followingElement = handleNextElement(inputElement.nextElementId, inputElements, resultingModelElements, content);
-    return content;
+    resultingModelElements.push(step);
+    step.followingElement = handleNextElement(inputElement.nextElementId, inputElements, resultingModelElements, step);
+    return step;
 };
 
 const createDivergingGatewayNode = (
@@ -121,7 +121,7 @@ const createDivergingGatewayNode = (
     inputElement: FlowGatewayDiverging,
     inputElements: FlowModelerProps["flow"]["elements"],
     resultingModelElements: Array<ModelElement>,
-    precedingElement: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode
+    precedingElement: StartNode | StepNode | DivergingGatewayBranch | ConvergingGatewayNode
 ): DivergingGatewayNode => {
     const divergingGateway: DivergingGatewayNode = {
         type: ElementType.DivergingGatewayNode,
@@ -156,7 +156,7 @@ const createDivergingGatewayNode = (
         resultingModelElements.push(branch);
         // there can be no end node before the next converging gateway
         branch.followingElement = (handleNextElement(branchTarget.id, inputElements, resultingModelElements, branch) as unknown) as
-            | ContentNode
+            | StepNode
             | DivergingGatewayNode
             | ConvergingGatewayBranch;
     });
@@ -188,13 +188,13 @@ export const createMinimalElementTreeStructure = ({
     };
     const elementsInTree: Array<ModelElement> = [start];
     const inputElement = elements[firstElementId];
-    let firstElement: ContentNode | DivergingGatewayNode | EndNode;
+    let firstElement: StepNode | DivergingGatewayNode | EndNode;
     if (!inputElement) {
         firstElement = createEndNode(start, elementsInTree);
     } else if (isDivergingGateway(inputElement)) {
         firstElement = createDivergingGatewayNode(firstElementId, inputElement, elements, elementsInTree, start);
     } else {
-        firstElement = createContentNode(firstElementId, inputElement, elements, elementsInTree, start);
+        firstElement = createStepNode(firstElementId, inputElement, elements, elementsInTree, start);
     }
     start.followingElement = firstElement;
     return { start, elementsInTree };

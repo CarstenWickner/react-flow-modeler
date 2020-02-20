@@ -1,6 +1,6 @@
 export const enum ElementType {
     StartNode = 1,
-    ContentNode,
+    StepNode,
     DivergingGatewayNode,
     ConvergingGatewayNode,
     DivergingGatewayBranch,
@@ -15,21 +15,21 @@ interface BaseModelNode {
 
 export interface StartNode extends BaseModelNode {
     type: ElementType.StartNode;
-    followingElement: ContentNode | DivergingGatewayNode | EndNode;
+    followingElement: StepNode | DivergingGatewayNode | EndNode;
 }
 
-export interface ContentNode extends BaseModelNode {
-    type: ElementType.ContentNode;
+export interface StepNode extends BaseModelNode {
+    type: ElementType.StepNode;
     id: string;
-    precedingElement: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode;
-    followingElement: ContentNode | DivergingGatewayNode | ConvergingGatewayBranch | EndNode;
+    precedingElement: StartNode | StepNode | DivergingGatewayBranch | ConvergingGatewayNode;
+    followingElement: StepNode | DivergingGatewayNode | ConvergingGatewayBranch | EndNode;
     data?: { [key: string]: unknown };
 }
 
 export interface DivergingGatewayNode extends BaseModelNode {
     type: ElementType.DivergingGatewayNode;
     id: string;
-    precedingElement: StartNode | ContentNode | DivergingGatewayBranch | ConvergingGatewayNode;
+    precedingElement: StartNode | StepNode | DivergingGatewayBranch | ConvergingGatewayNode;
     followingBranches: Array<DivergingGatewayBranch>;
     data?: { [key: string]: unknown };
 }
@@ -38,30 +38,30 @@ export interface DivergingGatewayBranch extends BaseModelNode {
     type: ElementType.DivergingGatewayBranch;
     precedingElement: DivergingGatewayNode;
     branchIndex: number;
-    followingElement: ContentNode | DivergingGatewayNode | ConvergingGatewayBranch;
+    followingElement: StepNode | DivergingGatewayNode | ConvergingGatewayBranch;
     data?: { [key: string]: unknown };
 }
 
 export interface ConvergingGatewayNode extends BaseModelNode {
     type: ElementType.ConvergingGatewayNode;
     precedingBranches: Array<ConvergingGatewayBranch>;
-    followingElement: ContentNode | DivergingGatewayNode | EndNode;
+    followingElement: StepNode | DivergingGatewayNode | EndNode;
 }
 
 export interface ConvergingGatewayBranch extends BaseModelNode {
     type: ElementType.ConvergingGatewayBranch;
-    precedingElement: ContentNode | DivergingGatewayBranch;
+    precedingElement: StepNode | DivergingGatewayBranch;
     followingElement: ConvergingGatewayNode;
     branchIndex: number;
 }
 
 export interface EndNode extends BaseModelNode {
     type: ElementType.EndNode;
-    precedingElement: StartNode | ContentNode | ConvergingGatewayNode;
+    precedingElement: StartNode | StepNode | ConvergingGatewayNode;
 }
 
 export type ModelElementExclStart =
-    | ContentNode
+    | StepNode
     | DivergingGatewayNode
     | DivergingGatewayBranch
     | ConvergingGatewayBranch

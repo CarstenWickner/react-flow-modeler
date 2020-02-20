@@ -4,9 +4,9 @@ exports[`renders correctly with minimal props 1`] = `
 <Fragment>
   <Component
     editMenu={[Function]}
-    elementTypeClassName="content-element"
+    elementTypeClassName="step-element"
     onClick={[Function]}
-    referenceElement={ContentNode { "id": "element-id" }}
+    referenceElement={StepNode { "id": "element-id" }}
   >
     text
   </Component>

@@ -3,7 +3,7 @@ import * as React from "react";
 import { DndProvider } from "react-dnd";
 import Backend from "react-dnd-html5-backend";
 
-import { ContentElement } from "./ContentElement";
+import { StepElement } from "./StepElement";
 import { EditMenu } from "./EditMenu";
 import { FlowElementWrapper } from "./FlowElementWrapper";
 import { Gateway } from "./Gateway";
@@ -12,7 +12,7 @@ import { HorizontalStroke, getConnectionClassName } from "./HorizontalStroke";
 import { buildRenderData } from "./renderDataUtils";
 import { changeNextElement } from "../model/action/changeNextElement";
 import {
-    ContentNode,
+    StepNode,
     ConvergingGatewayNode,
     DivergingGatewayBranch,
     DivergingGatewayNode,
@@ -37,7 +37,7 @@ interface FlowModelerState {
 }
 
 const createSelector = (
-    reference: { type: ElementType.StartNode } | ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode
+    reference: { type: ElementType.StartNode } | StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode
 ): Selector => {
     if (reference.type === ElementType.StartNode) {
         return reference;
@@ -59,7 +59,7 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
     state: FlowModelerState = { selection: null };
 
     isTargetSelected(
-        reference: { type: ElementType.StartNode } | ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode | null
+        reference: { type: ElementType.StartNode } | StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode | null
     ): boolean {
         if (this.state.selection === null) {
             return reference === null;
@@ -76,7 +76,7 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
     }
 
     onSelect = (
-        reference: { type: ElementType.StartNode } | ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode | null
+        reference: { type: ElementType.StartNode } | StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode | null
     ): void => {
         const { onChange } = this.props;
         if (onChange && !this.isTargetSelected(reference)) {
@@ -104,7 +104,7 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
     };
 
     renderEditMenu = (
-        reference: StartNode | ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode
+        reference: StartNode | StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode
     ): undefined | (() => React.ReactNode) => {
         if (!this.isTargetSelected(reference)) {
             return undefined;
@@ -114,7 +114,7 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
     };
 
     handleOnLinkDrop = (
-        dropTarget: ContentNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode,
+        dropTarget: StepNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode,
         dragContext: DraggedLinkContext,
         dryRun?: boolean
     ): EditActionResult | undefined => {
@@ -141,17 +141,17 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
                         {startEditMenu && startEditMenu()}
                     </>
                 );
-            case ElementType.ContentNode:
-                const { renderContent } = this.props;
+            case ElementType.StepNode:
+                const { renderStep } = this.props;
                 return (
-                    <ContentElement
+                    <StepElement
                         referenceElement={cellData}
                         editMenu={editable ? this.renderEditMenu(cellData) : undefined}
                         onLinkDrop={onLinkDrop}
                         onSelect={this.onSelect}
                     >
-                        {renderContent(cellData)}
-                    </ContentElement>
+                        {renderStep(cellData)}
+                    </StepElement>
                 );
             case ElementType.DivergingGatewayNode:
                 const { renderGatewayConditionType } = this.props;
@@ -256,7 +256,7 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
         options: PropTypes.shape({
             verticalAlign: PropTypes.oneOf(["top", "middle", "bottom"])
         }),
-        renderContent: PropTypes.func.isRequired,
+        renderStep: PropTypes.func.isRequired,
         renderGatewayConditionType: PropTypes.func,
         renderGatewayConditionValue: PropTypes.func,
         onChange: PropTypes.func,
@@ -267,11 +267,11 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
                 isActionAllowed: PropTypes.func,
                 getBranchConditionData: PropTypes.func
             }),
-            addFollowingContentElement: PropTypes.shape({
+            addFollowingStepElement: PropTypes.shape({
                 className: PropTypes.string,
                 title: PropTypes.string,
                 isActionAllowed: PropTypes.func,
-                getContentData: PropTypes.func
+                getStepData: PropTypes.func
             }),
             addFollowingDivergingGateway: PropTypes.shape({
                 className: PropTypes.string,

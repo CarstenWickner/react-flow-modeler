@@ -1,7 +1,7 @@
 import { isDivergingGateway } from "../modelUtils";
 
-import { ContentNode, DivergingGatewayBranch, ElementType } from "../../types/ModelElement";
-import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
+import { StepNode, DivergingGatewayBranch, ElementType } from "../../types/ModelElement";
+import { FlowModelerProps, FlowStep, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 
 export const cloneFlow = (originalFlow: FlowModelerProps["flow"]): FlowModelerProps["flow"] => {
     const clone: FlowModelerProps["flow"] = {
@@ -28,16 +28,13 @@ const checkIfIdNeedsReplacing = (flow: FlowModelerProps["flow"], currentId: stri
     return (id: string): boolean => id === currentId || (currentIdIsPointingToEnd && !(id in flow.elements));
 };
 
-const createLinkReplacer = (
-    needsReplacing: (id: string) => boolean,
-    replacementId: string
-): ((element: FlowContent | FlowGatewayDiverging) => void) => {
+const createLinkReplacer = (needsReplacing: (id: string) => boolean, replacementId: string): ((element: FlowStep | FlowGatewayDiverging) => void) => {
     const replaceBranchReference = (branch: { id?: string }): void => {
         if (needsReplacing(branch.id)) {
             branch.id = replacementId;
         }
     };
-    return (element: FlowContent | FlowGatewayDiverging): void => {
+    return (element: FlowStep | FlowGatewayDiverging): void => {
         if (isDivergingGateway(element)) {
             element.nextElements.forEach(replaceBranchReference);
         } else if (needsReplacing(element.nextElementId)) {
@@ -55,13 +52,13 @@ export const replaceAllLinks = (flow: FlowModelerProps["flow"], currentId: strin
 };
 
 export const replaceLinksInList = (
-    targets: Array<ContentNode | DivergingGatewayBranch>,
+    targets: Array<StepNode | DivergingGatewayBranch>,
     flow: FlowModelerProps["flow"],
     currentId: string,
     replacementId: string
 ): void => {
     const replacingContainedLink = createLinkReplacer(checkIfIdNeedsReplacing(flow, currentId), replacementId);
     targets
-        .map((target) => flow.elements[target.type === ElementType.ContentNode ? target.id : target.precedingElement.id])
+        .map((target) => flow.elements[target.type === ElementType.StepNode ? target.id : target.precedingElement.id])
         .forEach(replacingContainedLink);
 };

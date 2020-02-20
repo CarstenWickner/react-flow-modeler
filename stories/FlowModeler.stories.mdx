@@ -31,7 +31,7 @@ export const externalState = {
     <Story name="show-case">
         <FlowModeler
             flow={externalState.flow}
-            renderContent={({ id, data }) => (
+            renderStep={({ id, data }) => (
                 <input
                     type="text"
                     value={data ? data.label : ""}

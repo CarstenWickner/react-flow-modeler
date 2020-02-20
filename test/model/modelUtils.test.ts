@@ -1,6 +1,6 @@
 import { isDivergingGateway, createElementTree } from "../../src/model/modelUtils";
 import {
-    ContentNode,
+    StepNode,
     ConvergingGatewayBranch,
     ConvergingGatewayNode,
     DivergingGatewayNode,
@@ -8,7 +8,7 @@ import {
     ElementType,
     EndNode
 } from "../../src/types/ModelElement";
-import { cont, divGw } from "./testUtils";
+import { step, divGw } from "./testUtils";
 
 describe("isDivergingGateway()", () => {
     it.each`
@@ -37,25 +37,25 @@ describe("createElementTree()", () => {
         expect(endElement.columnIndex).toBe(2);
         expect(endElement.rowCount).toBe(1);
     });
-    it("can handle chained content elements", () => {
-        const startElement = createElementTree({ firstElementId: "a", elements: { a: cont("b"), b: cont("c"), c: {} } }, "top");
+    it("can handle chained step elements", () => {
+        const startElement = createElementTree({ firstElementId: "a", elements: { a: step("b"), b: step("c"), c: {} } }, "top");
         expect(startElement).toBeDefined();
         expect(startElement.type).toBe(ElementType.StartNode);
         expect(startElement.columnIndex).toBe(1);
         expect(startElement.rowCount).toBe(1);
-        const rootElement = startElement.followingElement as ContentNode;
-        expect(rootElement.type).toBe(ElementType.ContentNode);
+        const rootElement = startElement.followingElement as StepNode;
+        expect(rootElement.type).toBe(ElementType.StepNode);
         expect(rootElement.id).toBe("a");
         expect(rootElement.columnIndex).toBe(2);
         expect(rootElement.rowCount).toBe(1);
-        const bElement = rootElement.followingElement as ContentNode;
-        expect(bElement.type).toBe(ElementType.ContentNode);
+        const bElement = rootElement.followingElement as StepNode;
+        expect(bElement.type).toBe(ElementType.StepNode);
         expect(bElement.id).toBe("b");
         expect(bElement.columnIndex).toBe(3);
         expect(bElement.rowCount).toBe(1);
         expect(bElement.precedingElement).toBe(rootElement);
-        const cElement = bElement.followingElement as ContentNode;
-        expect(cElement.type).toBe(ElementType.ContentNode);
+        const cElement = bElement.followingElement as StepNode;
+        expect(cElement.type).toBe(ElementType.StepNode);
         expect(cElement.id).toBe("c");
         expect(cElement.columnIndex).toBe(4);
         expect(cElement.rowCount).toBe(1);
@@ -72,14 +72,14 @@ describe("createElementTree()", () => {
                 firstElementId: "div-gw-1",
                 elements: {
                     "div-gw-1": divGw("cont-1", "cont-3"),
-                    "cont-1": cont("cont-2"),
-                    "cont-2": cont("conv-gw-1/div-gw-2"),
-                    "cont-3": cont("conv-gw-1/div-gw-2"),
+                    "cont-1": step("cont-2"),
+                    "cont-2": step("conv-gw-1/div-gw-2"),
+                    "cont-3": step("conv-gw-1/div-gw-2"),
                     "conv-gw-1/div-gw-2": divGw("cont-4", "cont-5", "cont-6", "cont-7"),
-                    "cont-4": cont("conv-gw-2"),
-                    "cont-5": cont("conv-gw-2"),
-                    "cont-6": cont("conv-gw-2"),
-                    "cont-7": cont("conv-gw-2"),
+                    "cont-4": step("conv-gw-2"),
+                    "cont-5": step("conv-gw-2"),
+                    "cont-6": step("conv-gw-2"),
+                    "cont-7": step("conv-gw-2"),
                     "conv-gw-2": {}
                 }
             },
@@ -89,26 +89,26 @@ describe("createElementTree()", () => {
         expect(rootElement.followingBranches).toHaveLength(2);
         const div1Branch1 = rootElement.followingBranches[0] as DivergingGatewayBranch;
         const div1Branch2 = rootElement.followingBranches[1] as DivergingGatewayBranch;
-        const cont1 = div1Branch1.followingElement as ContentNode;
-        const cont2 = cont1.followingElement as ContentNode;
+        const cont1 = div1Branch1.followingElement as StepNode;
+        const cont2 = cont1.followingElement as StepNode;
         const conv1Branch1 = cont2.followingElement as ConvergingGatewayBranch;
-        const cont3 = div1Branch2.followingElement as ContentNode;
+        const cont3 = div1Branch2.followingElement as StepNode;
         const conv1Branch2 = cont3.followingElement as ConvergingGatewayBranch;
         const convGw1 = conv1Branch1.followingElement as ConvergingGatewayNode;
         expect(conv1Branch2.followingElement).toBe(convGw1);
         const divGw2 = convGw1.followingElement as DivergingGatewayNode;
         expect(divGw2.followingBranches).toHaveLength(4);
         const div2Branch1 = divGw2.followingBranches[0];
-        const cont4 = div2Branch1.followingElement as ContentNode;
+        const cont4 = div2Branch1.followingElement as StepNode;
         const conv2Branch1 = cont4.followingElement as ConvergingGatewayBranch;
         const div2Branch2 = divGw2.followingBranches[1];
-        const cont5 = div2Branch2.followingElement as ContentNode;
+        const cont5 = div2Branch2.followingElement as StepNode;
         const conv2Branch2 = cont5.followingElement as ConvergingGatewayBranch;
         const div2Branch3 = divGw2.followingBranches[2];
-        const cont6 = div2Branch3.followingElement as ContentNode;
+        const cont6 = div2Branch3.followingElement as StepNode;
         const conv2Branch3 = cont6.followingElement as ConvergingGatewayBranch;
         const div2Branch4 = divGw2.followingBranches[3];
-        const cont7 = div2Branch4.followingElement as ContentNode;
+        const cont7 = div2Branch4.followingElement as StepNode;
         const conv2Branch4 = cont7.followingElement as ConvergingGatewayBranch;
         const convGw2 = conv2Branch1.followingElement;
         expect(conv2Branch2.followingElement).toBe(convGw2);
@@ -136,7 +136,7 @@ describe("createElementTree()", () => {
                 firstElementId: "1",
                 elements: {
                     "1": divGw("2.1", null, "2.3"),
-                    "2.1": cont("3.1"),
+                    "2.1": step("3.1"),
                     "2.3": divGw(null, "3.3.2"),
                     "3.1": {},
                     "3.3.2": divGw(null, "4.3.2.2", null),
@@ -146,8 +146,8 @@ describe("createElementTree()", () => {
             "top"
         );
         const element1 = start.followingElement as DivergingGatewayNode;
-        const element21 = element1.followingBranches[0].followingElement as ContentNode;
-        const element31 = element21.followingElement as ContentNode;
+        const element21 = element1.followingBranches[0].followingElement as StepNode;
+        const element31 = element21.followingElement as StepNode;
         const convGwEnd = (element31.followingElement as ConvergingGatewayBranch).followingElement;
         expect(convGwEnd.followingElement.type).toBe(ElementType.EndNode);
         expect((element1.followingBranches[1].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);
@@ -155,7 +155,7 @@ describe("createElementTree()", () => {
         expect((element23.followingBranches[0].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);
         const element332 = element23.followingBranches[1].followingElement as DivergingGatewayNode;
         expect((element332.followingBranches[0].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);
-        const element4322 = element332.followingBranches[1].followingElement as ContentNode;
+        const element4322 = element332.followingBranches[1].followingElement as StepNode;
         expect((element4322.followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);
         expect((element332.followingBranches[2].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);
 
@@ -171,7 +171,7 @@ describe("createElementTree()", () => {
         // last sub path: one row for one more converging gateway
         expect(element332.rowCount).toBe(3);
         // trailing converging gateway: one row for end connection
-        // trailing converging gateway: one row for direct connection to final content element
+        // trailing converging gateway: one row for direct connection to final step element
         expect(element4322.rowCount).toBe(1);
         // trailing converging gateway: one row for end connection
         // converging gateway before single end node: taking all six rows
@@ -185,7 +185,7 @@ describe("createElementTree()", () => {
         const convGwC = (b.followingBranches[1].followingElement as ConvergingGatewayBranch).followingElement;
         expect((a.followingBranches[1].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwC);
         expect((b.followingBranches[1].followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwC);
-        const c = convGwC.followingElement as ContentNode;
+        const c = convGwC.followingElement as StepNode;
         expect((c.followingElement as ConvergingGatewayBranch).followingElement).toBe(convGwEnd);
         const end = convGwEnd.followingElement as EndNode;
 

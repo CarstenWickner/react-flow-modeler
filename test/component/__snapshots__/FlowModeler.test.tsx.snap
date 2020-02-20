@@ -27,7 +27,7 @@ exports[`renders correctly with all render props 1`] = `
       key="2-1"
       rowStartIndex={3}
     >
-      <ContentElement
+      <StepElement
         onSelect={[Function]}
         referenceElement={
           Object {
@@ -47,7 +47,7 @@ exports[`renders correctly with all render props 1`] = `
         }
       >
         First Node
-      </ContentElement>
+      </StepElement>
     </Component>
     <Component
       colStartIndex={3}
@@ -64,11 +64,11 @@ exports[`renders correctly with all render props 1`] = `
             },
             "followingBranches": Array [
               DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
-              DivergingGatewayBranch { "followingElement": ContentNode { "id": "3.2" } },
+              DivergingGatewayBranch { "followingElement": StepNode { "id": "3.2" } },
               DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
             ],
             "id": "2",
-            "precedingElement": ContentNode { "id": "1" },
+            "precedingElement": StepNode { "id": "1" },
             "rowCount": 3,
             "rowEndIndex": 4,
             "rowStartIndex": 1,
@@ -188,7 +188,7 @@ exports[`renders correctly with all render props 1`] = `
             "data": Object {
               "label": "Continue",
             },
-            "followingElement": ContentNode { "id": "3.2" },
+            "followingElement": StepNode { "id": "3.2" },
             "precedingElement": DivergingGatewayNode { "id": "2" },
             "rowCount": 1,
             "rowEndIndex": 3,
@@ -207,7 +207,7 @@ exports[`renders correctly with all render props 1`] = `
       key="5-2"
       rowStartIndex={2}
     >
-      <ContentElement
+      <StepElement
         onSelect={[Function]}
         referenceElement={
           Object {
@@ -218,7 +218,7 @@ exports[`renders correctly with all render props 1`] = `
             },
             "followingElement": ConvergingGatewayBranch,
             "id": "3.2",
-            "precedingElement": DivergingGatewayBranch { "followingElement": ContentNode { "id": "3.2" } },
+            "precedingElement": DivergingGatewayBranch { "followingElement": StepNode { "id": "3.2" } },
             "rowCount": 1,
             "rowEndIndex": 3,
             "rowStartIndex": 2,
@@ -227,7 +227,7 @@ exports[`renders correctly with all render props 1`] = `
         }
       >
         Second Node
-      </ContentElement>
+      </StepElement>
     </Component>
     <Component
       colEndIndex={7}
@@ -319,7 +319,7 @@ exports[`renders correctly with minimal/default props 1`] = `
       rowEndIndex={4}
       rowStartIndex={1}
     >
-      <ContentElement
+      <StepElement
         onSelect={[Function]}
         referenceElement={
           Object {
@@ -339,7 +339,7 @@ exports[`renders correctly with minimal/default props 1`] = `
         }
       >
         First Node
-      </ContentElement>
+      </StepElement>
     </Component>
     <Component
       colStartIndex={3}
@@ -357,11 +357,11 @@ exports[`renders correctly with minimal/default props 1`] = `
             },
             "followingBranches": Array [
               DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
-              DivergingGatewayBranch { "followingElement": ContentNode { "id": "3.2" } },
+              DivergingGatewayBranch { "followingElement": StepNode { "id": "3.2" } },
               DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
             ],
             "id": "2",
-            "precedingElement": ContentNode { "id": "1" },
+            "precedingElement": StepNode { "id": "1" },
             "rowCount": 3,
             "rowEndIndex": 4,
             "rowStartIndex": 1,
@@ -478,7 +478,7 @@ exports[`renders correctly with minimal/default props 1`] = `
             "data": Object {
               "label": "Continue",
             },
-            "followingElement": ContentNode { "id": "3.2" },
+            "followingElement": StepNode { "id": "3.2" },
             "precedingElement": DivergingGatewayNode { "id": "2" },
             "rowCount": 1,
             "rowEndIndex": 3,
@@ -494,7 +494,7 @@ exports[`renders correctly with minimal/default props 1`] = `
       rowEndIndex={3}
       rowStartIndex={2}
     >
-      <ContentElement
+      <StepElement
         onSelect={[Function]}
         referenceElement={
           Object {
@@ -505,7 +505,7 @@ exports[`renders correctly with minimal/default props 1`] = `
             },
             "followingElement": ConvergingGatewayBranch,
             "id": "3.2",
-            "precedingElement": DivergingGatewayBranch { "followingElement": ContentNode { "id": "3.2" } },
+            "precedingElement": DivergingGatewayBranch { "followingElement": StepNode { "id": "3.2" } },
             "rowCount": 1,
             "rowEndIndex": 3,
             "rowStartIndex": 2,
@@ -514,7 +514,7 @@ exports[`renders correctly with minimal/default props 1`] = `
         }
       >
         Second Node
-      </ContentElement>
+      </StepElement>
     </Component>
     <Component
       colEndIndex={7}

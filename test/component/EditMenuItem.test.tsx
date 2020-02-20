@@ -6,7 +6,7 @@ import { mount, shallow } from "enzyme";
 import { EditMenuItem } from "../../src/component/EditMenuItem";
 import { DraggableType } from "../../src/types/EditAction";
 import { ElementType } from "../../src/types/ModelElement";
-import { DraggedLinkContext } from "../../build/types/EditAction";
+import { DraggedLinkContext } from "../../src/types/EditAction";
 
 describe("renders correctly", () => {
     it("for clicking", () => {
@@ -21,7 +21,7 @@ describe("renders correctly", () => {
         const dragItem: DraggedLinkContext = {
             type: DraggableType.LINK,
             originElement: {
-                type: ElementType.ContentNode,
+                type: ElementType.StepNode,
                 id: "id",
                 precedingElement: undefined,
                 followingElement: undefined

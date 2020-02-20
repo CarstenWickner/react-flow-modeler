@@ -3,12 +3,12 @@ import { useDrop } from "react-dnd";
 
 import { isFlowValid } from "../model/pathValidationUtils";
 
-import { ContentNode, ConvergingGatewayNode, DivergingGatewayNode, ElementType, EndNode, ModelElementExclStart } from "../types/ModelElement";
+import { StepNode, ConvergingGatewayNode, DivergingGatewayNode, ElementType, EndNode, ModelElementExclStart } from "../types/ModelElement";
 import { DraggableType, DraggedLinkContext, onLinkDropCallback } from "../types/EditAction";
 
 const isTargetAncestorOfDragItem = (
     originElement: ModelElementExclStart,
-    referenceElement: ContentNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode
+    referenceElement: StepNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode
 ): boolean => {
     if (originElement === referenceElement) {
         return true;
@@ -21,7 +21,7 @@ const isTargetAncestorOfDragItem = (
     );
 };
 
-const isDropValid = (referenceElement: ContentNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode, onDrop: onLinkDropCallback) => (
+const isDropValid = (referenceElement: StepNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode, onDrop: onLinkDropCallback) => (
     dragContext: DraggedLinkContext
 ): boolean =>
     !isTargetAncestorOfDragItem(dragContext.originElement, referenceElement) &&
@@ -32,7 +32,7 @@ const disabledDropping: [{ isOver: boolean; canDrop: false }, React.LegacyRef<HT
 
 export const FlowElementWrapper: React.FC<{
     elementTypeClassName: string;
-    referenceElement: ContentNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode;
+    referenceElement: StepNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode;
     editMenu?: (() => React.ReactNode) | undefined;
     onLinkDrop?: onLinkDropCallback | undefined;
     onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;

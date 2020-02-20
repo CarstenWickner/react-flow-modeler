@@ -1,16 +1,16 @@
 import { cloneFlow } from "./editUtils";
 
-import { ContentNode, DivergingGatewayNode, DivergingGatewayBranch, ConvergingGatewayNode, ElementType, EndNode } from "../../types/ModelElement";
+import { StepNode, DivergingGatewayNode, DivergingGatewayBranch, ConvergingGatewayNode, ElementType, EndNode } from "../../types/ModelElement";
 import { EditActionResult } from "../../types/EditAction";
-import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
+import { FlowModelerProps, FlowStep, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 
-export const isChangeNextElementAllowed = (referenceElement: ContentNode | DivergingGatewayBranch): boolean =>
+export const isChangeNextElementAllowed = (referenceElement: StepNode | DivergingGatewayBranch): boolean =>
     referenceElement.followingElement && referenceElement.followingElement.type === ElementType.ConvergingGatewayBranch;
 
 export const changeNextElement = (
     originalFlow: FlowModelerProps["flow"],
-    newNextElement: ContentNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode,
-    originElement: ContentNode | DivergingGatewayBranch
+    newNextElement: StepNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode,
+    originElement: StepNode | DivergingGatewayBranch
 ): EditActionResult => {
     const changedFlow = cloneFlow(originalFlow);
     let newNextElementId;
@@ -24,9 +24,9 @@ export const changeNextElement = (
         newNextElementId = null;
     }
     switch (originElement.type) {
-        case ElementType.ContentNode:
-            const contentElementInFlow = (changedFlow.elements[originElement.id] as unknown) as FlowContent;
-            contentElementInFlow.nextElementId = newNextElementId;
+        case ElementType.StepNode:
+            const stepElementInFlow = (changedFlow.elements[originElement.id] as unknown) as FlowStep;
+            stepElementInFlow.nextElementId = newNextElementId;
             break;
         case ElementType.DivergingGatewayBranch:
             const divergingGatewayInFlow = (changedFlow.elements[originElement.precedingElement.id] as unknown) as FlowGatewayDiverging;

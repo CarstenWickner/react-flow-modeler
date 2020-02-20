@@ -2,14 +2,14 @@ import { v4 } from "uuid";
 
 import { replaceLinksInList, cloneFlow } from "./editUtils";
 
-import { ContentNode, ConvergingGatewayNode, DivergingGatewayBranch, ElementType, StartNode } from "../../types/ModelElement";
+import { StepNode, ConvergingGatewayNode, DivergingGatewayBranch, ElementType, StartNode } from "../../types/ModelElement";
 import { EditActionResult } from "../../types/EditAction";
-import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
+import { FlowModelerProps, FlowStep, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 
 const addElement = (
     originalFlow: FlowModelerProps["flow"],
-    createElement: (nextElementId: string) => FlowContent | FlowGatewayDiverging,
-    precedingElement: StartNode | ContentNode | ConvergingGatewayNode | DivergingGatewayBranch
+    createElement: (nextElementId: string) => FlowStep | FlowGatewayDiverging,
+    precedingElement: StartNode | StepNode | ConvergingGatewayNode | DivergingGatewayBranch
 ): EditActionResult => {
     const changedFlow = cloneFlow(originalFlow);
     const newElementId = v4();
@@ -19,10 +19,10 @@ const addElement = (
             nextElementId = changedFlow.firstElementId;
             changedFlow.firstElementId = newElementId;
             break;
-        case ElementType.ContentNode:
-            const precedingContentElement = (changedFlow.elements[precedingElement.id] as unknown) as FlowContent;
-            nextElementId = precedingContentElement.nextElementId;
-            precedingContentElement.nextElementId = newElementId;
+        case ElementType.StepNode:
+            const precedingStepElement = (changedFlow.elements[precedingElement.id] as unknown) as FlowStep;
+            nextElementId = precedingStepElement.nextElementId;
+            precedingStepElement.nextElementId = newElementId;
             break;
         case ElementType.ConvergingGatewayNode:
             nextElementId = precedingElement.followingElement.type === ElementType.EndNode ? null : precedingElement.followingElement.id;
@@ -43,9 +43,9 @@ const addElement = (
     return { changedFlow };
 };
 
-const createContentElement = (contentData: { [key: string]: unknown } | undefined) => (nextElementId: string | undefined): FlowContent => ({
+const createStepElement = (stepData: { [key: string]: unknown } | undefined) => (nextElementId: string | undefined): FlowStep => ({
     nextElementId,
-    data: contentData
+    data: stepData
 });
 
 const createDivergingGateway = (
@@ -62,15 +62,15 @@ const createDivergingGateway = (
     return { nextElements, data: gatewayData };
 };
 
-export const addContentElement = (
+export const addStepElement = (
     originalFlow: FlowModelerProps["flow"],
-    precedingElement: StartNode | ContentNode | ConvergingGatewayNode | DivergingGatewayBranch,
+    precedingElement: StartNode | StepNode | ConvergingGatewayNode | DivergingGatewayBranch,
     data: { [key: string]: unknown } | undefined
-): EditActionResult => addElement(originalFlow, createContentElement(data), precedingElement);
+): EditActionResult => addElement(originalFlow, createStepElement(data), precedingElement);
 
 export const addDivergingGateway = (
     originalFlow: FlowModelerProps["flow"],
-    precedingElement: StartNode | ContentNode | ConvergingGatewayNode | DivergingGatewayBranch,
+    precedingElement: StartNode | StepNode | ConvergingGatewayNode | DivergingGatewayBranch,
     gatewayData: { [key: string]: unknown } | undefined,
     branchConditionData: Array<{ [key: string]: unknown }> | undefined
 ): EditActionResult => addElement(originalFlow, createDivergingGateway(gatewayData, branchConditionData), precedingElement);

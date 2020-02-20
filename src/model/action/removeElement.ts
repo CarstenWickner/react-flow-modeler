@@ -1,27 +1,27 @@
 import { replaceAllLinks, cloneFlow } from "./editUtils";
 
-import { ContentNode, DivergingGatewayBranch, ElementType } from "../../types/ModelElement";
+import { StepNode, DivergingGatewayBranch, ElementType } from "../../types/ModelElement";
 import { EditActionResult } from "../../types/EditAction";
-import { FlowModelerProps, FlowContent, FlowGatewayDiverging } from "../../types/FlowModelerProps";
+import { FlowModelerProps, FlowStep, FlowGatewayDiverging } from "../../types/FlowModelerProps";
 
 /**
- * Only content elements may be removed or gateway branches that point to converging gateways (to not remove other elements implicitly).
+ * Only step elements may be removed or gateway branches that point to converging gateways (to not remove other elements implicitly).
  *
- * @param {ContentNode | DivergingGatewayBranch} referenceElement - content element or diverging gateway branch
+ * @param {StepNode | DivergingGatewayBranch} referenceElement - step element or diverging gateway branch
  * @returns {boolean} whether removeElement() is allowed to be called for the targeted element
  */
-export const isRemoveElementAllowed = (referenceElement: ContentNode | DivergingGatewayBranch): boolean =>
-    referenceElement.type === ElementType.ContentNode ||
+export const isRemoveElementAllowed = (referenceElement: StepNode | DivergingGatewayBranch): boolean =>
+    referenceElement.type === ElementType.StepNode ||
     (referenceElement.type === ElementType.DivergingGatewayBranch && referenceElement.followingElement.type === ElementType.ConvergingGatewayBranch);
 
-export const removeElement = (originalFlow: FlowModelerProps["flow"], referenceElement: ContentNode | DivergingGatewayBranch): EditActionResult => {
+export const removeElement = (originalFlow: FlowModelerProps["flow"], referenceElement: StepNode | DivergingGatewayBranch): EditActionResult => {
     const changedFlow = cloneFlow(originalFlow);
     switch (referenceElement.type) {
-        case ElementType.ContentNode:
-            const targetContentId = referenceElement.id;
-            const targetContentElement = (changedFlow.elements[targetContentId] as unknown) as FlowContent;
-            replaceAllLinks(changedFlow, targetContentId, targetContentElement.nextElementId);
-            delete changedFlow.elements[targetContentId];
+        case ElementType.StepNode:
+            const targetStepId = referenceElement.id;
+            const targetStepElement = (changedFlow.elements[targetStepId] as unknown) as FlowStep;
+            replaceAllLinks(changedFlow, targetStepId, targetStepElement.nextElementId);
+            delete changedFlow.elements[targetStepId];
             break;
         case ElementType.DivergingGatewayBranch:
             const targetGatewayId = referenceElement.precedingElement.id;

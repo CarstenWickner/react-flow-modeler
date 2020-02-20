@@ -2,10 +2,10 @@ import * as React from "react";
 import { shallow } from "enzyme";
 
 import { FlowElementWrapper } from "../../src/component/FlowElementWrapper";
-import { ContentNode, ElementType } from "../../src/types/ModelElement";
+import { StepNode, ElementType } from "../../src/types/ModelElement";
 
-const mockFlowElementReference = (id: string): ContentNode => ({
-    type: ElementType.ContentNode,
+const mockFlowElementReference = (id: string): StepNode => ({
+    type: ElementType.StepNode,
     id,
     precedingElement: undefined,
     followingElement: undefined,
@@ -41,8 +41,8 @@ describe("renders correctly", () => {
                 {"text"}
             </FlowElementWrapper>
         );
-        const contentElement = component.find(".some-element");
-        expect(contentElement.hasClass("selected")).toBe(false);
+        const stepElement = component.find(".some-element");
+        expect(stepElement.hasClass("selected")).toBe(false);
         expect(component.find(".edit-menu-placeholder").exists()).toBe(false);
     });
 });

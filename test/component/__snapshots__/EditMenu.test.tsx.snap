@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly for content element 1`] = `
+exports[`renders correctly for step element 1`] = `
 <div
   className="menu"
   onClick={[Function]}
 >
   <Component
-    defaultClassName="add-content"
-    key="add-content"
+    defaultClassName="add-step"
+    key="add-step"
     onClick={[Function]}
   />
   <Component
@@ -19,7 +19,7 @@ exports[`renders correctly for content element 1`] = `
     defaultClassName="change-next"
     dragItem={
       Object {
-        "originElement": ContentNode { "id": "b" },
+        "originElement": StepNode { "id": "b" },
         "type": "link",
       }
     }
@@ -39,8 +39,8 @@ exports[`renders correctly for converging gateway 1`] = `
   onClick={[Function]}
 >
   <Component
-    defaultClassName="add-content"
-    key="add-content"
+    defaultClassName="add-step"
+    key="add-step"
     onClick={[Function]}
   />
   <Component
@@ -70,8 +70,8 @@ exports[`renders correctly for diverging gateway branch 1`] = `
   onClick={[Function]}
 >
   <Component
-    defaultClassName="add-content"
-    key="add-content"
+    defaultClassName="add-step"
+    key="add-step"
     onClick={[Function]}
   />
   <Component
@@ -103,8 +103,8 @@ exports[`renders correctly for start element 1`] = `
   onClick={[Function]}
 >
   <Component
-    defaultClassName="add-content"
-    key="add-content"
+    defaultClassName="add-step"
+    key="add-step"
     onClick={[Function]}
   />
   <Component

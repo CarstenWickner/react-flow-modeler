@@ -2,14 +2,14 @@ import * as React from "react";
 
 import { FlowElementWrapper } from "./FlowElementWrapper";
 
-import { ContentNode } from "../types/ModelElement";
+import { StepNode } from "../types/ModelElement";
 import { onLinkDropCallback } from "../types/EditAction";
 
-export class ContentElement extends React.Component<{
-    referenceElement: ContentNode;
+export class StepElement extends React.Component<{
+    referenceElement: StepNode;
     editMenu: (() => React.ReactNode) | undefined;
     onLinkDrop: onLinkDropCallback | undefined;
-    onSelect: (element: ContentNode) => void;
+    onSelect: (element: StepNode) => void;
 }> {
     onClick = (event: React.MouseEvent): void => {
         const { onSelect, referenceElement } = this.props;
@@ -22,7 +22,7 @@ export class ContentElement extends React.Component<{
         return (
             <>
                 <FlowElementWrapper
-                    elementTypeClassName="content-element"
+                    elementTypeClassName="step-element"
                     referenceElement={referenceElement}
                     editMenu={editMenu}
                     onLinkDrop={onDrop}

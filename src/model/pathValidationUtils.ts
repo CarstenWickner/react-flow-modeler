@@ -1,7 +1,7 @@
 import { isDivergingGateway, createElementTree, createMinimalElementTreeStructure } from "./modelUtils";
 
 import {
-    ContentNode,
+    StepNode,
     ConvergingGatewayBranch,
     ConvergingGatewayNode,
     DivergingGatewayBranch,
@@ -39,21 +39,21 @@ const checkForCircularReference = (
         // check on each sub-path after the targeted diverging gateway
         targetElement.nextElements.forEach((next) => checkForCircularReference(next.id, elements, currentPath.slice(0)));
     } else {
-        // continue check after the targeted content element
+        // continue check after the targeted step element
         checkForCircularReference(targetElement.nextElementId, elements, currentPath);
     }
 };
 
 const collectTopPath = (
-    element: ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode,
-    path: Array<ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode>
+    element: StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode,
+    path: Array<StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode>
 ): void => {
     path.push(element);
     if (element.type !== ElementType.DivergingGatewayBranch || element.branchIndex === 0) {
         const nextElement =
             element.type === ElementType.ConvergingGatewayNode ? element.precedingBranches[0].precedingElement : element.precedingElement;
         // since this function is intended for any but the very top path, it should never end at the start node
-        collectTopPath((nextElement as unknown) as ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode, path);
+        collectTopPath((nextElement as unknown) as StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode, path);
         // checking it explicitly at run-time like this is unnecessary:
         // if (nextElement.type !== ElementType.StartNode) {
         //    collectTopPath(nextElement, path);
@@ -62,8 +62,8 @@ const collectTopPath = (
 };
 
 const bottomAncestorIsAbovePath = (
-    element: StartNode | ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode,
-    pathToIntersectWith: Array<ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode>
+    element: StartNode | StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode,
+    pathToIntersectWith: Array<StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode>
 ): boolean => {
     switch (element.type) {
         case ElementType.StartNode:
@@ -96,7 +96,7 @@ const bottomAncestorIsAbovePath = (
  */
 const areParentsNeighbours = (branchOne: ConvergingGatewayBranch, branchTwo: ConvergingGatewayBranch): boolean => {
     // collect path to second branch
-    const topPathToSecond: Array<ContentNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode> = [];
+    const topPathToSecond: Array<StepNode | DivergingGatewayNode | DivergingGatewayBranch | ConvergingGatewayNode> = [];
     collectTopPath(branchTwo.precedingElement, topPathToSecond);
     // iterate backwards over path to first element until finding a common parent (worst case: the root element)
     return bottomAncestorIsAbovePath(branchOne.precedingElement, topPathToSecond);

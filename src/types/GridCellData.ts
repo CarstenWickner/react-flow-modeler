@@ -1,5 +1,5 @@
 import {
-    ContentNode,
+    StepNode,
     ConvergingGatewayBranch,
     ConvergingGatewayNode,
     DivergingGatewayBranch,
@@ -21,5 +21,5 @@ export type GridCellData = {
     rowEndIndex?: number;
 } & (
     | ({ connectionType: ConnectionType } & (DivergingGatewayBranch | ConvergingGatewayBranch))
-    | ({ connectionType?: never } & (StartNode | ContentNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode))
+    | ({ connectionType?: never } & (StartNode | StepNode | DivergingGatewayNode | ConvergingGatewayNode | EndNode))
 );

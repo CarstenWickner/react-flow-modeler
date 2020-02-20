@@ -20,7 +20,7 @@ describe("renders correctly", () => {
         }
     };
     it("with minimal/default props", () => {
-        const component = shallow(<FlowModeler flow={simpleFlow} renderContent={({ data }): React.ReactNode => <>{data.label}</>} />);
+        const component = shallow(<FlowModeler flow={simpleFlow} renderStep={({ data }): React.ReactNode => <>{data.label}</>} />);
         expect(component).toMatchSnapshot();
     });
     it("with all render props", () => {
@@ -28,7 +28,7 @@ describe("renders correctly", () => {
             <FlowModeler
                 flow={simpleFlow}
                 options={{ verticalAlign: "bottom" }}
-                renderContent={({ data }): React.ReactNode => <>{data.label}</>}
+                renderStep={({ data }): React.ReactNode => <>{data.label}</>}
                 renderGatewayConditionType={({ data }): React.ReactNode => <label>{data.label}</label>}
                 renderGatewayConditionValue={({ data }): React.ReactNode => <span>{data.label}</span>}
             />

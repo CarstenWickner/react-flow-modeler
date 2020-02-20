@@ -33,7 +33,7 @@ export const externalState = {
     <Story name="structure">
         <FlowModeler
             flow={externalState.flow}
-            renderContent={({ data }) => <span>{data && data.label}</span>}
+            renderStep={({ data }) => <span>{data && data.label}</span>}
             renderGatewayConditionType={({ data }) => <label>{data && data.label}</label>}
             renderGatewayConditionValue={({ data }) => <label>{data && data.label}</label>}
             onChange={({ changedFlow }) => {

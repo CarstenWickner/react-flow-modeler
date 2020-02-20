@@ -1,18 +1,18 @@
 import { determineRowCounts } from "../../src/model/rowCountUtils";
 
-import { ContentNode, ConvergingGatewayBranch, DivergingGatewayNode, EndNode } from "../../src/types/ModelElement";
+import { StepNode, ConvergingGatewayBranch, DivergingGatewayNode, EndNode } from "../../src/types/ModelElement";
 import { createMinimalElementTreeStructure } from "../../src/model/modelUtils";
 import { FlowModelerProps } from "../../src/types/FlowModelerProps";
 
-import { cont, divGw } from "./testUtils";
+import { step, divGw } from "./testUtils";
 
 describe.only("determineRowCounts()", () => {
     describe("for model without gateways", () => {
         it.each`
-            testDescription                | flow
-            ${"all consecutive nodes"}     | ${{ firstElementId: "a", elements: { a: cont("b"), b: cont("c"), c: {} } }}
-            ${"single content & end node"} | ${{ firstElementId: "a", elements: { a: {} } }}
-            ${"single end node"}           | ${{ firstElementId: null, elements: {} }}
+            testDescription             | flow
+            ${"all consecutive nodes"}  | ${{ firstElementId: "a", elements: { a: step("b"), b: step("c"), c: {} } }}
+            ${"single step & end node"} | ${{ firstElementId: "a", elements: { a: {} } }}
+            ${"single end node"}        | ${{ firstElementId: null, elements: {} }}
         `("assigns row count of 1 to $testDescription", ({ flow }: { flow: FlowModelerProps["flow"] }) => {
             const { start, elementsInTree } = createMinimalElementTreeStructure(flow);
             determineRowCounts(start, "top", elementsInTree.forEach.bind(elementsInTree));
@@ -38,18 +38,18 @@ describe.only("determineRowCounts()", () => {
             expect(convergingGateway.rowCount).toBe(3);
             expect(convergingGateway.followingElement.rowCount).toBe(3);
         });
-        it("and preceding content element", () => {
+        it("and preceding step element", () => {
             const { start, elementsInTree } = createMinimalElementTreeStructure({
                 firstElementId: "f",
-                elements: { f: cont("g"), g: divGw(null, null) }
+                elements: { f: step("g"), g: divGw(null, null) }
             });
             determineRowCounts(start, "top", elementsInTree.forEach.bind(elementsInTree));
 
-            const contentNode = start.followingElement as ContentNode;
-            const divergingGateway = contentNode.followingElement as DivergingGatewayNode;
+            const stepNode = start.followingElement as StepNode;
+            const divergingGateway = stepNode.followingElement as DivergingGatewayNode;
             const convergingGateway = (divergingGateway.followingBranches[0].followingElement as ConvergingGatewayBranch).followingElement;
             expect(start.rowCount).toBe(2);
-            expect(contentNode.rowCount).toBe(2);
+            expect(stepNode.rowCount).toBe(2);
             expect(divergingGateway.rowCount).toBe(2);
             expect(divergingGateway.followingBranches[0].rowCount).toBe(1);
             expect(divergingGateway.followingBranches[0].followingElement.rowCount).toBe(1);
@@ -58,7 +58,7 @@ describe.only("determineRowCounts()", () => {
             expect(convergingGateway.rowCount).toBe(2);
             expect(convergingGateway.followingElement.rowCount).toBe(2);
         });
-        it("and content elements before converging gateway", () => {
+        it("and step elements before converging gateway", () => {
             const { start, elementsInTree } = createMinimalElementTreeStructure({
                 firstElementId: "g",
                 elements: { g: divGw("a", "b"), a: {}, b: {} }
@@ -66,8 +66,8 @@ describe.only("determineRowCounts()", () => {
             determineRowCounts(start, "top", elementsInTree.forEach.bind(elementsInTree));
 
             const divergingGateway = start.followingElement as DivergingGatewayNode;
-            const branchA = divergingGateway.followingBranches[0].followingElement as ContentNode;
-            const branchB = divergingGateway.followingBranches[1].followingElement as ContentNode;
+            const branchA = divergingGateway.followingBranches[0].followingElement as StepNode;
+            const branchB = divergingGateway.followingBranches[1].followingElement as StepNode;
             const convergingGateway = (branchA.followingElement as ConvergingGatewayBranch).followingElement;
 
             expect(start.rowCount).toBe(2);
@@ -81,7 +81,7 @@ describe.only("determineRowCounts()", () => {
             expect(convergingGateway.rowCount).toBe(2);
             expect(convergingGateway.followingElement.rowCount).toBe(2);
         });
-        it("and content element after converging gateway", () => {
+        it("and step element after converging gateway", () => {
             const { start, elementsInTree } = createMinimalElementTreeStructure({
                 firstElementId: "g",
                 elements: { g: divGw("c", "c"), c: {} }
@@ -89,25 +89,25 @@ describe.only("determineRowCounts()", () => {
             determineRowCounts(start, "top", elementsInTree.forEach.bind(elementsInTree));
             const gateway = start.followingElement as DivergingGatewayNode;
             const convGw = (gateway.followingBranches[0].followingElement as ConvergingGatewayBranch).followingElement;
-            const commonElement = convGw.followingElement as ContentNode;
+            const commonElement = convGw.followingElement as StepNode;
             const endNode = commonElement.followingElement as EndNode;
 
             expect(gateway.rowCount).toBe(2);
             expect(commonElement.rowCount).toBe(2);
             expect(endNode.rowCount).toBe(2);
         });
-        it("and content elements before/between/after gateways", () => {
+        it("and step elements before/between/after gateways", () => {
             const { start, elementsInTree } = createMinimalElementTreeStructure({
                 firstElementId: "f",
-                elements: { f: cont("g"), g: divGw("a", "b"), a: cont("c"), b: cont("c"), c: {} }
+                elements: { f: step("g"), g: divGw("a", "b"), a: step("c"), b: step("c"), c: {} }
             });
             determineRowCounts(start, "top", elementsInTree.forEach.bind(elementsInTree));
-            const first = start.followingElement as ContentNode;
+            const first = start.followingElement as StepNode;
             const gateway = first.followingElement as DivergingGatewayNode;
-            const branchA = gateway.followingBranches[0].followingElement as ContentNode;
-            const branchB = gateway.followingBranches[1].followingElement as ContentNode;
+            const branchA = gateway.followingBranches[0].followingElement as StepNode;
+            const branchB = gateway.followingBranches[1].followingElement as StepNode;
             const convGw = (branchA.followingElement as ConvergingGatewayBranch).followingElement;
-            const commonElement = convGw.followingElement as ContentNode;
+            const commonElement = convGw.followingElement as StepNode;
             const endNode = commonElement.followingElement as EndNode;
 
             expect(first.rowCount).toBe(2);
@@ -137,13 +137,13 @@ describe.only("determineRowCounts()", () => {
             determineRowCounts(start, "top", elementsInTree.forEach.bind(elementsInTree));
             const firstGateway = start.followingElement as DivergingGatewayNode;
             const branchGatewayA = firstGateway.followingBranches[0].followingElement as DivergingGatewayNode;
-            const branchA1 = branchGatewayA.followingBranches[0].followingElement as ContentNode;
-            const branchA2 = branchGatewayA.followingBranches[1].followingElement as ContentNode;
-            const branchB = firstGateway.followingBranches[1].followingElement as ContentNode;
+            const branchA1 = branchGatewayA.followingBranches[0].followingElement as StepNode;
+            const branchA2 = branchGatewayA.followingBranches[1].followingElement as StepNode;
+            const branchB = firstGateway.followingBranches[1].followingElement as StepNode;
             const branchGatewayC = firstGateway.followingBranches[2].followingElement as DivergingGatewayNode;
-            const branchC1 = branchGatewayC.followingBranches[0].followingElement as ContentNode;
-            const branchC2 = branchGatewayC.followingBranches[1].followingElement as ContentNode;
-            const branchC3 = branchGatewayC.followingBranches[2].followingElement as ContentNode;
+            const branchC1 = branchGatewayC.followingBranches[0].followingElement as StepNode;
+            const branchC2 = branchGatewayC.followingBranches[1].followingElement as StepNode;
+            const branchC3 = branchGatewayC.followingBranches[2].followingElement as StepNode;
             const convGw = (firstGateway.followingBranches[3].followingElement as ConvergingGatewayBranch).followingElement;
             const endNode = convGw.followingElement as EndNode;
 
@@ -167,29 +167,29 @@ describe.only("determineRowCounts()", () => {
                     a1: divGw("a11", "a12"),
                     a11: {},
                     a12: {},
-                    a2: cont("a2bc"),
+                    a2: step("a2bc"),
                     a2bc: {},
                     b: divGw("b1", "b2"),
-                    b1: cont("bc"),
-                    b2: cont("bc"),
-                    c: cont("bc"),
-                    bc: cont("a2bc")
+                    b1: step("bc"),
+                    b2: step("bc"),
+                    c: step("bc"),
+                    bc: step("a2bc")
                 }
             });
             determineRowCounts(start, "top", elementsInTree.forEach.bind(elementsInTree));
             const firstGateway = start.followingElement as DivergingGatewayNode;
             const branchGatewayA = firstGateway.followingBranches[0].followingElement as DivergingGatewayNode;
             const branchGatewayA1 = branchGatewayA.followingBranches[0].followingElement as DivergingGatewayNode;
-            const branchA11 = branchGatewayA1.followingBranches[0].followingElement as ContentNode;
-            const branchA12 = branchGatewayA1.followingBranches[1].followingElement as ContentNode;
-            const branchA2 = branchGatewayA.followingBranches[1].followingElement as ContentNode;
+            const branchA11 = branchGatewayA1.followingBranches[0].followingElement as StepNode;
+            const branchA12 = branchGatewayA1.followingBranches[1].followingElement as StepNode;
+            const branchA2 = branchGatewayA.followingBranches[1].followingElement as StepNode;
             const branchGatewayB = firstGateway.followingBranches[1].followingElement as DivergingGatewayNode;
-            const branchB1 = branchGatewayB.followingBranches[0].followingElement as ContentNode;
-            const branchB2 = branchGatewayB.followingBranches[1].followingElement as ContentNode;
-            const branchC = firstGateway.followingBranches[2].followingElement as ContentNode;
+            const branchB1 = branchGatewayB.followingBranches[0].followingElement as StepNode;
+            const branchB2 = branchGatewayB.followingBranches[1].followingElement as StepNode;
+            const branchC = firstGateway.followingBranches[2].followingElement as StepNode;
             const convergingBC = (branchB1.followingElement as ConvergingGatewayBranch).followingElement;
             const convergingA2BC = (branchA2.followingElement as ConvergingGatewayBranch).followingElement;
-            const convGwEnd = ((convergingA2BC.followingElement as ContentNode).followingElement as ConvergingGatewayBranch).followingElement;
+            const convGwEnd = ((convergingA2BC.followingElement as StepNode).followingElement as ConvergingGatewayBranch).followingElement;
             const endNode = convGwEnd.followingElement as EndNode;
 
             expect(firstGateway.rowCount).toBe(6);
@@ -211,12 +211,12 @@ describe.only("determineRowCounts()", () => {
                 firstElementId: "d1",
                 elements: {
                     d1: divGw("a1", "a2", "a3"),
-                    a1: cont("d2"),
-                    a2: cont("d2"),
-                    a3: cont("d2"),
+                    a1: step("d2"),
+                    a2: step("d2"),
+                    a3: step("d2"),
                     d2: divGw("b1", "b2"),
-                    b1: cont("d3"),
-                    b2: cont("d3"),
+                    b1: step("d3"),
+                    b2: step("d3"),
                     d3: divGw("c1", "c2", "c3", "c4"),
                     c1: {},
                     c2: {},
@@ -225,19 +225,19 @@ describe.only("determineRowCounts()", () => {
                 }
             });
             const firstDiverging = start.followingElement as DivergingGatewayNode;
-            const branchA1 = firstDiverging.followingBranches[0].followingElement as ContentNode;
-            const branchA2 = firstDiverging.followingBranches[1].followingElement as ContentNode;
-            const branchA3 = firstDiverging.followingBranches[2].followingElement as ContentNode;
+            const branchA1 = firstDiverging.followingBranches[0].followingElement as StepNode;
+            const branchA2 = firstDiverging.followingBranches[1].followingElement as StepNode;
+            const branchA3 = firstDiverging.followingBranches[2].followingElement as StepNode;
             const firstConverging = (branchA1.followingElement as ConvergingGatewayBranch).followingElement;
             const secondDiverging = firstConverging.followingElement as DivergingGatewayNode;
-            const branchB1 = secondDiverging.followingBranches[0].followingElement as ContentNode;
-            const branchB2 = secondDiverging.followingBranches[1].followingElement as ContentNode;
+            const branchB1 = secondDiverging.followingBranches[0].followingElement as StepNode;
+            const branchB2 = secondDiverging.followingBranches[1].followingElement as StepNode;
             const secondConverging = (branchB1.followingElement as ConvergingGatewayBranch).followingElement;
             const thirdDiverging = secondConverging.followingElement as DivergingGatewayNode;
-            const branchC1 = thirdDiverging.followingBranches[0].followingElement as ContentNode;
-            const branchC2 = thirdDiverging.followingBranches[1].followingElement as ContentNode;
-            const branchC3 = thirdDiverging.followingBranches[2].followingElement as ContentNode;
-            const branchC4 = thirdDiverging.followingBranches[3].followingElement as ContentNode;
+            const branchC1 = thirdDiverging.followingBranches[0].followingElement as StepNode;
+            const branchC2 = thirdDiverging.followingBranches[1].followingElement as StepNode;
+            const branchC3 = thirdDiverging.followingBranches[2].followingElement as StepNode;
+            const branchC4 = thirdDiverging.followingBranches[3].followingElement as StepNode;
             const thirdConverging = (branchC1.followingElement as ConvergingGatewayBranch).followingElement;
             const endNode = thirdConverging.followingElement as EndNode;
 
@@ -282,33 +282,33 @@ describe.only("determineRowCounts()", () => {
                 firstElementId: "d1",
                 elements: {
                     d1: divGw("a1", "a2", "a3"),
-                    a1: cont("d2"),
-                    a2: cont("d2"),
-                    a3: cont("d2"),
+                    a1: step("d2"),
+                    a2: step("d2"),
+                    a3: step("d2"),
                     d2: divGw("b1", "b2", "b3", "b4"),
-                    b1: cont("d3"),
-                    b2: cont("d3"),
-                    b3: cont("d3"),
-                    b4: cont("d3"),
+                    b1: step("d3"),
+                    b2: step("d3"),
+                    b3: step("d3"),
+                    b4: step("d3"),
                     d3: divGw("c1", "c2"),
                     c1: {},
                     c2: {}
                 }
             });
             const firstDiverging = start.followingElement as DivergingGatewayNode;
-            const branchA1 = firstDiverging.followingBranches[0].followingElement as ContentNode;
-            const branchA2 = firstDiverging.followingBranches[1].followingElement as ContentNode;
-            const branchA3 = firstDiverging.followingBranches[2].followingElement as ContentNode;
+            const branchA1 = firstDiverging.followingBranches[0].followingElement as StepNode;
+            const branchA2 = firstDiverging.followingBranches[1].followingElement as StepNode;
+            const branchA3 = firstDiverging.followingBranches[2].followingElement as StepNode;
             const firstConverging = (branchA1.followingElement as ConvergingGatewayBranch).followingElement;
             const secondDiverging = firstConverging.followingElement as DivergingGatewayNode;
-            const branchB1 = secondDiverging.followingBranches[0].followingElement as ContentNode;
-            const branchB2 = secondDiverging.followingBranches[1].followingElement as ContentNode;
-            const branchB3 = secondDiverging.followingBranches[2].followingElement as ContentNode;
-            const branchB4 = secondDiverging.followingBranches[3].followingElement as ContentNode;
+            const branchB1 = secondDiverging.followingBranches[0].followingElement as StepNode;
+            const branchB2 = secondDiverging.followingBranches[1].followingElement as StepNode;
+            const branchB3 = secondDiverging.followingBranches[2].followingElement as StepNode;
+            const branchB4 = secondDiverging.followingBranches[3].followingElement as StepNode;
             const secondConverging = (branchB1.followingElement as ConvergingGatewayBranch).followingElement;
             const thirdDiverging = secondConverging.followingElement as DivergingGatewayNode;
-            const branchC1 = thirdDiverging.followingBranches[0].followingElement as ContentNode;
-            const branchC2 = thirdDiverging.followingBranches[1].followingElement as ContentNode;
+            const branchC1 = thirdDiverging.followingBranches[0].followingElement as StepNode;
+            const branchC2 = thirdDiverging.followingBranches[1].followingElement as StepNode;
             const thirdConverging = (branchC1.followingElement as ConvergingGatewayBranch).followingElement;
             const endNode = thirdConverging.followingElement as EndNode;
 

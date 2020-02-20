@@ -21,8 +21,8 @@ const serializeModelElement = (value: ModelElement): string => {
     switch (value.type) {
         case ElementType.StartNode:
             return "StartNode";
-        case ElementType.ContentNode:
-            return `ContentNode { "id": "${value.id}" }`;
+        case ElementType.StepNode:
+            return `StepNode { "id": "${value.id}" }`;
         case ElementType.DivergingGatewayNode:
             return `DivergingGatewayNode { "id": "${value.id}" }`;
         case ElementType.DivergingGatewayBranch:

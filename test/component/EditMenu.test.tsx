@@ -9,7 +9,7 @@ import {
     StartNode,
     ElementType,
     ModelElement,
-    ContentNode,
+    StepNode,
     ConvergingGatewayNode,
     DivergingGatewayBranch,
     DivergingGatewayNode
@@ -17,12 +17,12 @@ import {
 import { FlowModelerProps } from "../../src/types/FlowModelerProps";
 import { EditActionResult } from "../../src/types/EditAction";
 
-import { cont, divGw } from "../model/testUtils";
+import { step, divGw } from "../model/testUtils";
 
 describe("renders correctly", () => {
     const { elementsInTree }: { elementsInTree: Array<ModelElement> } = createMinimalElementTreeStructure({
         firstElementId: "a",
-        elements: { a: divGw("b", "c", null), b: cont("c"), c: {} }
+        elements: { a: divGw("b", "c", null), b: step("c"), c: {} }
     });
     const onChange = (): void => {};
     it("for start element", () => {
@@ -31,10 +31,10 @@ describe("renders correctly", () => {
         );
         expect(component).toMatchSnapshot();
     });
-    it("for content element", () => {
+    it("for step element", () => {
         const component = shallow(
             <EditMenu
-                referenceElement={elementsInTree.find((entry) => entry.type === ElementType.ContentNode && entry.id === "b") as ContentNode}
+                referenceElement={elementsInTree.find((entry) => entry.type === ElementType.StepNode && entry.id === "b") as StepNode}
                 onChange={onChange}
             />
         );
@@ -58,7 +58,7 @@ describe("renders correctly", () => {
                     elementsInTree.find(
                         (entry) =>
                             entry.type === ElementType.ConvergingGatewayNode &&
-                            entry.followingElement.type === ElementType.ContentNode &&
+                            entry.followingElement.type === ElementType.StepNode &&
                             entry.followingElement.id === "c"
                     ) as ConvergingGatewayNode
                 }
@@ -82,8 +82,8 @@ describe("renders correctly", () => {
     });
     it.each`
         action           | optionKey                         | isAllowed
-        ${"add-content"} | ${"addFollowingContentElement"}   | ${true}
-        ${"add-content"} | ${"addFollowingContentElement"}   | ${false}
+        ${"add-step"}    | ${"addFollowingStepElement"}      | ${true}
+        ${"add-step"}    | ${"addFollowingStepElement"}      | ${false}
         ${"add-gateway"} | ${"addFollowingDivergingGateway"} | ${true}
         ${"add-gateway"} | ${"addFollowingDivergingGateway"} | ${false}
         ${"change-next"} | ${"changeNextElement"}            | ${true}
@@ -125,24 +125,24 @@ describe("renders correctly", () => {
 describe("offers actions", () => {
     const originalFlow: FlowModelerProps["flow"] = {
         firstElementId: "a",
-        elements: { a: divGw("b", "c", null), b: cont("c"), c: {} }
+        elements: { a: divGw("b", "c", null), b: step("c"), c: {} }
     };
     const { elementsInTree } = createMinimalElementTreeStructure(originalFlow);
     const onChange = jest.fn((): void => {});
     const event = ({ stopPropagation: jest.fn(() => {}) } as unknown) as React.MouseEvent;
-    it("adding following content element", () => {
+    it("adding following step element", () => {
         const component = mount(
             <EditMenu
                 referenceElement={elementsInTree.find((entry) => entry.type === ElementType.StartNode) as StartNode}
                 onChange={onChange}
                 editActions={{
-                    addFollowingContentElement: {
-                        getContentData: (): { x: boolean } => ({ x: false })
+                    addFollowingStepElement: {
+                        getStepData: (): { x: boolean } => ({ x: false })
                     }
                 }}
             />
         );
-        component.find(".add-content").prop("onClick")(event);
+        component.find(".add-step").prop("onClick")(event);
         expect(onChange.mock.calls).toHaveLength(1);
         expect(onChange.mock.calls[0]).toHaveLength(1);
         expect(onChange.mock.calls[0][0]).toBeDefined();
@@ -210,7 +210,7 @@ describe("offers actions", () => {
         const component = mount(
             <DndProvider backend={Backend}>
                 <EditMenu
-                    referenceElement={elementsInTree.find((entry) => entry.type === ElementType.ContentNode && entry.id === "b") as ContentNode}
+                    referenceElement={elementsInTree.find((entry) => entry.type === ElementType.StepNode && entry.id === "b") as StepNode}
                     onChange={onChange}
                 />
             </DndProvider>

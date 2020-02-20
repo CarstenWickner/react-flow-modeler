@@ -37,7 +37,7 @@ const collectGridCellData = (renderElement: ModelElement, rowStartIndex: number,
     }
     switch (renderElement.type) {
         case ElementType.StartNode:
-        case ElementType.ContentNode:
+        case ElementType.StepNode:
         case ElementType.ConvergingGatewayNode:
             collectGridCellData(renderElement.followingElement, rowStartIndex, renderData);
             break;
