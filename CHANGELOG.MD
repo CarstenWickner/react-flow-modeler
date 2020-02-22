@@ -4,7 +4,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0]
-- initial implementation
+## [Unreleased]
+### Added
+- Mentioning of all component props in README
+- Basic examples in README
 
+## [1.0.0]
+### Added
+- Allow for simple process flows to be displayed
+- Automatic positioning of elements in a grid (i.e. no "pixel pushing")
+- Enable customization of the content of a `StepNode`
+- Enable customization of the condition type associated with a `DivergingGatewayNode`
+- Enable customization of the condition value associated with a `DivergingGatewayBranch`
+- Automatically insert a `ConvergingGatewayNode` where multiple elements reference the same next element
+- Enforce the existence of exactly one `StartNode` and one `EndNode`
+- Allow structural editing
+- Enable customization of edit icons and tool-tips
+- Enable customization of when certain edit actions are not allowed
+- Enable customization of default content of a newly added `StepNode`
+- Enable customization of default condition type, number of branches and associated condition values for a newly added `DivergingGatewayNode`
+- Expose internal validation logic
+
+[Unreleased]: https://github.com/CarstenWickner/react-jsonschema-inspector/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/CarstenWickner/react-jsonschema-inspector/releases/tag/v1.0.0
