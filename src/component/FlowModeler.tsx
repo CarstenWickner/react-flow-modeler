@@ -19,7 +19,8 @@ import {
     DivergingGatewayNode,
     ElementType,
     EndNode,
-    StartNode
+    StartNode,
+    ModelElement
 } from "../types/ModelElement";
 import { EditActionResult, DraggedLinkContext, SelectableElementType } from "../types/EditAction";
 import { FlowModelerProps } from "../types/FlowModelerProps";
@@ -204,6 +205,23 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
         }
     }
 
+    buildUniqueKeyForModelElement = (element: ModelElement): string => {
+        switch (element.type) {
+            case ElementType.StartNode:
+            case ElementType.EndNode:
+                return element.type;
+            case ElementType.StepNode:
+            case ElementType.DivergingGatewayNode:
+                return `${element.type}-${element.id}`;
+            case ElementType.DivergingGatewayBranch:
+                return `${element.type}-${element.branchIndex}-${element.precedingElement.id}`;
+            case ElementType.ConvergingGatewayBranch:
+                return `${element.type}-${element.branchIndex}-${this.buildUniqueKeyForModelElement(element.followingElement.followingElement)}`;
+            case ElementType.ConvergingGatewayNode:
+                return `${element.type}-${this.buildUniqueKeyForModelElement(element.followingElement)}`;
+        }
+    };
+
     renderGridCell = (editable: boolean): ((cellData: GridCellData) => React.ReactNode) => {
         const { options } = this.props;
         const verticalAlign = options ? options.verticalAlign : undefined;
@@ -215,7 +233,7 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
                     colEndIndex={colEndIndex}
                     rowStartIndex={verticalAlign === "bottom" && rowEndIndex ? rowEndIndex - 1 : rowStartIndex}
                     rowEndIndex={verticalAlign === "top" || verticalAlign === "bottom" ? undefined : rowEndIndex}
-                    key={`${colStartIndex}-${rowStartIndex}`}
+                    key={this.buildUniqueKeyForModelElement(cellData)}
                 >
                     {this.renderFlowElement(cellData, editable)}
                 </GridCell>

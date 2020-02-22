@@ -11,7 +11,7 @@ exports[`renders correctly with all render props 1`] = `
 >
   <Component
     colStartIndex={1}
-    key="1-1"
+    key="start"
     rowStartIndex={3}
   >
     <div
@@ -21,7 +21,7 @@ exports[`renders correctly with all render props 1`] = `
   </Component>
   <Component
     colStartIndex={2}
-    key="2-1"
+    key="step-1"
     rowStartIndex={3}
   >
     <StepElement
@@ -48,7 +48,7 @@ exports[`renders correctly with all render props 1`] = `
   </Component>
   <Component
     colStartIndex={3}
-    key="3-1"
+    key="div-gw-2"
     rowStartIndex={3}
   >
     <Gateway
@@ -81,7 +81,7 @@ exports[`renders correctly with all render props 1`] = `
   </Component>
   <Component
     colStartIndex={4}
-    key="4-1"
+    key="div-branch-0-2"
     rowStartIndex={1}
   >
     <HorizontalStroke
@@ -113,7 +113,7 @@ exports[`renders correctly with all render props 1`] = `
   <Component
     colEndIndex={7}
     colStartIndex={5}
-    key="5-1"
+    key="conv-branch-0-end"
     rowStartIndex={1}
   >
     <div
@@ -125,7 +125,7 @@ exports[`renders correctly with all render props 1`] = `
   </Component>
   <Component
     colStartIndex={7}
-    key="7-1"
+    key="conv-gw-end"
     rowStartIndex={3}
   >
     <Gateway
@@ -150,7 +150,7 @@ exports[`renders correctly with all render props 1`] = `
   </Component>
   <Component
     colStartIndex={8}
-    key="8-1"
+    key="end"
     rowStartIndex={3}
   >
     <Component
@@ -170,7 +170,7 @@ exports[`renders correctly with all render props 1`] = `
   </Component>
   <Component
     colStartIndex={4}
-    key="4-2"
+    key="div-branch-1-2"
     rowStartIndex={2}
   >
     <HorizontalStroke
@@ -201,7 +201,7 @@ exports[`renders correctly with all render props 1`] = `
   </Component>
   <Component
     colStartIndex={5}
-    key="5-2"
+    key="step-3.2"
     rowStartIndex={2}
   >
     <StepElement
@@ -229,7 +229,7 @@ exports[`renders correctly with all render props 1`] = `
   <Component
     colEndIndex={7}
     colStartIndex={6}
-    key="6-2"
+    key="conv-branch-1-end"
     rowStartIndex={2}
   >
     <div
@@ -241,7 +241,7 @@ exports[`renders correctly with all render props 1`] = `
   </Component>
   <Component
     colStartIndex={4}
-    key="4-3"
+    key="div-branch-2-2"
     rowStartIndex={3}
   >
     <HorizontalStroke
@@ -273,7 +273,7 @@ exports[`renders correctly with all render props 1`] = `
   <Component
     colEndIndex={7}
     colStartIndex={5}
-    key="5-3"
+    key="conv-branch-2-end"
     rowStartIndex={3}
   >
     <div
@@ -297,7 +297,7 @@ exports[`renders correctly with minimal/default props 1`] = `
 >
   <Component
     colStartIndex={1}
-    key="1-1"
+    key="start"
     rowEndIndex={4}
     rowStartIndex={1}
   >
@@ -308,7 +308,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   </Component>
   <Component
     colStartIndex={2}
-    key="2-1"
+    key="step-1"
     rowEndIndex={4}
     rowStartIndex={1}
   >
@@ -336,7 +336,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   </Component>
   <Component
     colStartIndex={3}
-    key="3-1"
+    key="div-gw-2"
     rowEndIndex={4}
     rowStartIndex={1}
   >
@@ -366,7 +366,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   </Component>
   <Component
     colStartIndex={4}
-    key="4-1"
+    key="div-branch-0-2"
     rowEndIndex={2}
     rowStartIndex={1}
   >
@@ -395,7 +395,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   <Component
     colEndIndex={7}
     colStartIndex={5}
-    key="5-1"
+    key="conv-branch-0-end"
     rowEndIndex={2}
     rowStartIndex={1}
   >
@@ -408,7 +408,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   </Component>
   <Component
     colStartIndex={7}
-    key="7-1"
+    key="conv-gw-end"
     rowEndIndex={4}
     rowStartIndex={1}
   >
@@ -434,7 +434,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   </Component>
   <Component
     colStartIndex={8}
-    key="8-1"
+    key="end"
     rowEndIndex={4}
     rowStartIndex={1}
   >
@@ -455,7 +455,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   </Component>
   <Component
     colStartIndex={4}
-    key="4-2"
+    key="div-branch-1-2"
     rowEndIndex={3}
     rowStartIndex={2}
   >
@@ -483,7 +483,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   </Component>
   <Component
     colStartIndex={5}
-    key="5-2"
+    key="step-3.2"
     rowEndIndex={3}
     rowStartIndex={2}
   >
@@ -512,7 +512,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   <Component
     colEndIndex={7}
     colStartIndex={6}
-    key="6-2"
+    key="conv-branch-1-end"
     rowEndIndex={3}
     rowStartIndex={2}
   >
@@ -525,7 +525,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   </Component>
   <Component
     colStartIndex={4}
-    key="4-3"
+    key="div-branch-2-2"
     rowEndIndex={4}
     rowStartIndex={3}
   >
@@ -554,7 +554,7 @@ exports[`renders correctly with minimal/default props 1`] = `
   <Component
     colEndIndex={7}
     colStartIndex={5}
-    key="5-3"
+    key="conv-branch-2-end"
     rowEndIndex={4}
     rowStartIndex={3}
   >
