@@ -38,16 +38,7 @@ export const externalState = {
                     style={{ marginRight: "0.5em", width: "6em", fontSize: "12px", lineHeight: "2em" }}
                     onClick={(event) => { event.stopPropagation() }}
                     onChange={(event) => {
-                        externalState.flow = {
-                            firstElementId: externalState.flow.firstElementId,
-                            elements: {
-                                ...externalState.flow.elements,
-                                [id]: {
-                                    ...externalState.flow.elements[id],
-                                    data: { label: event.target.value }
-                                }
-                            }
-                        };
+                        externalState.flow.elements[id].data = { label: event.target.value };
                         event.stopPropagation();
                         forceReRender();
                     }}
@@ -59,16 +50,7 @@ export const externalState = {
                     style={{ width: "10em", fontSize: "12px" }}
                     onClick={(event) => { event.stopPropagation() }}
                     onChange={(event) => {
-                        externalState.flow = {
-                            firstElementId: externalState.flow.firstElementId,
-                            elements: {
-                                ...externalState.flow.elements,
-                                [id]: {
-                                    ...externalState.flow.elements[id],
-                                    data: { value: event.target.value }
-                                }
-                            }
-                        };
+                        externalState.flow.elements[id].data = { type: event.target.value };
                         event.stopPropagation();
                         forceReRender();
                     }}
@@ -85,17 +67,7 @@ export const externalState = {
                         style={{ width: "10em", marginLeft: "0.5em", fontSize: "12px" }}
                         onClick={(event) => { event.stopPropagation() }}
                         onChange={(event) => {
-                            externalState.flow = {
-                                firstElementId: externalState.flow.firstElementId,
-                                elements: {
-                                    ...externalState.flow.elements,
-                                    [precedingElement.id]: {
-                                        ...externalState.flow.elements[precedingElement.id],
-                                        nextElements: [...externalState.flow.elements[precedingElement.id].nextElements]
-                                            .map((branch, index) => index === branchIndex ? { id: branch.id, conditionData: { label: event.target.value } } : branch)
-                                    }
-                                }
-                            };
+                            externalState.flow.elements[precedingElement.id].nextElements[branchIndex].conditionData = { label: event.target.value };
                             event.stopPropagation();
                             forceReRender();
                         }}
