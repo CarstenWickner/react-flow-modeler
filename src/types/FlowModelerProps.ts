@@ -20,6 +20,7 @@ export interface FlowModelerProps {
     };
     options?: {
         verticalAlign?: "top" | "middle" | "bottom";
+        omitDndProvider?: boolean;
     };
     renderStep: (target: StepNode) => React.ReactNode;
     renderGatewayConditionType?: (target: DivergingGatewayNode) => React.ReactNode;
