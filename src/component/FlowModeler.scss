@@ -126,6 +126,9 @@
             }
         }
     }
+    & .gateway-element.diverging + .menu {
+        top: ($strokeStrength * 3) + (1.1em / 2);
+    }
     & .stroke-horizontal::before,
     & .stroke-vertical::before {
         background-color: $strokeColor;
@@ -183,7 +186,14 @@
             min-height: $strokeStrength * 4;
         }
         & > .bottom-spacing {
-            margin-top: $strokeStrength / 2;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: $strokeStrength / 2;
+        }
+        & .clickable-spacing {
+            min-height: $strokeStrength * 4;
+            max-height: $strokeStrength * 8;
+            width: 100%;
         }
     }
     & .stroke-vertical {
@@ -212,12 +222,14 @@
     }
     &.editable {
         & .flow-element,
-        & .top-label {
+        & .top-label,
+        & .clickable-spacing {
             cursor: context-menu;
         }
         & .flow-element.end-element,
         & .selected.flow-element,
-        & .selected > .top-label {
+        & .selected .top-label,
+        & .selected .clickable-spacing {
             cursor: inherit;
         }
         & .start-element.selected,
