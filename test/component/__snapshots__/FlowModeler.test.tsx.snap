@@ -1,577 +1,591 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly with all render props 1`] = `
-<DndProvider
-  backend={[Function]}
+<OutsideClickHandler
+  disabled={false}
+  display="block"
+  onOutsideClick={[Function]}
+  useCapture={true}
 >
-  <div
-    className="flow-modeler"
-    style={
-      Object {
-        "gridTemplateColumns": "repeat(8, max-content)",
-      }
-    }
+  <DndProvider
+    backend={[Function]}
   >
-    <Component
-      colStartIndex={1}
-      key="1-1"
-      rowStartIndex={3}
-    >
-      <div
-        className="flow-element start-element"
-        onClick={[Function]}
-      />
-    </Component>
-    <Component
-      colStartIndex={2}
-      key="2-1"
-      rowStartIndex={3}
-    >
-      <StepElement
-        onSelect={[Function]}
-        referenceElement={
-          Object {
-            "colStartIndex": 2,
-            "columnIndex": 2,
-            "data": Object {
-              "label": "First Node",
-            },
-            "followingElement": DivergingGatewayNode { "id": "2" },
-            "id": "1",
-            "precedingElement": StartNode,
-            "rowCount": 3,
-            "rowEndIndex": 4,
-            "rowStartIndex": 1,
-            "type": "step",
-          }
+    <div
+      className="flow-modeler"
+      style={
+        Object {
+          "gridTemplateColumns": "repeat(8, max-content)",
         }
-      >
-        First Node
-      </StepElement>
-    </Component>
-    <Component
-      colStartIndex={3}
-      key="3-1"
-      rowStartIndex={3}
-    >
-      <Gateway
-        gateway={
-          Object {
-            "colStartIndex": 3,
-            "columnIndex": 3,
-            "data": Object {
-              "label": "Alternatives",
-            },
-            "followingBranches": Array [
-              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
-              DivergingGatewayBranch { "followingElement": StepNode { "id": "3.2" } },
-              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
-            ],
-            "id": "2",
-            "precedingElement": StepNode { "id": "1" },
-            "rowCount": 3,
-            "rowEndIndex": 4,
-            "rowStartIndex": 1,
-            "type": "div-gw",
-          }
-        }
-        onSelect={[Function]}
-      >
-        <label>
-          Alternatives
-        </label>
-      </Gateway>
-    </Component>
-    <Component
-      colStartIndex={4}
-      key="4-1"
-      rowStartIndex={1}
-    >
-      <HorizontalStroke
-        onSelect={[Function]}
-        referenceElement={
-          Object {
-            "branchIndex": 0,
-            "colEndIndex": undefined,
-            "colStartIndex": 4,
-            "columnIndex": 4,
-            "connectionType": 1,
-            "data": Object {
-              "label": "Stop Here",
-            },
-            "followingElement": ConvergingGatewayBranch,
-            "precedingElement": DivergingGatewayNode { "id": "2" },
-            "rowCount": 1,
-            "rowEndIndex": 2,
-            "rowStartIndex": 1,
-            "type": "div-branch",
-          }
-        }
-      >
-        <span>
-          Stop Here
-        </span>
-      </HorizontalStroke>
-    </Component>
-    <Component
-      colEndIndex={7}
-      colStartIndex={5}
-      key="5-1"
-      rowStartIndex={1}
-    >
-      <div
-        className="stroke-horizontal"
-      />
-      <div
-        className="stroke-vertical bottom-half"
-      />
-    </Component>
-    <Component
-      colStartIndex={7}
-      key="7-1"
-      rowStartIndex={3}
-    >
-      <Gateway
-        gateway={
-          Object {
-            "colStartIndex": 7,
-            "columnIndex": 7,
-            "followingElement": EndNode,
-            "precedingBranches": Array [
-              ConvergingGatewayBranch,
-              ConvergingGatewayBranch,
-              ConvergingGatewayBranch,
-            ],
-            "rowCount": 3,
-            "rowEndIndex": 4,
-            "rowStartIndex": 1,
-            "type": "conv-gw",
-          }
-        }
-        onSelect={[Function]}
-      />
-    </Component>
-    <Component
-      colStartIndex={8}
-      key="8-1"
-      rowStartIndex={3}
+      }
     >
       <Component
-        elementTypeClassName="end-element"
-        referenceElement={
-          Object {
-            "colStartIndex": 8,
-            "columnIndex": 8,
-            "precedingElement": ConvergingGatewayNode { "followingElement": EndNode },
-            "rowCount": 3,
-            "rowEndIndex": 4,
-            "rowStartIndex": 1,
-            "type": "end",
-          }
-        }
-      />
-    </Component>
-    <Component
-      colStartIndex={4}
-      key="4-2"
-      rowStartIndex={2}
-    >
-      <HorizontalStroke
-        onSelect={[Function]}
-        referenceElement={
-          Object {
-            "branchIndex": 1,
-            "colEndIndex": undefined,
-            "colStartIndex": 4,
-            "columnIndex": 4,
-            "connectionType": 2,
-            "data": Object {
-              "label": "Continue",
-            },
-            "followingElement": StepNode { "id": "3.2" },
-            "precedingElement": DivergingGatewayNode { "id": "2" },
-            "rowCount": 1,
-            "rowEndIndex": 3,
-            "rowStartIndex": 2,
-            "type": "div-branch",
-          }
-        }
+        colStartIndex={1}
+        key="1-1"
+        rowStartIndex={3}
       >
-        <span>
-          Continue
-        </span>
-      </HorizontalStroke>
-    </Component>
-    <Component
-      colStartIndex={5}
-      key="5-2"
-      rowStartIndex={2}
-    >
-      <StepElement
-        onSelect={[Function]}
-        referenceElement={
-          Object {
-            "colStartIndex": 5,
-            "columnIndex": 5,
-            "data": Object {
-              "label": "Second Node",
-            },
-            "followingElement": ConvergingGatewayBranch,
-            "id": "3.2",
-            "precedingElement": DivergingGatewayBranch { "followingElement": StepNode { "id": "3.2" } },
-            "rowCount": 1,
-            "rowEndIndex": 3,
-            "rowStartIndex": 2,
-            "type": "step",
-          }
-        }
+        <div
+          className="flow-element start-element"
+          onClick={[Function]}
+        />
+      </Component>
+      <Component
+        colStartIndex={2}
+        key="2-1"
+        rowStartIndex={3}
       >
-        Second Node
-      </StepElement>
-    </Component>
-    <Component
-      colEndIndex={7}
-      colStartIndex={6}
-      key="6-2"
-      rowStartIndex={2}
-    >
-      <div
-        className="stroke-horizontal"
-      />
-      <div
-        className="stroke-vertical full-height"
-      />
-    </Component>
-    <Component
-      colStartIndex={4}
-      key="4-3"
-      rowStartIndex={3}
-    >
-      <HorizontalStroke
-        onSelect={[Function]}
-        referenceElement={
-          Object {
-            "branchIndex": 2,
-            "colEndIndex": undefined,
-            "colStartIndex": 4,
-            "columnIndex": 4,
-            "connectionType": 3,
-            "data": Object {
-              "label": "Unless it is already done",
-            },
-            "followingElement": ConvergingGatewayBranch,
-            "precedingElement": DivergingGatewayNode { "id": "2" },
-            "rowCount": 1,
-            "rowEndIndex": 4,
-            "rowStartIndex": 3,
-            "type": "div-branch",
+        <StepElement
+          onSelect={[Function]}
+          referenceElement={
+            Object {
+              "colStartIndex": 2,
+              "columnIndex": 2,
+              "data": Object {
+                "label": "First Node",
+              },
+              "followingElement": DivergingGatewayNode { "id": "2" },
+              "id": "1",
+              "precedingElement": StartNode,
+              "rowCount": 3,
+              "rowEndIndex": 4,
+              "rowStartIndex": 1,
+              "type": "step",
+            }
           }
-        }
+        >
+          First Node
+        </StepElement>
+      </Component>
+      <Component
+        colStartIndex={3}
+        key="3-1"
+        rowStartIndex={3}
       >
-        <span>
-          Unless it is already done
-        </span>
-      </HorizontalStroke>
-    </Component>
-    <Component
-      colEndIndex={7}
-      colStartIndex={5}
-      key="5-3"
-      rowStartIndex={3}
-    >
-      <div
-        className="stroke-horizontal"
-      />
-      <div
-        className="stroke-vertical top-half"
-      />
-    </Component>
-  </div>
-</DndProvider>
+        <Gateway
+          gateway={
+            Object {
+              "colStartIndex": 3,
+              "columnIndex": 3,
+              "data": Object {
+                "label": "Alternatives",
+              },
+              "followingBranches": Array [
+                DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
+                DivergingGatewayBranch { "followingElement": StepNode { "id": "3.2" } },
+                DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
+              ],
+              "id": "2",
+              "precedingElement": StepNode { "id": "1" },
+              "rowCount": 3,
+              "rowEndIndex": 4,
+              "rowStartIndex": 1,
+              "type": "div-gw",
+            }
+          }
+          onSelect={[Function]}
+        >
+          <label>
+            Alternatives
+          </label>
+        </Gateway>
+      </Component>
+      <Component
+        colStartIndex={4}
+        key="4-1"
+        rowStartIndex={1}
+      >
+        <HorizontalStroke
+          onSelect={[Function]}
+          referenceElement={
+            Object {
+              "branchIndex": 0,
+              "colEndIndex": undefined,
+              "colStartIndex": 4,
+              "columnIndex": 4,
+              "connectionType": 1,
+              "data": Object {
+                "label": "Stop Here",
+              },
+              "followingElement": ConvergingGatewayBranch,
+              "precedingElement": DivergingGatewayNode { "id": "2" },
+              "rowCount": 1,
+              "rowEndIndex": 2,
+              "rowStartIndex": 1,
+              "type": "div-branch",
+            }
+          }
+        >
+          <span>
+            Stop Here
+          </span>
+        </HorizontalStroke>
+      </Component>
+      <Component
+        colEndIndex={7}
+        colStartIndex={5}
+        key="5-1"
+        rowStartIndex={1}
+      >
+        <div
+          className="stroke-horizontal"
+        />
+        <div
+          className="stroke-vertical bottom-half"
+        />
+      </Component>
+      <Component
+        colStartIndex={7}
+        key="7-1"
+        rowStartIndex={3}
+      >
+        <Gateway
+          gateway={
+            Object {
+              "colStartIndex": 7,
+              "columnIndex": 7,
+              "followingElement": EndNode,
+              "precedingBranches": Array [
+                ConvergingGatewayBranch,
+                ConvergingGatewayBranch,
+                ConvergingGatewayBranch,
+              ],
+              "rowCount": 3,
+              "rowEndIndex": 4,
+              "rowStartIndex": 1,
+              "type": "conv-gw",
+            }
+          }
+          onSelect={[Function]}
+        />
+      </Component>
+      <Component
+        colStartIndex={8}
+        key="8-1"
+        rowStartIndex={3}
+      >
+        <Component
+          elementTypeClassName="end-element"
+          referenceElement={
+            Object {
+              "colStartIndex": 8,
+              "columnIndex": 8,
+              "precedingElement": ConvergingGatewayNode { "followingElement": EndNode },
+              "rowCount": 3,
+              "rowEndIndex": 4,
+              "rowStartIndex": 1,
+              "type": "end",
+            }
+          }
+        />
+      </Component>
+      <Component
+        colStartIndex={4}
+        key="4-2"
+        rowStartIndex={2}
+      >
+        <HorizontalStroke
+          onSelect={[Function]}
+          referenceElement={
+            Object {
+              "branchIndex": 1,
+              "colEndIndex": undefined,
+              "colStartIndex": 4,
+              "columnIndex": 4,
+              "connectionType": 2,
+              "data": Object {
+                "label": "Continue",
+              },
+              "followingElement": StepNode { "id": "3.2" },
+              "precedingElement": DivergingGatewayNode { "id": "2" },
+              "rowCount": 1,
+              "rowEndIndex": 3,
+              "rowStartIndex": 2,
+              "type": "div-branch",
+            }
+          }
+        >
+          <span>
+            Continue
+          </span>
+        </HorizontalStroke>
+      </Component>
+      <Component
+        colStartIndex={5}
+        key="5-2"
+        rowStartIndex={2}
+      >
+        <StepElement
+          onSelect={[Function]}
+          referenceElement={
+            Object {
+              "colStartIndex": 5,
+              "columnIndex": 5,
+              "data": Object {
+                "label": "Second Node",
+              },
+              "followingElement": ConvergingGatewayBranch,
+              "id": "3.2",
+              "precedingElement": DivergingGatewayBranch { "followingElement": StepNode { "id": "3.2" } },
+              "rowCount": 1,
+              "rowEndIndex": 3,
+              "rowStartIndex": 2,
+              "type": "step",
+            }
+          }
+        >
+          Second Node
+        </StepElement>
+      </Component>
+      <Component
+        colEndIndex={7}
+        colStartIndex={6}
+        key="6-2"
+        rowStartIndex={2}
+      >
+        <div
+          className="stroke-horizontal"
+        />
+        <div
+          className="stroke-vertical full-height"
+        />
+      </Component>
+      <Component
+        colStartIndex={4}
+        key="4-3"
+        rowStartIndex={3}
+      >
+        <HorizontalStroke
+          onSelect={[Function]}
+          referenceElement={
+            Object {
+              "branchIndex": 2,
+              "colEndIndex": undefined,
+              "colStartIndex": 4,
+              "columnIndex": 4,
+              "connectionType": 3,
+              "data": Object {
+                "label": "Unless it is already done",
+              },
+              "followingElement": ConvergingGatewayBranch,
+              "precedingElement": DivergingGatewayNode { "id": "2" },
+              "rowCount": 1,
+              "rowEndIndex": 4,
+              "rowStartIndex": 3,
+              "type": "div-branch",
+            }
+          }
+        >
+          <span>
+            Unless it is already done
+          </span>
+        </HorizontalStroke>
+      </Component>
+      <Component
+        colEndIndex={7}
+        colStartIndex={5}
+        key="5-3"
+        rowStartIndex={3}
+      >
+        <div
+          className="stroke-horizontal"
+        />
+        <div
+          className="stroke-vertical top-half"
+        />
+      </Component>
+    </div>
+  </DndProvider>
+</OutsideClickHandler>
 `;
 
 exports[`renders correctly with minimal/default props 1`] = `
-<DndProvider
-  backend={[Function]}
+<OutsideClickHandler
+  disabled={false}
+  display="block"
+  onOutsideClick={[Function]}
+  useCapture={true}
 >
-  <div
-    className="flow-modeler"
-    style={
-      Object {
-        "gridTemplateColumns": "repeat(8, max-content)",
-      }
-    }
+  <DndProvider
+    backend={[Function]}
   >
-    <Component
-      colStartIndex={1}
-      key="1-1"
-      rowEndIndex={4}
-      rowStartIndex={1}
-    >
-      <div
-        className="flow-element start-element"
-        onClick={[Function]}
-      />
-    </Component>
-    <Component
-      colStartIndex={2}
-      key="2-1"
-      rowEndIndex={4}
-      rowStartIndex={1}
-    >
-      <StepElement
-        onSelect={[Function]}
-        referenceElement={
-          Object {
-            "colStartIndex": 2,
-            "columnIndex": 2,
-            "data": Object {
-              "label": "First Node",
-            },
-            "followingElement": DivergingGatewayNode { "id": "2" },
-            "id": "1",
-            "precedingElement": StartNode,
-            "rowCount": 3,
-            "rowEndIndex": 4,
-            "rowStartIndex": 1,
-            "type": "step",
-          }
+    <div
+      className="flow-modeler"
+      style={
+        Object {
+          "gridTemplateColumns": "repeat(8, max-content)",
         }
-      >
-        First Node
-      </StepElement>
-    </Component>
-    <Component
-      colStartIndex={3}
-      key="3-1"
-      rowEndIndex={4}
-      rowStartIndex={1}
-    >
-      <Gateway
-        gateway={
-          Object {
-            "colStartIndex": 3,
-            "columnIndex": 3,
-            "data": Object {
-              "label": "Alternatives",
-            },
-            "followingBranches": Array [
-              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
-              DivergingGatewayBranch { "followingElement": StepNode { "id": "3.2" } },
-              DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
-            ],
-            "id": "2",
-            "precedingElement": StepNode { "id": "1" },
-            "rowCount": 3,
-            "rowEndIndex": 4,
-            "rowStartIndex": 1,
-            "type": "div-gw",
-          }
-        }
-        onSelect={[Function]}
-      />
-    </Component>
-    <Component
-      colStartIndex={4}
-      key="4-1"
-      rowEndIndex={2}
-      rowStartIndex={1}
-    >
-      <HorizontalStroke
-        onSelect={[Function]}
-        referenceElement={
-          Object {
-            "branchIndex": 0,
-            "colEndIndex": undefined,
-            "colStartIndex": 4,
-            "columnIndex": 4,
-            "connectionType": 1,
-            "data": Object {
-              "label": "Stop Here",
-            },
-            "followingElement": ConvergingGatewayBranch,
-            "precedingElement": DivergingGatewayNode { "id": "2" },
-            "rowCount": 1,
-            "rowEndIndex": 2,
-            "rowStartIndex": 1,
-            "type": "div-branch",
-          }
-        }
-      />
-    </Component>
-    <Component
-      colEndIndex={7}
-      colStartIndex={5}
-      key="5-1"
-      rowEndIndex={2}
-      rowStartIndex={1}
-    >
-      <div
-        className="stroke-horizontal"
-      />
-      <div
-        className="stroke-vertical bottom-half"
-      />
-    </Component>
-    <Component
-      colStartIndex={7}
-      key="7-1"
-      rowEndIndex={4}
-      rowStartIndex={1}
-    >
-      <Gateway
-        gateway={
-          Object {
-            "colStartIndex": 7,
-            "columnIndex": 7,
-            "followingElement": EndNode,
-            "precedingBranches": Array [
-              ConvergingGatewayBranch,
-              ConvergingGatewayBranch,
-              ConvergingGatewayBranch,
-            ],
-            "rowCount": 3,
-            "rowEndIndex": 4,
-            "rowStartIndex": 1,
-            "type": "conv-gw",
-          }
-        }
-        onSelect={[Function]}
-      />
-    </Component>
-    <Component
-      colStartIndex={8}
-      key="8-1"
-      rowEndIndex={4}
-      rowStartIndex={1}
+      }
     >
       <Component
-        elementTypeClassName="end-element"
-        referenceElement={
-          Object {
-            "colStartIndex": 8,
-            "columnIndex": 8,
-            "precedingElement": ConvergingGatewayNode { "followingElement": EndNode },
-            "rowCount": 3,
-            "rowEndIndex": 4,
-            "rowStartIndex": 1,
-            "type": "end",
-          }
-        }
-      />
-    </Component>
-    <Component
-      colStartIndex={4}
-      key="4-2"
-      rowEndIndex={3}
-      rowStartIndex={2}
-    >
-      <HorizontalStroke
-        onSelect={[Function]}
-        referenceElement={
-          Object {
-            "branchIndex": 1,
-            "colEndIndex": undefined,
-            "colStartIndex": 4,
-            "columnIndex": 4,
-            "connectionType": 2,
-            "data": Object {
-              "label": "Continue",
-            },
-            "followingElement": StepNode { "id": "3.2" },
-            "precedingElement": DivergingGatewayNode { "id": "2" },
-            "rowCount": 1,
-            "rowEndIndex": 3,
-            "rowStartIndex": 2,
-            "type": "div-branch",
-          }
-        }
-      />
-    </Component>
-    <Component
-      colStartIndex={5}
-      key="5-2"
-      rowEndIndex={3}
-      rowStartIndex={2}
-    >
-      <StepElement
-        onSelect={[Function]}
-        referenceElement={
-          Object {
-            "colStartIndex": 5,
-            "columnIndex": 5,
-            "data": Object {
-              "label": "Second Node",
-            },
-            "followingElement": ConvergingGatewayBranch,
-            "id": "3.2",
-            "precedingElement": DivergingGatewayBranch { "followingElement": StepNode { "id": "3.2" } },
-            "rowCount": 1,
-            "rowEndIndex": 3,
-            "rowStartIndex": 2,
-            "type": "step",
-          }
-        }
+        colStartIndex={1}
+        key="1-1"
+        rowEndIndex={4}
+        rowStartIndex={1}
       >
-        Second Node
-      </StepElement>
-    </Component>
-    <Component
-      colEndIndex={7}
-      colStartIndex={6}
-      key="6-2"
-      rowEndIndex={3}
-      rowStartIndex={2}
-    >
-      <div
-        className="stroke-horizontal"
-      />
-      <div
-        className="stroke-vertical full-height"
-      />
-    </Component>
-    <Component
-      colStartIndex={4}
-      key="4-3"
-      rowEndIndex={4}
-      rowStartIndex={3}
-    >
-      <HorizontalStroke
-        onSelect={[Function]}
-        referenceElement={
-          Object {
-            "branchIndex": 2,
-            "colEndIndex": undefined,
-            "colStartIndex": 4,
-            "columnIndex": 4,
-            "connectionType": 3,
-            "data": Object {
-              "label": "Unless it is already done",
-            },
-            "followingElement": ConvergingGatewayBranch,
-            "precedingElement": DivergingGatewayNode { "id": "2" },
-            "rowCount": 1,
-            "rowEndIndex": 4,
-            "rowStartIndex": 3,
-            "type": "div-branch",
+        <div
+          className="flow-element start-element"
+          onClick={[Function]}
+        />
+      </Component>
+      <Component
+        colStartIndex={2}
+        key="2-1"
+        rowEndIndex={4}
+        rowStartIndex={1}
+      >
+        <StepElement
+          onSelect={[Function]}
+          referenceElement={
+            Object {
+              "colStartIndex": 2,
+              "columnIndex": 2,
+              "data": Object {
+                "label": "First Node",
+              },
+              "followingElement": DivergingGatewayNode { "id": "2" },
+              "id": "1",
+              "precedingElement": StartNode,
+              "rowCount": 3,
+              "rowEndIndex": 4,
+              "rowStartIndex": 1,
+              "type": "step",
+            }
           }
-        }
-      />
-    </Component>
-    <Component
-      colEndIndex={7}
-      colStartIndex={5}
-      key="5-3"
-      rowEndIndex={4}
-      rowStartIndex={3}
-    >
-      <div
-        className="stroke-horizontal"
-      />
-      <div
-        className="stroke-vertical top-half"
-      />
-    </Component>
-  </div>
-</DndProvider>
+        >
+          First Node
+        </StepElement>
+      </Component>
+      <Component
+        colStartIndex={3}
+        key="3-1"
+        rowEndIndex={4}
+        rowStartIndex={1}
+      >
+        <Gateway
+          gateway={
+            Object {
+              "colStartIndex": 3,
+              "columnIndex": 3,
+              "data": Object {
+                "label": "Alternatives",
+              },
+              "followingBranches": Array [
+                DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
+                DivergingGatewayBranch { "followingElement": StepNode { "id": "3.2" } },
+                DivergingGatewayBranch { "followingElement": ConvergingGatewayBranch },
+              ],
+              "id": "2",
+              "precedingElement": StepNode { "id": "1" },
+              "rowCount": 3,
+              "rowEndIndex": 4,
+              "rowStartIndex": 1,
+              "type": "div-gw",
+            }
+          }
+          onSelect={[Function]}
+        />
+      </Component>
+      <Component
+        colStartIndex={4}
+        key="4-1"
+        rowEndIndex={2}
+        rowStartIndex={1}
+      >
+        <HorizontalStroke
+          onSelect={[Function]}
+          referenceElement={
+            Object {
+              "branchIndex": 0,
+              "colEndIndex": undefined,
+              "colStartIndex": 4,
+              "columnIndex": 4,
+              "connectionType": 1,
+              "data": Object {
+                "label": "Stop Here",
+              },
+              "followingElement": ConvergingGatewayBranch,
+              "precedingElement": DivergingGatewayNode { "id": "2" },
+              "rowCount": 1,
+              "rowEndIndex": 2,
+              "rowStartIndex": 1,
+              "type": "div-branch",
+            }
+          }
+        />
+      </Component>
+      <Component
+        colEndIndex={7}
+        colStartIndex={5}
+        key="5-1"
+        rowEndIndex={2}
+        rowStartIndex={1}
+      >
+        <div
+          className="stroke-horizontal"
+        />
+        <div
+          className="stroke-vertical bottom-half"
+        />
+      </Component>
+      <Component
+        colStartIndex={7}
+        key="7-1"
+        rowEndIndex={4}
+        rowStartIndex={1}
+      >
+        <Gateway
+          gateway={
+            Object {
+              "colStartIndex": 7,
+              "columnIndex": 7,
+              "followingElement": EndNode,
+              "precedingBranches": Array [
+                ConvergingGatewayBranch,
+                ConvergingGatewayBranch,
+                ConvergingGatewayBranch,
+              ],
+              "rowCount": 3,
+              "rowEndIndex": 4,
+              "rowStartIndex": 1,
+              "type": "conv-gw",
+            }
+          }
+          onSelect={[Function]}
+        />
+      </Component>
+      <Component
+        colStartIndex={8}
+        key="8-1"
+        rowEndIndex={4}
+        rowStartIndex={1}
+      >
+        <Component
+          elementTypeClassName="end-element"
+          referenceElement={
+            Object {
+              "colStartIndex": 8,
+              "columnIndex": 8,
+              "precedingElement": ConvergingGatewayNode { "followingElement": EndNode },
+              "rowCount": 3,
+              "rowEndIndex": 4,
+              "rowStartIndex": 1,
+              "type": "end",
+            }
+          }
+        />
+      </Component>
+      <Component
+        colStartIndex={4}
+        key="4-2"
+        rowEndIndex={3}
+        rowStartIndex={2}
+      >
+        <HorizontalStroke
+          onSelect={[Function]}
+          referenceElement={
+            Object {
+              "branchIndex": 1,
+              "colEndIndex": undefined,
+              "colStartIndex": 4,
+              "columnIndex": 4,
+              "connectionType": 2,
+              "data": Object {
+                "label": "Continue",
+              },
+              "followingElement": StepNode { "id": "3.2" },
+              "precedingElement": DivergingGatewayNode { "id": "2" },
+              "rowCount": 1,
+              "rowEndIndex": 3,
+              "rowStartIndex": 2,
+              "type": "div-branch",
+            }
+          }
+        />
+      </Component>
+      <Component
+        colStartIndex={5}
+        key="5-2"
+        rowEndIndex={3}
+        rowStartIndex={2}
+      >
+        <StepElement
+          onSelect={[Function]}
+          referenceElement={
+            Object {
+              "colStartIndex": 5,
+              "columnIndex": 5,
+              "data": Object {
+                "label": "Second Node",
+              },
+              "followingElement": ConvergingGatewayBranch,
+              "id": "3.2",
+              "precedingElement": DivergingGatewayBranch { "followingElement": StepNode { "id": "3.2" } },
+              "rowCount": 1,
+              "rowEndIndex": 3,
+              "rowStartIndex": 2,
+              "type": "step",
+            }
+          }
+        >
+          Second Node
+        </StepElement>
+      </Component>
+      <Component
+        colEndIndex={7}
+        colStartIndex={6}
+        key="6-2"
+        rowEndIndex={3}
+        rowStartIndex={2}
+      >
+        <div
+          className="stroke-horizontal"
+        />
+        <div
+          className="stroke-vertical full-height"
+        />
+      </Component>
+      <Component
+        colStartIndex={4}
+        key="4-3"
+        rowEndIndex={4}
+        rowStartIndex={3}
+      >
+        <HorizontalStroke
+          onSelect={[Function]}
+          referenceElement={
+            Object {
+              "branchIndex": 2,
+              "colEndIndex": undefined,
+              "colStartIndex": 4,
+              "columnIndex": 4,
+              "connectionType": 3,
+              "data": Object {
+                "label": "Unless it is already done",
+              },
+              "followingElement": ConvergingGatewayBranch,
+              "precedingElement": DivergingGatewayNode { "id": "2" },
+              "rowCount": 1,
+              "rowEndIndex": 4,
+              "rowStartIndex": 3,
+              "type": "div-branch",
+            }
+          }
+        />
+      </Component>
+      <Component
+        colEndIndex={7}
+        colStartIndex={5}
+        key="5-3"
+        rowEndIndex={4}
+        rowStartIndex={3}
+      >
+        <div
+          className="stroke-horizontal"
+        />
+        <div
+          className="stroke-vertical top-half"
+        />
+      </Component>
+    </div>
+  </DndProvider>
+</OutsideClickHandler>
 `;

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { shallow } from "enzyme";
+import { mount, shallow } from "enzyme";
 
 import { FlowModeler } from "../../src/component/FlowModeler";
 
@@ -34,5 +34,33 @@ describe("renders correctly", () => {
             />
         );
         expect(component).toMatchSnapshot();
+    });
+    it.each`
+        elementType             | cssSelector
+        ${"start node"}         | ${".start-element"}
+        ${"step node"}          | ${".step-element"}
+        ${"diverging gateway"}  | ${".gateway-element.diverging"}
+        ${"converging gateway"} | ${".gateway-element.converging"}
+    `("when selecting $elementType", ({ cssSelector }) => {
+        const component = mount(
+            <FlowModeler
+                flow={simpleFlow}
+                renderStep={({ data }): React.ReactNode => <>{data.label}</>}
+                renderGatewayConditionType={({ data }): React.ReactNode => <>{data.label}</>}
+                renderGatewayConditionValue={({ data }): React.ReactNode => <>{data.label}</>}
+                onChange={(): void => {}}
+            />
+        );
+        let targetNode = component.find(cssSelector).at(0);
+        expect(targetNode.hasClass("selected")).toBe(false);
+        expect(component.find(".menu").exists()).toBe(false);
+
+        const onClick = targetNode.prop("onClick") as (event: React.MouseEvent) => void;
+        onClick({ stopPropagation: (): void => {} } as React.MouseEvent);
+        component.update();
+
+        targetNode = component.find(cssSelector).at(0);
+        expect(targetNode.hasClass("selected")).toBe(true);
+        expect(component.find(".menu").exists()).toBe(true);
     });
 });

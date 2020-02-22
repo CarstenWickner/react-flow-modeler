@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import OutsideClickHandler from "react-outside-click-handler";
 import { DndProvider } from "react-dnd";
 import Backend from "react-dnd-html5-backend";
 
@@ -94,6 +95,12 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
     clearSelection = (event: React.MouseEvent): void => {
         this.onSelect(null);
         event.stopPropagation();
+    };
+
+    handleOnOutsideClick = (): void => {
+        if (this.state.selection !== null) {
+            this.onSelect(null);
+        }
     };
 
     handleOnChange = (change: (originalFlow: FlowModelerProps["flow"]) => EditActionResult): void => {
@@ -220,15 +227,17 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
         const { flow, options, onChange } = this.props;
         const { gridCellData, columnCount } = buildRenderData(flow, options && options.verticalAlign === "bottom" ? "bottom" : "top");
         return (
-            <DndProvider backend={Backend}>
-                <div
-                    className={`flow-modeler${onChange ? " editable" : ""}`}
-                    onClick={onChange ? this.clearSelection : undefined}
-                    style={{ gridTemplateColumns: `repeat(${columnCount}, max-content)` }}
-                >
-                    {gridCellData.map(this.renderGridCell(!!onChange))}
-                </div>
-            </DndProvider>
+            <OutsideClickHandler onOutsideClick={this.handleOnOutsideClick}>
+                <DndProvider backend={Backend}>
+                    <div
+                        className={`flow-modeler${onChange ? " editable" : ""}`}
+                        onClick={onChange ? this.clearSelection : undefined}
+                        style={{ gridTemplateColumns: `repeat(${columnCount}, max-content)` }}
+                    >
+                        {gridCellData.map(this.renderGridCell(!!onChange))}
+                    </div>
+                </DndProvider>
+            </OutsideClickHandler>
         );
     }
 

@@ -171,7 +171,7 @@
             z-index: -1;
         }
         &.can-drop::before {
-            background-color: $dropStrokeColor;
+            background: linear-gradient(90deg, $strokeColor 0%, $dropStrokeColor 62%);
         }
         & > .top-label {
             display: flex;
