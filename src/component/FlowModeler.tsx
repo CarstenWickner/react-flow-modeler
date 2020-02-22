@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import OutsideClickHandler from "react-outside-click-handler";
 import { DndProvider } from "react-dnd";
 import Backend from "react-dnd-html5-backend";
 
@@ -94,6 +95,12 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
     clearSelection = (event: React.MouseEvent): void => {
         this.onSelect(null);
         event.stopPropagation();
+    };
+
+    handleOnOutsideClick = (): void => {
+        if (this.state.selection !== null) {
+            this.onSelect(null);
+        }
     };
 
     handleOnChange = (change: (originalFlow: FlowModelerProps["flow"]) => EditActionResult): void => {
@@ -216,20 +223,30 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
         };
     };
 
-    render(): React.ReactElement {
+    renderMain(): React.ReactElement {
         const { flow, options, onChange } = this.props;
         const { gridCellData, columnCount } = buildRenderData(flow, options && options.verticalAlign === "bottom" ? "bottom" : "top");
         return (
-            <DndProvider backend={Backend}>
-                <div
-                    className={`flow-modeler${onChange ? " editable" : ""}`}
-                    onClick={onChange ? this.clearSelection : undefined}
-                    style={{ gridTemplateColumns: `repeat(${columnCount}, max-content)` }}
-                >
-                    {gridCellData.map(this.renderGridCell(!!onChange))}
-                </div>
-            </DndProvider>
+            <div
+                className={`flow-modeler${onChange ? " editable" : ""}`}
+                onClick={onChange ? this.clearSelection : undefined}
+                style={{ gridTemplateColumns: `repeat(${columnCount}, max-content)` }}
+            >
+                {gridCellData.map(this.renderGridCell(!!onChange))}
+            </div>
         );
+    }
+
+    render(): React.ReactElement {
+        const { onChange, options } = this.props;
+        if (onChange) {
+            return (
+                <OutsideClickHandler onOutsideClick={this.handleOnOutsideClick}>
+                    {options && options.omitDndProvider ? this.renderMain() : <DndProvider backend={Backend}>{this.renderMain()}</DndProvider>}
+                </OutsideClickHandler>
+            );
+        }
+        return this.renderMain();
     }
 
     static propTypes = {
@@ -254,7 +271,8 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
             ).isRequired
         }).isRequired,
         options: PropTypes.shape({
-            verticalAlign: PropTypes.oneOf(["top", "middle", "bottom"])
+            verticalAlign: PropTypes.oneOf(["top", "middle", "bottom"]),
+            omitDndProvider: PropTypes.bool
         }),
         renderStep: PropTypes.func.isRequired,
         renderGatewayConditionType: PropTypes.func,

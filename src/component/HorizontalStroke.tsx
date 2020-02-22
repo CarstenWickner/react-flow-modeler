@@ -64,7 +64,9 @@ export class HorizontalStroke extends React.Component<
                             <div
                                 className="bottom-spacing"
                                 style={(children && this.topLabelRef.current && { minHeight: `${this.state.wrapperTopHeight}px` }) || undefined}
-                            />
+                            >
+                                <div className="clickable-spacing" onClick={this.onTopLabelClick} />
+                            </div>
                         </>
                     )}
                 </div>

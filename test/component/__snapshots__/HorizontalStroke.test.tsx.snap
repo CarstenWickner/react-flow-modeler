@@ -21,7 +21,12 @@ exports[`renders correctly with minimal/default props 1`] = `
     </div>
     <div
       className="bottom-spacing"
-    />
+    >
+      <div
+        className="clickable-spacing"
+        onClick={[Function]}
+      />
+    </div>
   </div>
 </HorizontalStroke>
 `;
