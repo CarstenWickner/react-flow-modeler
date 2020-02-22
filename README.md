@@ -19,7 +19,9 @@ Have a look at the [![Storybook][storybook-image]][storybook-url]
 
 ### Installation from NPM
 
-In active development, i.e. not yet published
+```shell
+npm i react-flow-modeler
+```
 
 ### React Component Props of `<FlowModeler>`
 
