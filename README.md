@@ -8,6 +8,23 @@ Introducing a component for viewing/editing simple flow-charts but with the abil
 The layout is handled through CSS `grid` which avoids error-prone pixel calculations.
 The limited flexibility is accepted and even desired to concentrate on the more important content while still achieving a uniform design.
 
+Topics covered in this document are:
+- [Demo](#demo)
+- [Usage](#usage)
+    - [Installation from NPM](#installation-from-npm)
+    - [React Component Props of `<FlowModeler>`](#react-component-props-of-flowmodeler)
+        - [`flow` (required)](#flow-required)
+        - [`options`](#options)
+        - [`renderStep` (required)](#renderstep-required)
+        - [`renderGatewayConditionType`](#rendergatewayconditiontype)
+        - [`renderGatewayConditionValue`](#rendergatewayconditionvalue)
+        - [`onChange`](#onchange)
+        - [`editActions`](#editactions)
+    - [Additional Exports](#additional-exports)
+        - [`isFlowValid` function](#isflowvalid-function)
+    - [Example (read-only)](#example-read-only)
+    - [Example (structural editing, starting with empty "flow")](#example-structural-editing-starting-with-empty-flow)
+
 ## Demo
 
 Have a look at the [![Storybook][storybook-image]][storybook-url]
@@ -26,14 +43,14 @@ npm i react-flow-modeler
 Describing the whole data model being displayed, expecting an object with two fields:
 - `flow.firstElementId` – string containing the key to the `flow.elements` entry, that should follow the start node
 - `flow.elements` – object containing all "step" nodes and "diverging gateway" nodes as values
-  - "step" nodes are represented by an object that may contain the following fields:
-    - `data` – object in which any kind of additional information may be stored (in order to consider it in the `renderStep` function
-    - `nextElementId` – string containing the key to the `flow.elements` entry, that should follow this step (if omitted or without matching entry in `flow.elements`, it will point to the end node)
-  - "diverging gateway" nodes are represented by an object that may contain the following fields:
-    - `data` – object in which any kind of additional information may be stored (in order to consider it in the `renderGatewayConditionType` function
-    - `nextElements` (required, otherwise it is treated as "step" node) – array of branches from this gateway, each branch being represented by an object with the following fields:
-      - `conditionData` – object in which any kind of additional information may be stored (in order to consider it in the `renderGatewayConditionValue` function
-      - `id` – string containing the key to the `flow.elements` entry, that should follow this gateway branch (if omitted or without matching entry in `flow.elements`, it will point to the end node)
+    - "step" nodes are represented by an object that may contain the following fields:
+        - `data` – object in which any kind of additional information may be stored (in order to consider it in the `renderStep` function
+        - `nextElementId` – string containing the key to the `flow.elements` entry, that should follow this step (if omitted or without matching entry in `flow.elements`, it will point to the end node)
+    - "diverging gateway" nodes are represented by an object that may contain the following fields:
+        - `data` – object in which any kind of additional information may be stored (in order to consider it in the `renderGatewayConditionType` function
+        - `nextElements` (required, otherwise it is treated as "step" node) – array of branches from this gateway, each branch being represented by an object with the following fields:
+            - `conditionData` – object in which any kind of additional information may be stored (in order to consider it in the `renderGatewayConditionValue` function
+            - `id` – string containing the key to the `flow.elements` entry, that should follow this gateway branch (if omitted or without matching entry in `flow.elements`, it will point to the end node)
 
 #### `options`
 Currently only catering for one setting:
@@ -64,35 +81,41 @@ Render function for the condition label on a branch from a diverging gateway exp
 - `followingElement` – reference to the directly following element in the flow
 
 #### `onChange`
-Callback function that when present enables structural editing, receiving a single input object containing the following field:
-- `changedFlow` – updated `flow` that should be stored in some external state and provided again via the `flow` prop
+Callback function that when present enables structural editing,
+- receiving a single input object containing the following field:
+    - `changedFlow` – updated `flow` that should be stored in some external state and provided again via the `flow` prop to the `<Modeler>`
 
 #### `editActions`
 Object containing various customization options for the structural editing feature in the following fields:
 - `addDivergingBranch` – object for customizing the adding of branches to a diverging gateway, expecting any of the following fields:
-  - `className` – string overriding the default `"menu-item add-branch"` css classes on the corresponding context menu item
-  - `title` – string defining the tool-tip to show for the corresponding context menu item
-  - `isActionAllowed` – function for preventing adding branches to certain gateway, expecting a `boolean` to be returned based on the same single input object as on `renderGatewayConditionType` referring to the selected element
-  - `getBranchConditionData` – function for providing the default `conditionData` on a newly added diverging gateway branch based on the same single input object as on `renderGatewayConditionType`
+    - `className` – string overriding the default `"menu-item add-branch"` css classes on the corresponding context menu item
+    - `title` – string defining the tool-tip to show for the corresponding context menu item
+    - `isActionAllowed` – function for preventing adding branches to certain gateway, expecting a `boolean` to be returned based on the same single input object as on `renderGatewayConditionType` referring to the selected element
+    - `getBranchConditionData` – function for providing the default `conditionData` on a newly added diverging gateway branch based on the same single input object as on `renderGatewayConditionType`
 - `addFollowingStepElement` – object for customizing the adding of step nodes, expecting any of the following fields:
-  - `className` – string overriding the default `"menu-item add-step"` css classes on the corresponding context menu item
-  - `title` – string defining the tool-tip to show for the corresponding context menu item
-  - `isActionAllowed` – function for preventing adding step nodes after certain elements, expecting a `boolean` to be returned based on the reference to the selected element
-  - `getStepData` – function for providing the default `data` on a newly added step node based on the reference to the element where the corresponding context menu item was clicked
+    - `className` – string overriding the default `"menu-item add-step"` css classes on the corresponding context menu item
+    - `title` – string defining the tool-tip to show for the corresponding context menu item
+    - `isActionAllowed` – function for preventing adding step nodes after certain elements, expecting a `boolean` to be returned based on the reference to the selected element
+    - `getStepData` – function for providing the default `data` on a newly added step node based on the reference to the element where the corresponding context menu item was clicked
 - `addFollowingDivergingGateway` – object for customizing the adding of diverging gateway nodes, expecting any of the following fields:
-  - `className` – string overriding the default `"menu-item add-gateway"` css classes on the corresponding context menu item
-  - `title` – string defining the tool-tip to show for the corresponding context menu item
-  - `isActionAllowed` – function for preventing adding diverging gateways after certain elements, expecting a `boolean` to be returned based on the reference to the element where the corresponding context menu item was clicked
-  - `getGatewayData` – function for providing the default `data` on a newly added diverging gateway based on the reference to the selected element
-  - `getBranchConditionData`– function for providing an array of the default `conditionData` objects for each branch of a newly added diverging gateway based on the reference to the element where the corresponding context menu item was clicked; thereby also determining how many branches there are by default
+    - `className` – string overriding the default `"menu-item add-gateway"` css classes on the corresponding context menu item
+    - `title` – string defining the tool-tip to show for the corresponding context menu item
+    - `isActionAllowed` – function for preventing adding diverging gateways after certain elements, expecting a `boolean` to be returned based on the reference to the element where the corresponding context menu item was clicked
+    - `getGatewayData` – function for providing the default `data` on a newly added diverging gateway based on the reference to the selected element
+    - `getBranchConditionData`– function for providing an array of the default `conditionData` objects for each branch of a newly added diverging gateway based on the reference to the element where the corresponding context menu item was clicked; thereby also determining how many branches there are by default
 - `changeNextElement` – object for customizing the links between elements in the flow, expecting any of the following fields:
-  - `className` – string overriding the default `"menu-item change-next"` css classes on the corresponding context menu item
-  - `title` – string defining the tool-tip to show for the corresponding context menu item
-  - `isActionAllowed` – function for preventing links from certain elements to be changed, expecting a `boolean` to be returned based on the reference to the selected element
+    - `className` – string overriding the default `"menu-item change-next"` css classes on the corresponding context menu item
+    - `title` – string defining the tool-tip to show for the corresponding context menu item
+    - `isActionAllowed` – function for preventing links from certain elements to be changed, expecting a `boolean` to be returned based on the reference to the selected element
 - `removeElement` – object for customizing the removal of elements in the flow, expecting any of the following fields:
-  - `className` – string overriding the default `"menu-item remove"` css classes on the corresponding context menu item
-  - `title` – string defining the tool-tip to show for the corresponding context menu item
-  - `isActionAllowed` – function for preventing certain elements to be removed, expecting a `boolean` to be returned based on the reference to the selected element
+    - `className` – string overriding the default `"menu-item remove"` css classes on the corresponding context menu item
+    - `title` – string defining the tool-tip to show for the corresponding context menu item
+    - `isActionAllowed` – function for preventing certain elements to be removed, expecting a `boolean` to be returned based on the reference to the selected element
+
+### Additional Exports
+#### `isFlowValid` function
+- input: expecting a complete `flow` as single input parameter
+- output: returning a `boolean` response to indicate whether the given `flow` is deemed valid by the `<Modeler>`
 
 ### Example (read-only)
 ```javascript
