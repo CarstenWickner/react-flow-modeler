@@ -1,4 +1,4 @@
-import { isDivergingGateway, createElementTree } from "../../src/model/modelUtils";
+import { isDivergingGateway, createElementTree, updateStepData, updateGatewayData, updateGatewayBranchData } from "../../src/model/modelUtils";
 import {
     StepNode,
     ConvergingGatewayBranch,
@@ -9,6 +9,7 @@ import {
     EndNode
 } from "../../src/types/ModelElement";
 import { step, divGw } from "./testUtils";
+import { FlowModelerProps } from "../../src/types/FlowModelerProps";
 
 describe("isDivergingGateway()", () => {
     it.each`
@@ -193,5 +194,199 @@ describe("createElementTree()", () => {
         expect(b.rowCount).toBe(2);
         expect(c.rowCount).toBe(2);
         expect(end.rowCount).toBe(3);
+    });
+});
+describe("updateStepData()", () => {
+    const originalFlow = {
+        firstElementId: "1",
+        elements: {
+            "1": {
+                nextElements: [
+                    { id: "2", conditionData: { y: "y" } },
+                    { id: "3", conditionData: { z: "z" } }
+                ],
+                data: { x: "x" }
+            },
+            "2": { nextElementId: "3", data: { old: "value" } },
+            "3": { data: { unchanged: "step" } }
+        }
+    };
+    it("copies complete flow", () => {
+        const result = updateStepData(originalFlow, "2", (oldData) => oldData);
+        expect(result.changedFlow).not.toBe(originalFlow);
+        expect(result.changedFlow).toEqual(originalFlow);
+    });
+    it("replaces data of targeted step only in copy", () => {
+        const result = updateStepData(originalFlow, "2", () => ({ new: "value" }));
+        expect(result.changedFlow).not.toBe(originalFlow);
+        expect(result.changedFlow).not.toEqual(originalFlow);
+        expect(result.changedFlow).toEqual({
+            firstElementId: "1",
+            elements: {
+                "1": {
+                    nextElements: [
+                        { id: "2", conditionData: { y: "y" } },
+                        { id: "3", conditionData: { z: "z" } }
+                    ],
+                    data: { x: "x" }
+                },
+                "2": { nextElementId: "3", data: { new: "value" } },
+                "3": { data: { unchanged: "step" } }
+            }
+        });
+    });
+    it("defaults nextElementId to null if not present", () => {
+        const result = updateStepData(originalFlow, "3", () => ({ changed: "value" }));
+        expect(result.changedFlow).not.toBe(originalFlow);
+        expect(result.changedFlow).not.toEqual(originalFlow);
+        expect(result.changedFlow).toEqual({
+            firstElementId: "1",
+            elements: {
+                "1": {
+                    nextElements: [
+                        { id: "2", conditionData: { y: "y" } },
+                        { id: "3", conditionData: { z: "z" } }
+                    ],
+                    data: { x: "x" }
+                },
+                "2": { nextElementId: "3", data: { old: "value" } },
+                "3": { nextElementId: null, data: { changed: "value" } }
+            }
+        });
+    });
+    it("throws on non-existent step id", () => {
+        const action = (): never => updateStepData(originalFlow, "4", () => ({}));
+        expect(action).toThrowError("There is no step with id '4'.");
+    });
+    it("throws on id referring to gateway", () => {
+        const action = (): never => updateStepData(originalFlow, "1", () => ({}));
+        expect(action).toThrowError("Element with id '1' is a diverging gateway. Call 'updateGatewayData()' instead.");
+    });
+});
+describe("updateGatewayData()", () => {
+    const originalFlow: FlowModelerProps["flow"] = {
+        firstElementId: "1",
+        elements: {
+            "1": {
+                nextElements: [
+                    { id: "2", conditionData: { x: "x" } },
+                    { id: "3", conditionData: { y: "y" } },
+                    { id: null, conditionData: { z: "z" } }
+                ],
+                data: { old: "value" }
+            },
+            "2": { nextElementId: "3", data: { step: "value" } },
+            "3": {}
+        }
+    };
+    it("copies complete flow", () => {
+        const result = updateGatewayData(
+            originalFlow,
+            "1",
+            (oldData) => oldData,
+            (oldBranchData) => oldBranchData
+        );
+        expect(result.changedFlow).not.toBe(originalFlow);
+        expect(result.changedFlow).toEqual(originalFlow);
+    });
+    it("replaces data of targeted gateway only in copy", () => {
+        const result = updateGatewayData(originalFlow, "1", () => ({ changed: "value" }));
+        expect(result.changedFlow).not.toBe(originalFlow);
+        expect(result.changedFlow).not.toEqual(originalFlow);
+        expect(result.changedFlow).toEqual({
+            firstElementId: "1",
+            elements: {
+                "1": {
+                    nextElements: [
+                        { id: "2", conditionData: { x: "x" } },
+                        { id: "3", conditionData: { y: "y" } },
+                        { id: null, conditionData: { z: "z" } }
+                    ],
+                    data: { changed: "value" }
+                },
+                "2": { nextElementId: "3", data: { step: "value" } },
+                "3": {}
+            }
+        });
+    });
+    it("can also update branch data at the same time", () => {
+        const result = updateGatewayData(
+            originalFlow,
+            "1",
+            () => ({ changed: "gateway" }),
+            (oldBranchData, branchIndex, allOldBranchData): { [key: string]: unknown } =>
+                branchIndex === 0 ? oldBranchData : branchIndex === 1 ? { updated: "branch" } : allOldBranchData[branchIndex]
+        );
+        expect(result.changedFlow).not.toBe(originalFlow);
+        expect(result.changedFlow).not.toEqual(originalFlow);
+        expect(result.changedFlow).toEqual({
+            firstElementId: "1",
+            elements: {
+                "1": {
+                    nextElements: [
+                        { id: "2", conditionData: { x: "x" } },
+                        { id: "3", conditionData: { updated: "branch" } },
+                        { id: null, conditionData: { z: "z" } }
+                    ],
+                    data: { changed: "gateway" }
+                },
+                "2": { nextElementId: "3", data: { step: "value" } },
+                "3": {}
+            }
+        });
+    });
+    it("throws on non-existent gateway id", () => {
+        const action = (): never => updateGatewayData(originalFlow, "4", () => ({}));
+        expect(action).toThrowError("There is no diverging gateway with id '4'.");
+    });
+    it("throws on id referring to step", () => {
+        const action = (): never => updateGatewayData(originalFlow, "2", () => ({}));
+        expect(action).toThrowError("Element with id '2' is a step. Call 'updateStepData()' instead.");
+    });
+});
+describe("updateGatewayBranchData()", () => {
+    const originalFlow = {
+        firstElementId: "1",
+        elements: {
+            "1": {
+                nextElements: [{ id: "2", conditionData: { unchanged: "branch" } }, { conditionData: { old: "value" } }],
+                data: { x: "x" }
+            },
+            "2": { nextElementId: "3", data: { y: "y" } },
+            "3": { data: { z: "z" } }
+        }
+    };
+    it("copies complete flow", () => {
+        const result = updateGatewayBranchData(originalFlow, "1", 0, (oldData) => oldData);
+        expect(result.changedFlow).not.toBe(originalFlow);
+        expect(result.changedFlow).toEqual(originalFlow);
+    });
+    it("replaces data of targeted branch only in copy", () => {
+        const result = updateGatewayBranchData(originalFlow, "1", 0, () => ({ changed: "value" }));
+        expect(result.changedFlow).not.toBe(originalFlow);
+        expect(result.changedFlow).not.toEqual(originalFlow);
+        expect(result.changedFlow).toEqual({
+            firstElementId: "1",
+            elements: {
+                "1": {
+                    nextElements: [{ id: "2", conditionData: { changed: "value" } }, { conditionData: { old: "value" } }],
+                    data: { x: "x" }
+                },
+                "2": { nextElementId: "3", data: { y: "y" } },
+                "3": { data: { z: "z" } }
+            }
+        });
+    });
+    it("throws on non-existent gateway id", () => {
+        const action = (): never => updateGatewayBranchData(originalFlow, "4", 0, () => ({}));
+        expect(action).toThrowError("There is no diverging gateway with id '4'.");
+    });
+    it("throws on id referring to step", () => {
+        const action = (): never => updateGatewayBranchData(originalFlow, "2", 0, () => ({}));
+        expect(action).toThrowError("Element with id '2' is a step.");
+    });
+    it("throws on invalid branchIndex", () => {
+        const action = (): never => updateGatewayBranchData(originalFlow, "1", 5, () => ({}));
+        expect(action).toThrowError("Diverging gateway with id '1' has 2 branches. Index 5 is invalid.");
     });
 });

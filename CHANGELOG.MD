@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Export of `updateStepData()` function for manipulating content of a single step node
+- Export of `updateGatewayData()` function for manipulating condition type associated with a single diverging gateway node
+- Export of `updateGatewayBranchData()` function for manipulating condition value associated with a single diverging gateway branch
+- Export of `validateFlow()` function (as alternative to `isFlowValid()`) throwing a descriptive error in case of an invalid flow
 
 ## [1.0.1] - 2020-02-23
 ### Added

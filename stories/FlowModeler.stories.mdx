@@ -3,7 +3,7 @@ import { action } from '@storybook/addon-actions';
 import { Meta, Preview, Story, Props } from '@storybook/addon-docs/blocks';
 import "./style-overrides.css";
 
-import { FlowModeler } from "../src/index";
+import { FlowModeler, updateStepData, updateGatewayData, updateGatewayBranchData } from "../src/index";
 
 <Meta title='FlowModeler' component={FlowModeler} />
 
@@ -27,6 +27,11 @@ export const externalState = {
     }
 }
 
+export const onChange = ({ changedFlow }) => {
+    externalState.flow = changedFlow;
+    forceReRender();
+};
+
 <Preview>
     <Story name="show-case">
         <FlowModeler
@@ -37,11 +42,7 @@ export const externalState = {
                     value={data ? data.label : ""}
                     style={{ marginRight: "0.5em", width: "6em", fontSize: "12px", lineHeight: "2em" }}
                     onClick={(event) => { event.stopPropagation() }}
-                    onChange={(event) => {
-                        externalState.flow.elements[id].data = { label: event.target.value };
-                        event.stopPropagation();
-                        forceReRender();
-                    }}
+                    onChange={(event) => onChange(updateStepData(externalState.flow, id, () => ({ label: event.target.value })))}
                 />
             )}
             renderGatewayConditionType={({ id, data }) => (
@@ -49,11 +50,7 @@ export const externalState = {
                     value={data ? data.type : "one"}
                     style={{ width: "10em", fontSize: "12px" }}
                     onClick={(event) => { event.stopPropagation() }}
-                    onChange={(event) => {
-                        externalState.flow.elements[id].data = { type: event.target.value };
-                        event.stopPropagation();
-                        forceReRender();
-                    }}
+                    onChange={(event) => onChange(updateGatewayData(externalState.flow, id, () => ({ type: event.target.value })))}
                 >
                     <option value="one">A Condition</option>
                     <option value="two">Other Condition</option>
@@ -66,20 +63,13 @@ export const externalState = {
                         value={data ? data.label : "Fulfilled"}
                         style={{ width: "10em", marginLeft: "0.5em", fontSize: "12px" }}
                         onClick={(event) => { event.stopPropagation() }}
-                        onChange={(event) => {
-                            externalState.flow.elements[precedingElement.id].nextElements[branchIndex].conditionData = { label: event.target.value };
-                            event.stopPropagation();
-                            forceReRender();
-                        }}
+                        onChange={(event) => onChange(updateGatewayBranchData(externalState.flow, precedingElement.id, branchIndex, () => ({ label: event.target.value })))}
                     >
                         <option value="Fulfilled">Fulfilled</option>
                         <option value="Not fulfilled">Not fulfilled</option>
                     </select>
             )}
-            onChange={({ changedFlow }) => {
-                externalState.flow = changedFlow;
-                forceReRender();
-            }}
+            onChange={onChange}
         />
     </Story>
 </Preview>

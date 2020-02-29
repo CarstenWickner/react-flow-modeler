@@ -3,7 +3,7 @@ import { action } from '@storybook/addon-actions';
 import { Meta, Preview, Story, Props } from '@storybook/addon-docs/blocks';
 import "./style-overrides.css";
 
-import { FlowModeler } from "../src/index";
+import { FlowModeler, updateStepData, updateGatewayData, updateGatewayBranchData } from "../src/index";
 
 <Meta title='FlowModeler Editing' component={FlowModeler} />
 
@@ -55,6 +55,11 @@ export const externalState = {
 If the elements themselves are supposed to be editable, you'll have to use the appropriate components within the
 `renderStep()`/`renderGatewayConditionType()`/`renderGatewayConditionValue()` functions and take care of the update of the state yourself.
 
+export const onChangeFlow2 = ({ changedFlow }) => {
+    externalState.flow2 = changedFlow;
+    forceReRender();
+};
+
 <Preview>
     <Story name="elements">
         <FlowModeler
@@ -63,20 +68,15 @@ If the elements themselves are supposed to be editable, you'll have to use the a
                 <input
                     type="text"
                     value={data ? data.label : ""}
-                    onChange={(event) => {
-                        externalState.flow2.elements[id].data = ({ label: event.target.value });
-                        forceReRender();
-                    }}
+                    onChange={(event) => onChangeFlow2(updateStepData(externalState.flow2, id, () => ({ label: event.target.value })))}
                 />
             )}
             renderGatewayConditionType={({ id, data }) => (
                 <select
                     value={data ? data.label : ""}
-                    onChange={(event) => {
-                        externalState.flow2.elements[id].data = ({ label: event.target.value });
-                        event.stopPropagation();
-                        forceReRender();
-                    }}>
+                    onClick={(event) => { event.stopPropagation(); }}
+                    onChange={(event) => onChangeFlow2(updateGatewayData(externalState.flow2, id, () => ({ label: event.target.value }), () => ({})))}
+                >
                     <option value="">n/a</option>
                     <option value="Condition">Condition</option>
                     <option value="Check">Check</option>
@@ -86,16 +86,10 @@ If the elements themselves are supposed to be editable, you'll have to use the a
                 <input
                     type="text"
                     value={data ? data.label : ""}
-                    onChange={(event) => {
-                        externalState.flow2.elements[precedingElement.id].nextElements[branchIndex].conditionData = ({ label: event.target.value });
-                        forceReRender();
-                    }}
+                    onChange={(event) => onChangeFlow2(updateGatewayBranchData(externalState.flow2, precedingElement.id, branchIndex, () => ({ label: event.target.value })))}
                 />
             )}
-            onChange={({ changedFlow }) => {
-                externalState.flow2 = changedFlow;
-                forceReRender();
-            }}
+            onChange={onChangeFlow2}
         />
     </Story>
 </Preview>

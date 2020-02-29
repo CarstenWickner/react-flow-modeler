@@ -22,6 +22,10 @@ Topics covered in this document are:
         - [`editActions`](#editactions)
     - [Additional Exports](#additional-exports)
         - [`isFlowValid` function](#isflowvalid-function)
+        - [`validateFlow` function](#validateflow-function)
+        - [`updateStepData` function](#updatestepdata-function)
+        - [`updateGatewayData` function](#updategatewaydata-function)
+        - [`updateGatewayBranchData` function](#updategatewaybranchdata-function)
     - [Example (read-only)](#example-read-only)
     - [Example (structural editing, starting with empty "flow")](#example-structural-editing-starting-with-empty-flow)
 
@@ -116,6 +120,47 @@ Object containing various customization options for the structural editing featu
 #### `isFlowValid` function
 - input: expecting a complete `flow` as single input parameter
 - output: returning a `boolean` response to indicate whether the given `flow` is deemed valid by the `<Modeler>`
+
+#### `validateFlow` function
+- input: expecting a complete `flow` as single input parameter
+- output: not returning anything in case of a valid `flow` but throwing an `Error` otherwise
+
+#### `updateStepData` function
+- inputs:
+    1. expecting a complete `flow` as first input parameter
+    2. expecting the `id` of a step node (i.e. identifying the step node under `flow.elements[id]`) as second input parameter
+    3. expecting a callback function as third input parameter
+        - input: the current `data` of the targeted step node will be provided as single input parameter
+        - output: the new `data` object to set on the targeted step node is expected to be returned
+- output: returning an object (that can be provided to your `onChange` function) containing the following field:
+    - `changedFlow` – updated `flow` that should be stored in some external state and provided again via the `flow` prop to the `<Modeler>`
+
+#### `updateGatewayData` function
+- inputs:
+    1. expecting a complete `flow` as first input parameter
+    2. expecting the `id` of a gateway node (i.e. identifying the gateway node under `flow.elements[id]`) as second input parameter
+    3. expecting a callback function as third input parameter
+        - input: the current `data` of the targeted gateway node will be provided as single input parameter
+        - output: the new `data` object to set on the targeted gateway node is expected to be returned
+    4. optionally catering for another callback function to be provided as fourth input parameter
+        - inputs:
+            1. the current `conditionData` of a branch of the targeted gateway node will be provided as first input parameter
+            2. the index of the respective branch of the targeted gateway node will be provided as second input parameter
+            3. an array of the current `conditionData` of all branches of the targeted gateway node will be provided as third input parameter
+        - ooutput: the new `conditionData` object to set on the respective branch of the targeted gateway node is expected to be returned
+- output: returning an object (that can be provided to your `onChange` function) containing the following field:
+    - `changedFlow` – updated `flow` that should be stored in some external state and provided again via the `flow` prop to the `<Modeler>`
+
+#### `updateGatewayBranchData` function
+- inputs:
+    1. expecting a complete `flow` as first input parameter
+    2. expecting the `id` of a gateway node (i.e. identifying the gateway node under `flow.elements[id]`) as second input parameter
+    3. expecting the index of the targeted branch of the gateway node (i.e. referring to `flow.elements[id].nextElements[index]`) as third input parameter
+    4. expecting a callback function as fourth input parameter
+        - input: the current `conditionData` of the targeted gateway branch will be provided as single input parameter
+        - output: the new `conditionData` object to set on the targeted gateway branch is expected to be returned
+- output: returning an object (that can be provided to your `onChange` function) containing the following field:
+    - `changedFlow` – updated `flow` that should be stored in some external state and provided again via the `flow` prop to the `<Modeler>`
 
 ### Example (read-only)
 ```javascript
