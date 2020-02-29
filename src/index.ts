@@ -1,3 +1,5 @@
 export { FlowModeler } from "./component/FlowModeler";
 
-export { isFlowValid } from "./model/pathValidationUtils";
+export { updateStepData, updateGatewayData, updateGatewayBranchData } from "./model/modelUtils";
+
+export { isFlowValid, validateFlow } from "./model/pathValidationUtils";

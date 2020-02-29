@@ -11,6 +11,7 @@ import {
     StartNode
 } from "../types/ModelElement";
 import { FlowModelerProps, FlowStep, FlowGatewayDiverging } from "../types/FlowModelerProps";
+import { EditActionResult } from "../types/EditAction";
 
 export const isDivergingGateway = (inputElement: FlowStep | FlowGatewayDiverging): inputElement is FlowGatewayDiverging =>
     !!inputElement && (inputElement as FlowGatewayDiverging).nextElements !== undefined;
@@ -207,4 +208,99 @@ export const createElementTree = (flow: FlowModelerProps["flow"], verticalAlign:
     // calculate number of rows within the grid to be rendered
     determineRowCounts(start, verticalAlign, elementsInTree.forEach.bind(elementsInTree));
     return start;
+};
+
+export const updateStepData = (
+    flow: FlowModelerProps["flow"],
+    stepId: string,
+    updateData: (oldData: { [key: string]: unknown }) => { [key: string]: unknown }
+): EditActionResult => {
+    if (!(stepId in flow.elements)) {
+        throw new Error(`There is no step with id '${stepId}'.`);
+    }
+    if (isDivergingGateway(flow.elements[stepId])) {
+        throw new Error(`Element with id '${stepId}' is a diverging gateway. Call 'updateGatewayData()' instead.`);
+    }
+    return {
+        changedFlow: {
+            firstElementId: flow.firstElementId,
+            elements: {
+                ...flow.elements,
+                [stepId]: {
+                    nextElementId: (flow.elements[stepId] as FlowStep).nextElementId || null,
+                    data: updateData(flow.elements[stepId].data)
+                }
+            }
+        }
+    };
+};
+
+export const updateGatewayData = (
+    flow: FlowModelerProps["flow"],
+    gatewayId: string,
+    updateData: (oldData: { [key: string]: unknown }) => { [key: string]: unknown },
+    updateBranchData?: (
+        oldData: { [key: string]: unknown },
+        branchIndex: number,
+        allOldBranchData: Array<{ [key: string]: unknown }>
+    ) => { [key: string]: unknown }
+): EditActionResult => {
+    if (!(gatewayId in flow.elements)) {
+        throw new Error(`There is no diverging gateway with id '${gatewayId}'.`);
+    }
+    if (!isDivergingGateway(flow.elements[gatewayId])) {
+        throw new Error(`Element with id '${gatewayId}' is a step. Call 'updateStepData()' instead.`);
+    }
+    const gateway = flow.elements[gatewayId] as FlowGatewayDiverging;
+    let nextElements: FlowGatewayDiverging["nextElements"];
+    if (updateBranchData) {
+        const allOldBranchData = gateway.nextElements.map((oldBranch) => oldBranch.conditionData);
+        nextElements = gateway.nextElements.map(({ id, conditionData }, branchIndex) => ({
+            id,
+            conditionData: updateBranchData(conditionData, branchIndex, allOldBranchData)
+        }));
+    } else {
+        nextElements = gateway.nextElements;
+    }
+    const changedFlow = {
+        firstElementId: flow.firstElementId,
+        elements: {
+            ...flow.elements,
+            [gatewayId]: { nextElements, data: updateData(gateway.data) }
+        }
+    };
+    return { changedFlow };
+};
+
+export const updateGatewayBranchData = (
+    flow: FlowModelerProps["flow"],
+    gatewayId: string,
+    branchIndex: number,
+    updateConditionData: (oldConditionData: { [key: string]: unknown }) => { [key: string]: unknown }
+): EditActionResult => {
+    if (!(gatewayId in flow.elements)) {
+        throw new Error(`There is no diverging gateway with id '${gatewayId}'.`);
+    }
+    if (!isDivergingGateway(flow.elements[gatewayId])) {
+        throw new Error(`Element with id '${gatewayId}' is a step.`);
+    }
+    const gateway = flow.elements[gatewayId] as FlowGatewayDiverging;
+    if (gateway.nextElements.length <= branchIndex) {
+        throw new Error(`Diverging gateway with id '${gatewayId}' has ${gateway.nextElements.length} branches. Index ${branchIndex} is invalid.`);
+    }
+    return {
+        changedFlow: {
+            firstElementId: flow.firstElementId,
+            elements: {
+                ...flow.elements,
+                [gatewayId]: {
+                    nextElements: gateway.nextElements.map(({ id, conditionData }, index) => ({
+                        id,
+                        conditionData: index === branchIndex ? updateConditionData(conditionData) : conditionData
+                    })),
+                    data: flow.elements[gatewayId].data
+                }
+            }
+        }
+    };
 };
