@@ -171,7 +171,6 @@
             height: $strokeStrength;
             width: 100%;
             top: calc(50% - #{$strokeStrength / 2});
-            z-index: -1;
         }
         &.can-drop::before {
             background: linear-gradient(90deg, $strokeColor 0%, $dropStrokeColor 62%);
