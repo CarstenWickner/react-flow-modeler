@@ -77,10 +77,19 @@
                 background-color: transparent;
             }
             &::after {
-                content: "X";
                 position: absolute;
-                font: bold 1.75em Arial, sans-serif;
                 color: $standardElementColor;
+            }
+            &.diverging::after {
+                content: "X";
+                font: bold 1.75em Arial, sans-serif;
+            }
+            &.converging::after {
+                content: "";
+                border: $strokeStrength solid $standardElementColor;
+                height: ($standardElementSize / 2) - $strokeStrength;
+                width: ($standardElementSize / 2) - $strokeStrength;
+                border-radius: 50%;
             }
         }
         &.start-element.selected,
