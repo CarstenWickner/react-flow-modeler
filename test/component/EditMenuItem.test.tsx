@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DndProvider } from "react-dnd";
-import Backend from "react-dnd-test-backend";
+import { TestBackend } from "react-dnd-test-backend";
 import { mount, shallow } from "enzyme";
 
 import { EditMenuItem } from "../../src/component/EditMenuItem";
@@ -28,7 +28,7 @@ describe("renders correctly", () => {
             }
         };
         const component = mount(
-            <DndProvider backend={Backend}>
+            <DndProvider backend={TestBackend}>
                 <EditMenuItem options={undefined} defaultClassName="for-dragging" dragItem={dragItem} />
             </DndProvider>
         );

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DndProvider } from "react-dnd";
-import Backend from "react-dnd-test-backend";
+import { TestBackend } from "react-dnd-test-backend";
 import { shallow, mount } from "enzyme";
 
 import { EditMenu } from "../../src/component/EditMenu";
@@ -92,7 +92,7 @@ describe("renders correctly", () => {
         ${"remove"}      | ${"removeElement"}                | ${false}
     `("can conditionally show/hide $action action (showing: $isAllowed)", ({ action, optionKey, isAllowed }) => {
         const component = mount(
-            <DndProvider backend={Backend}>
+            <DndProvider backend={TestBackend}>
                 <EditMenu
                     referenceElement={
                         elementsInTree.find(
@@ -208,7 +208,7 @@ describe("offers actions", () => {
     });
     it("removing element", () => {
         const component = mount(
-            <DndProvider backend={Backend}>
+            <DndProvider backend={TestBackend}>
                 <EditMenu
                     referenceElement={elementsInTree.find((entry) => entry.type === ElementType.StepNode && entry.id === "b") as StepNode}
                     onChange={onChange}
