@@ -2,7 +2,7 @@ import * as PropTypes from "prop-types";
 import * as React from "react";
 import OutsideClickHandler from "react-outside-click-handler";
 import { DndProvider } from "react-dnd";
-import Backend from "react-dnd-html5-backend";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 import { StepElement } from "./StepElement";
 import { EditMenu } from "./EditMenu";
@@ -260,7 +260,7 @@ export class FlowModeler extends React.Component<FlowModelerProps, FlowModelerSt
         if (onChange) {
             return (
                 <OutsideClickHandler onOutsideClick={this.handleOnOutsideClick}>
-                    {options && options.omitDndProvider ? this.renderMain() : <DndProvider backend={Backend}>{this.renderMain()}</DndProvider>}
+                    {options && options.omitDndProvider ? this.renderMain() : <DndProvider backend={HTML5Backend}>{this.renderMain()}</DndProvider>}
                 </OutsideClickHandler>
             );
         }

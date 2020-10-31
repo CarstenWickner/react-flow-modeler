@@ -89,10 +89,8 @@ const handleNextElement = (
         return createEndNode((precedingElement as unknown) as StartNode | StepNode | ConvergingGatewayNode, resultingModelElements);
     }
     if (isDivergingGateway(inputElement)) {
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
         return createDivergingGatewayNode(id, inputElement, inputElements, resultingModelElements, precedingElement);
     }
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return createStepNode(id, inputElement, inputElements, resultingModelElements, precedingElement);
 };
 
